@@ -59,7 +59,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
  
 	
 	echo '<div class="form-row form-row-wide"><label>PaySeed Phone Number <span class="required">*</span></label>
-		<input id="seedpay_payment_phone" type="text" autocomplete="off">
+		<input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off">
 		</div>
 		
 		<div class="clear"></div>';
@@ -208,26 +208,37 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
 	public function process_payment( $order_id ) {
 
 		$order = wc_get_order( $order_id );
-		if($order->payment_token == 'accepted'){
-		// Mark as on-hold (we're awaiting the cheque)
-		$order->update_status( 'wc-awaiting-shipment' );
 		
-		add_post_meta($order_id, '_isl_waiting_total',true);
+	
 		
-			$mailer = WC()->mailer();
-            $email  = $mailer->emails['WC_ISL_Email_New_Order'];
-            $email->trigger($order);
-		
-			unset($mailer);
-			unset($email);
-			$mailer = WC()->mailer();
-		  	$email_customer  = $mailer->emails['WC_ISL_Customer_Email_New_Order'];
-            $email_customer->trigger($order);
-				
+		$phone = wc_format_phone_number($_REQUEST['seedpay_payment_phone'] );
+		echo $phone;
+		if($phone == ''){
+		$error_message = __('Please add a valid SeedPay phone number.', 'woocommerce-gateway-seedpay');	
+		wc_add_notice( __('Payment error: ', 'woothemes') . $error_message, 'error' );	
+		}
 		
 		
-		// Reduce stock levels
-		#$order->reduce_order_stock();
+		
+		
+		if($order->payment_token != 'accepted'){
+		$error_message = __('You must first accept payment before continuing.', 'woocommerce-gateway-seedpay');
+		wc_add_notice( __('Payment error: ', 'woothemes') . $error_message, 'error' );	
+		}
+		
+		
+		if($error_message == ''){		
+		
+			
+		
+		
+		
+		
+		$order->update_status( 'wc-processing' );
+		
+			
+		
+		$order->reduce_order_stock();
 
 		// Remove cart
 		WC()->cart->empty_cart();
@@ -240,9 +251,9 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
 			'result' 	=> 'success',
 			'redirect'	=> $this->get_return_url( $order )
 		);
-		}else{
 			
-		//error	
+			
+			
 			
 		}
 
