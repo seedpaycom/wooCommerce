@@ -1,0 +1,119 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Woocommerce SeedPay Gateway\n"
+"POT-Creation-Date: 2019-01-29 21:31-0500\n"
+"PO-Revision-Date: 2019-01-29 21:31-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-wc-gateway-seedpay.php:15
+#: includes/class-wc-gateway-seedpay.php:135
+msgid "SeedPay"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:16
+msgid "Gateway for SeedPay"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:48
+msgid "TEST MODE ENABLED. In test mode, you will be using staging api credentials."
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:62
+msgid "PaySeed Phone Number"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:63
+msgid "Request Payment"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:125
+msgid "Enable/Disable"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:127
+msgid "Enable SeedPay"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:132
+msgid "Title"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:134
+msgid "This controls the title which the user sees during checkout."
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:139
+msgid "Description"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:141
+msgid "Payment method description that the customer will see on your checkout."
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:142
+msgid "Please enter your PaySeed phone number and approve the payment once received."
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:146
+msgid "Instructions"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:148
+msgid "Instructions that will be added to the thank you page and emails."
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:153
+msgid "Test Mode"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:155
+msgid "Enable Test Servers"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:159
+msgid "SeedPay Username"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:161
+#: includes/class-wc-gateway-seedpay.php:168
+msgid "Your SeedPay Username."
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:166
+msgid "SeedPay Password"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:173
+msgid "SeedPay Token"
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:175
+msgid "Your SeedPay Token, leave this field empty to generate a new token."
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:236
+msgid "Please add a valid SeedPay phone number."
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:237
+#: includes/class-wc-gateway-seedpay.php:245
+msgid "Payment error: "
+msgstr ""
+
+#: includes/class-wc-gateway-seedpay.php:244
+msgid "You must first accept payment before continuing."
+msgstr ""
+
+#: seedpay.php:55
+msgid "Settings"
+msgstr ""
