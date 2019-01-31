@@ -10,8 +10,8 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
      */
 	public function __construct() {
 		if(!isset($_COOKIE['seedpay_cart_id'])){
-		$transaction_id = wp_rand();
-		setcookie( 'seedpay_cart_id', $transaction_id, time() + (168 * HOUR_IN_SECONDS), COOKIEPATH, COOKIE_DOMAIN);
+		
+		$transaction_id = seedpay_generate_new_cart_id();
 		
 		}else{
 			$transaction_id = $_COOKIE['seedpay_cart_id'];	

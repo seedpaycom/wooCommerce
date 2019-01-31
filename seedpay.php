@@ -103,8 +103,9 @@
 			
 		$message['error'] = __('Please add a valid SeedPay phone number.', 'woocommerce-gateway-seedpay');	
 		}
-		if( $response->error!= ''){
-		$message['error'] =  $response->error;	
+		if( $response->errors[0] != ''){
+		$message['error'] =  $response->errors[0];	
+		seedpay_generate_new_cart_id();
 		}
 			
 	echo json_encode($message);
@@ -153,9 +154,16 @@
 		$response=	seedpay_request($url,array(),'GET',$gateway_settings['token']);
 	#	print_r($response);
 		if($response[0]->status == 'acceptedAndPaid'){
-			set_transient( 'seedpay_order_status_'.$transaction_id.'',$response[0], 168 * HOUR_IN_SECONDS );	
+			set_transient( 'seedpay_order_status_'.$transaction_id.'',$response[0], 168 * HOUR_IN_SECONDS );
+			set_transient( 'seedpay_order_statusname_'.$transaction_id.'',$response[0]->status, 168 * HOUR_IN_SECONDS );		
 			set_transient( 'seedpay_order_phone_'.$transaction_id.'',$phone, 168 * HOUR_IN_SECONDS );	
 			
+		}
+		if($response[0]->status == 'errored'){
+			
+			$message['error'] = __('There was an error with this transaction.', 'woocommerce-gateway-seedpay');	
+			
+			seedpay_generate_new_cart_id();
 		}
 		$message['response'] =$response;
 		}else{
@@ -170,7 +178,12 @@
 	add_action( 'wp_ajax_ajax_seedpay_check_request','ajax_seedpay_check_request' );
 	add_action( 'wp_ajax_nopriv_ajax_seedpay_check_request','ajax_seedpay_check_request' );
 	
-	
+	function seedpay_generate_new_cart_id(){
+	$transaction_id = wp_rand();	
+	setcookie( 'seedpay_cart_id', '',time() - ( 15 * 60 ), COOKIEPATH, COOKIE_DOMAIN );	
+	setcookie( 'seedpay_cart_id', $transaction_id, time() + (60* 20), COOKIEPATH, COOKIE_DOMAIN);
+		return $transaction_id ;
+	}
 	function woocommerce_seedpay_init(){
 		
 		require_once( plugin_basename( 'includes/class-wc-gateway-seedpay.php' ) );
@@ -203,3 +216,17 @@
 		return array_merge( $plugin_links, $links );
 	}
 	add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'woocommerce_seedpay_plugin_links' );
+	
+	function seedpay_add_to_cart_validation( $passed, $product_id, $quantity ) { 
+    
+	$transient = get_transient('seedpay_order_statusname_'.$_COOKIE['seedpay_cart_id'].'');
+	if ($transient == 'acceptedAndPaid' ) {
+        wc_add_notice( __( 'Payment already accepted you can no longer add any items to the cart', 'woocommerce' ), 'error' );
+            $passed = false;
+    }
+	
+	
+    return $passed; 
+}; 
+	
+	 add_filter( 'woocommerce_add_to_cart_validation', 'seedpay_add_to_cart_validation', 10, 3 );
