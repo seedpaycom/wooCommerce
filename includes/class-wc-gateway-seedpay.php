@@ -9,6 +9,14 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
      * Constructor for the gateway.
      */
 	public function __construct() {
+		if(!isset($_COOKIE['seedpay_cart_id'])){
+		$transaction_id = wp_rand();
+		setcookie( 'seedpay_cart_id', $transaction_id, time() + (168 * HOUR_IN_SECONDS), COOKIEPATH, COOKIE_DOMAIN);
+		
+		}else{
+			$transaction_id = $_COOKIE['seedpay_cart_id'];	
+		}
+		
 		$this->id                 = 'seedpay';
 		$this->icon               = apply_filters('woocommerce_cheque_icon', '');
 		$this->has_fields         = true;
@@ -18,16 +26,25 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
 		// Load the settings.
 		$this->init_form_fields();
 		$this->init_settings();
-		$this->testmode = $this->get_option( 'testmode' );
+		$this->testmode = $this->get_option( 'environment' );
 		// Define user set variables
 		$this->title        = $this->get_option( 'title' );
 		$this->description  = $this->get_option( 'description' );
 		$this->instructions = $this->get_option( 'instructions', $this->description );
 		$this->url = 'https://api.seedpay.com';
 		
+		
+		$this->username       = $this->get_option( 'username' );
+		$this->password       = $this->get_option( 'password' );
+		$this->token     = $this->get_option( 'token' );
+		if(($this->username != '' && $this->password != '') && $this->token == ''){
+			
+		$this->login();	
+			
+		}
 		if ( 'yes' === $this->testmode ) {
 			$this->url = 'https://staging.api.seedpay.com';
-			$this->add_testmode_admin_settings_notice();
+			
 		} 
 		
 		
@@ -39,18 +56,30 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
     	add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
     	add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 		
-		//ajax calls
-		add_action( 'wp_ajax_ajax_seedpay_submit_request', array($this,'ajax_seedpay_submit_request') );
-		add_action( 'wp_ajax_nopriv_ajax_seedpay_submit_request',array($this,'ajax_seedpay_submit_request') );
+
+		
+	}
+	public function login(){
+		
+		$fields = array('username'=>$this->username, 'password'=>$this->password);
+		$response = seedpay_request('login',$fields,'POST');
+		
+		if($response->token != ''){
+		$gateway_settings =get_option('woocommerce_seedpay_settings');
+		$gateway_settings['token'] = $response->token;
+		update_option('woocommerce_seedpay_settings', $gateway_settings);
+		}
+		
 		
 	}
 	public function payment_fields() {
- 
+ 	
+	$transaction_id = $_COOKIE['seedpay_cart_id'];	
 	
 	if ( $this->description ) {
 		
 		if ( $this->testmode == 'yes' ) {
-			$this->description .= __('TEST MODE ENABLED. In test mode, you will be using staging api credentials.','woocommerce-gateway-seedpay');
+			$this->description .='<p style="color:red;font-weight:bold">'. __('TEST MODE ENABLED. In test mode, you will be using staging api credentials.','woocommerce-gateway-seedpay').'</p>';
 			$this->description  = trim( $this->description );
 		}
 		
@@ -58,16 +87,45 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
 	}
  
 	
-	echo '<fieldset id="wc-' . esc_attr( $this->id ) . '-cc-form" class="wc-credit-card-form wc-payment-form" style="background:transparent;">';
+	echo '
+	<div class="seedpay-messages"></div>
+	<fieldset id="wc-' . esc_attr( $this->id ) . '-cc-form" class="wc-credit-card-form wc-payment-form" style="background:transparent;">';
  
 	
 	do_action( 'woocommerce_credit_card_form_start', $this->id );
- 
+ 	$check_payment = get_transient('seedpay_order_status_'.$transaction_id .'');
+	$phone = get_transient('seedpay_order_phone_'.$transaction_id .'');
 	
-	echo '<div class="form-row form-row-wide"><label>'.__('PaySeed Phone Number','woocommerce-gateway-seedpay').' <span class="required">*</span></label>
-		<input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off"> <a href="#" class="seedpay-request-payment-submit seed-pay-button">'.__('Request Payment','woocommerce-gateway-seedpay').'</a>
+		
+	
+	if($check_payment != ""){
+		
+	echo '<input type="hidden" class="seedpay_recheck_payment" value="1" data-id="'.$transaction_id .'" data-pn="'.$phone.'">';	
+		
+	}
 
+	
+	echo '<div class="form-row form-row-wide seedpay-number-form" >
+	
+	
+	<label>'.__('PaySeed Phone Number','woocommerce-gateway-seedpay').' <span class="required">*</span></label>
+		<input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off" value="'.$phone .'"> <a href="#" class="seedpay-request-payment-submit seed-pay-button">'.__('Request Payment','woocommerce-gateway-seedpay').'</a>
+
+	</div>
+		
+		<div class="seedpay-number-form-pending" style="display:none">
+			<p class="seedpay-message-success"> <img src="'.plugins_url( 'assets/images/loading.gif','woocommerce-gateway-seedpay/seedpay.php' ).'" style="border:0px;float:none;"> Please accept the payment on your phone</p>
+			 <a href="#" class="seedpay-cancel-payment-submit seed-pay-button">'.__('Cancel Request','woocommerce-gateway-seedpay').'</a>
+			
 		</div>
+		
+		<div class="seedpay-number-form-success" style="display:none">
+			<input type="hidden" name="seedpay_payment_cancel" class="seedpay_payment_cancel" value="0">
+			<input type="hidden" name="seedpay_payment_success" class="seedpay_payment_success" value="">
+			<input type="hidden" name="seedpay_payment_cart_hash" class="seedpay_payment_cart_hash" value="'.$transaction_id .'">
+			<p class="seedpay-message-success">Payment has been confirmed, please continue with your order</p>
+		</div>
+		
 		
 		<div class="clear"></div>';
  
@@ -77,71 +135,9 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
  
 }	
 	
-	public function ajax_seedpay_submit_request(){
-		
-		$phone = wc_format_phone_number($_REQUEST['phone'] );
-		$total = WC()->order->id;
-		$order_id = $_REQUEST['order_id'];
-		$order = new WC_Order( $order_id );
-		$message = array();
-		$message['error'] = '';
-		$message['post'] = $_REQUEST;
-		
-		if($phone != ''){
-		
-		$request = array(				
-				'fromPhoneNumber'=>$phone,
-				'amount' =>$order->get_total(),
-				'uniqueTransactionId'=>$order_id							
-			);
-		$message['request'] = $request;
-		
-			$this->request('requestPayment',$request,'POST');
-			
-		}else{
-			
-		$message['error'] = __('Please add a valid SeedPay phone number.', 'woocommerce-gateway-seedpay');	
-		}
-		
-		echo json_encode($message);
-	die();	
-	}
+
 	
-	public function request($function,$fields,$method){
-		
-		$curl = curl_init();
-		$fields = json_encode($fields);
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "".$this->url."/".$function."",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 0,
-		  CURLOPT_FOLLOWLOCATION => false,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => $method,
-		  CURLOPT_POSTFIELDS =>$fields,
-		  CURLOPT_HTTPHEADER => array(
-			"Content-Type: application/json",
-			"x-access-token: null"
-		  ),
-		));
-		
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-		
-		curl_close($curl);
-		
-		if ($err) {
-		  echo "cURL Error #:" . $err;
-		} else {
-		  echo $response;
-		}
-			
-		
-		
-		
-	}
+	
 	
 	
 	
@@ -204,9 +200,9 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
 				
 				'desc_tip'    => true,
 			),
-			'token' => array(
+			'password' => array(
 				'title'       => __( 'SeedPay Token', 'woocommerce-gateway-seedpay' ),
-				'type'        => 'password',
+				'type'        => 'text',
 				'description' => __( 'Your SeedPay Token, leave this field empty to generate a new token.', 'woocommerce-gateway-seedpay' ),
 				
 				'desc_tip'    => true,
@@ -271,43 +267,55 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway {
 		$error_message = __('Please add a valid SeedPay phone number.', 'woocommerce-gateway-seedpay');	
 		wc_add_notice( __('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error' );	
 		}
-		
-		
-		
-		
-		if($order->payment_token != 'accepted'){
-		$error_message = __('You must first accept payment before continuing.', 'woocommerce-gateway-seedpay');
-		wc_add_notice( __('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error' );	
-		}
-		
-		
-		if($error_message == ''){		
-		
+		if($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid'){
+			$error_message = __('You must first accept payment before continuing.', 'woocommerce-gateway-seedpay');
+			wc_add_notice( __('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error' );	
+		}else{
+			#one last check to see if payment is good
+			$getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId'=>$_REQUEST['seedpay_payment_cart_hash']))));
+			$posturl = '/transactions/'.$getVars.'';	
+			$response=	seedpay_request($posturl,array(),'GET',$this->token);
 			
-		
-		
-		
-		
-		$order->update_status( 'wc-processing' );
-		
+			if($response[0]->status == 'acceptedAndPaid'){
 			
+				
+				
+				
+				if($error_message == ''){		
+				
+					
+				
+				
+			
+				$order->payment_complete();
+				
+				$order->update_status( 'wc-processing' );
+				
+					
+				$order->add_order_note( __( 'SeedPay Payment Completed: #'.$response[0]->_id.'', 'woocommerce-gateway-seedpay' ) );
+				$order->add_order_note( __( 'SeedPay Payment Phone: '.$_REQUEST['seedpay_payment_phone'] .'', 'woocommerce-gateway-seedpay' ) );
+				 $order->update_meta_data( '_seedpay_payment', $response[0] );
+				 $order->update_meta_data( '_seedpay_payment_phone',$_REQUEST['seedpay_payment_phone'] );
+				$order->reduce_order_stock();
+				setcookie( 'seedpay_cart_id', '',time() - ( 15 * 60 ), COOKIEPATH, COOKIE_DOMAIN );
+				// Remove cart
+				WC()->cart->empty_cart();
+			
+	
 		
-		$order->reduce_order_stock();
-
-		// Remove cart
-		WC()->cart->empty_cart();
-		
-
-
-
-		// Return thankyou redirect
-		return array(
-			'result' 	=> 'success',
-			'redirect'	=> $this->get_return_url( $order )
-		);
-			
-			
-			
+	
+				// Return thankyou redirect
+				return array(
+					'result' 	=> 'success',
+					'redirect'	=> $this->get_return_url( $order )
+				);
+				
+				}else{
+				$error_message = __('You must first accept payment before continuing.', 'woocommerce-gateway-seedpay');
+				wc_add_notice( __('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error' );		
+					
+				}
+			}
 			
 		}
 
