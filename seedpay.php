@@ -8,6 +8,7 @@
  * Version: 1.0.0
  * WC tested up to: 3.3
  * WC requires at least: 2.6
+ * Text Domain: woocommerce-gateway-seedpay
  */
  
 	if ( ! defined( 'ABSPATH' ) ) {
@@ -184,16 +185,21 @@
 	setcookie( 'seedpay_cart_id', $transaction_id, time() + (60* 20), COOKIEPATH, COOKIE_DOMAIN);
 		return $transaction_id ;
 	}
+	
+	
 	function woocommerce_seedpay_init(){
 		
 		require_once( plugin_basename( 'includes/class-wc-gateway-seedpay.php' ) );
-		load_plugin_textdomain( 'woocommerce-gateway-seedpay', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
-		add_filter( 'woocommerce_payment_gateways', 'woocommerce_seedpay_add_gateway' );
 		
+		add_filter( 'woocommerce_payment_gateways', 'woocommerce_seedpay_add_gateway' );
+		load_plugin_textdomain( 'woocommerce-gateway-seedpay', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
 		
 		
 	}
 	add_action( 'plugins_loaded', 'woocommerce_seedpay_init', 0 );
+	
+	
+	
 	function woocommerce_seedpay_add_gateway( $methods ) {
 		$methods[] = 'WC_Gateway_SeedPay';
 		return $methods;
@@ -217,6 +223,9 @@
 	}
 	add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'woocommerce_seedpay_plugin_links' );
 	
+	
+	
+	
 	function seedpay_add_to_cart_validation( $passed, $product_id, $quantity ) { 
     
 	$transient = get_transient('seedpay_order_statusname_'.$_COOKIE['seedpay_cart_id'].'');
@@ -227,6 +236,6 @@
 	
 	
     return $passed; 
-}; 
+	}; 
 	
 	 add_filter( 'woocommerce_add_to_cart_validation', 'seedpay_add_to_cart_validation', 10, 3 );

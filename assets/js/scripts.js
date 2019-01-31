@@ -42,8 +42,14 @@ jQuery(function($) {
 		seedpay_check_transaction($(".seedpay_recheck_payment").attr('data-id'), $(".seedpay_recheck_payment").attr('data-pn'));	
 		}
 		
-		
-		$( document ).on( "click", ".seed-pay-button", function() {
+		$( document ).on( "click", ".seedpay-cancel-payment-submit", function() {
+			
+			$(".seedpay_payment_cancel").val('1');
+			$(".seedpay-number-form-pending").hide();
+			$(".seedpay-number-form").fadeIn();
+			return false;
+		});
+		$( document ).on( "click", ".seedpay-request-payment-submit", function() {
 			
 			
 			$(".seedpay_payment_cancel").val('0')
