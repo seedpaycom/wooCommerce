@@ -127,7 +127,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         echo '<div class="form-row form-row-wide seedpay-number-form" >
     
     
-    <label>' . __('PaySeed Phone Number', 'woocommerce-gateway-seedpay') . ' <span class="required">*</span></label>
+    <label>' . __('Phone Number', 'woocommerce-gateway-seedpay') . ' <span class="required">*</span></label>
         <input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off" value="' . $phone . '"> <a href="#" class="seedpay-request-payment-submit seed-pay-button">' . __('Request Payment', 'woocommerce-gateway-seedpay') . '</a>
 
     </div>
@@ -191,7 +191,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
                 'title' => __('Description', 'woocommerce-gateway-seedpay'),
                 'type' => 'textarea',
                 'description' => __('Payment method description that the customer will see on your checkout.', 'woocommerce-gateway-seedpay'),
-                'default' => __('Please enter your PaySeed phone number and approve the payment once received.', 'woocommerce-gateway-seedpay'),
+                'default' => __('Please enter your phone number and approve the payment once received.', 'woocommerce-gateway-seedpay'),
                 'desc_tip' => true
             ),
             'instructions' => array(
