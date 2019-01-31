@@ -29,7 +29,7 @@
 		$fields = json_encode($fields);
 	
 		$gateway_settings =get_option('woocommerce_seedpay_settings');
-		if($gateway_settings['environment'] == 'yes'){
+		if($gateway_settings['environment'] == 'yes'){//a tab for indentation and a newline after the if
 			
 			$url =  'https://staging.api.seedpay.com';
 		}else{
@@ -38,7 +38,7 @@
 		
 		$headers = array();
 		$headers[] = "Content-Type: application/json";
-		if($token != NULL){
+		if($token != NULL){//no indentation and no newline after the if
 		$headers[] = "x-access-token: ".$token."";	
 		}
 		if($method == 'GET'){
@@ -64,7 +64,7 @@
 	
 		curl_close($curl);
 		
-		if ($err) {
+		if ($err) {//two spaces for indentation and no newline after the if
 		  return $err;
 		} else {
 		 return json_decode($response);
