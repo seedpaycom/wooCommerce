@@ -20,7 +20,7 @@ jQuery(function($) {
                     $(".seedpay-number-form").hide();
                     $(".seedpay-number-form-pending").hide();
                     $(".seedpay-number-form-success").fadeIn();
-                    $(".woocommerce-checkout").submit();
+                   // $(".woocommerce-checkout").submit();
                 } else {
 
                     setTimeout(function() {
