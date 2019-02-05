@@ -22,8 +22,8 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         $this->id                 = 'seedpay';
         $this->icon               = apply_filters('woocommerce_cheque_icon', '');
         $this->has_fields         = true;
-        $this->method_title       = __('SeedPay', 'woocommerce-gateway-seedpay');
-        $this->method_description = __('Gateway for SeedPay', 'woocommerce-gateway-seedpay');
+        $this->method_title       = __('Seedpay', 'woocommerce-gateway-seedpay');
+        $this->method_description = __('Gateway for Seedpay', 'woocommerce-gateway-seedpay');
         
         // Load the settings.
         $this->init_form_fields();
@@ -162,7 +162,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
     
     public function add_testmode_admin_settings_notice()
     {
-        wc_add_notice(__('SeedPay is currently in Test Mode: ', 'woocommerce-gateway-seedpay'), 'error');
+        wc_add_notice(__('Seedpay is currently in Test Mode: ', 'woocommerce-gateway-seedpay'), 'error');
     }
     
     
@@ -176,7 +176,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
             'enabled' => array(
                 'title' => __('Enable/Disable', 'woocommerce-gateway-seedpay'),
                 'type' => 'checkbox',
-                'label' => __('Enable SeedPay', 'woocommerce-gateway-seedpay'),
+                'label' => __('Enable Seedpay', 'woocommerce-gateway-seedpay'),
                 'default' => 'yes'
             ),
             
@@ -184,7 +184,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
                 'title' => __('Title', 'woocommerce-gateway-seedpay'),
                 'type' => 'text',
                 'description' => __('This controls the title which the user sees during checkout.', 'woocommerce-gateway-seedpay'),
-                'default' => __('SeedPay', 'woocommerce-gateway-seedpay'),
+                'default' => __('Seedpay', 'woocommerce-gateway-seedpay'),
                 'desc_tip' => true
             ),
             'description' => array(
@@ -208,23 +208,23 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
                 'default' => 'yes'
             ),
             'username' => array(
-                'title' => __('SeedPay Username', 'woocommerce-gateway-seedpay'),
+                'title' => __('Seedpay Username', 'woocommerce-gateway-seedpay'),
                 'type' => 'text',
-                'description' => __('Your SeedPay Username.', 'woocommerce-gateway-seedpay'),
+                'description' => __('Your Seedpay Username.', 'woocommerce-gateway-seedpay'),
                 
                 'desc_tip' => true
             ),
             'password' => array(
-                'title' => __('SeedPay Password', 'woocommerce-gateway-seedpay'),
+                'title' => __('Seedpay Password', 'woocommerce-gateway-seedpay'),
                 'type' => 'password',
-                'description' => __('Your SeedPay Username.', 'woocommerce-gateway-seedpay'),
+                'description' => __('Your Seedpay Username.', 'woocommerce-gateway-seedpay'),
                 
                 'desc_tip' => true
             ),
             'password' => array(
-                'title' => __('SeedPay Token', 'woocommerce-gateway-seedpay'),
+                'title' => __('Seedpay Token', 'woocommerce-gateway-seedpay'),
                 'type' => 'text',
-                'description' => __('Your SeedPay Token, leave this field empty to generate a new token.', 'woocommerce-gateway-seedpay'),
+                'description' => __('Your Seedpay Token, leave this field empty to generate a new token.', 'woocommerce-gateway-seedpay'),
                 
                 'desc_tip' => true
             )
@@ -293,7 +293,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         $phone = wc_format_phone_number($_REQUEST['seedpay_payment_phone']);
         
         if ($phone == '') {
-            $error_message = __('Please add a valid SeedPay phone number.', 'woocommerce-gateway-seedpay');
+            $error_message = __('Please add a valid Seedpay phone number.', 'woocommerce-gateway-seedpay');
             wc_add_notice(__('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error');
         }
         if ($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid') {
@@ -323,8 +323,8 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
                     $order->update_status('wc-processing');
                     
                     
-                    $order->add_order_note(__('SeedPay Payment Completed: #' . $response[0]->_id . '', 'woocommerce-gateway-seedpay'));
-                    $order->add_order_note(__('SeedPay Payment Phone: ' . $_REQUEST['seedpay_payment_phone'] . '', 'woocommerce-gateway-seedpay'));
+                    $order->add_order_note(__('Seedpay Payment Completed: #' . $response[0]->_id . '', 'woocommerce-gateway-seedpay'));
+                    $order->add_order_note(__('Seedpay Payment Phone: ' . $_REQUEST['seedpay_payment_phone'] . '', 'woocommerce-gateway-seedpay'));
                     $order->update_meta_data('_seedpay_payment', $response[0]);
                     $order->update_meta_data('_seedpay_payment_phone', $_REQUEST['seedpay_payment_phone']);
                     $order->reduce_order_stock();

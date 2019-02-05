@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: WooCommerce SeedPay Gateway
+ * Plugin Name: WooCommerce Seedpay Gateway
  * Plugin URI: http://seedpay.com
  * Description: Receive payments using Seedpay
  * Author: Seedpay
  * Author URI: http://seedpay.com/
  * Version: 1.0.0
- * WC tested up to: 3.3
- * WC requires at least: 2.6
+ * WC tested up to: 3.5.4
+ * WC requires at least: 3.0
  * Text Domain: woocommerce-gateway-seedpay
  */
 
@@ -105,7 +105,7 @@ function ajax_seedpay_submit_request()
         
     } else {
         
-        $message['error'] = __('Please add a valid SeedPay phone number.', 'woocommerce-gateway-seedpay');
+        $message['error'] = __('Please add a valid Seedpay phone number.', 'woocommerce-gateway-seedpay');
     }
     if ($response->errors[0] != '') {
         $message['error'] = $response->errors[0];
@@ -175,7 +175,7 @@ function ajax_seedpay_check_request()
         $message['response'] = $response;
     } else {
         
-        $message['error'] = __('Please add a valid SeedPay phone number.', 'woocommerce-gateway-seedpay');
+        $message['error'] = __('Please add a valid Seedpay phone number.', 'woocommerce-gateway-seedpay');
     }
     
     echo json_encode($message);

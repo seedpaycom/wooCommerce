@@ -1,4 +1,4 @@
-=== WooCommerce SeedPay Gateway ===
+=== WooCommerce Seedpay Gateway ===
 Contributors: seedpay
 Tags: seedpay
 Requires at least: 4.0.0
@@ -8,9 +8,9 @@ Stable tag: 1.0.0
 License: GPLv3 or later License
 URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-=== WooCommerce SeedPay Gateway ===
+=== WooCommerce Seedpay Gateway ===
 
-A payment gateway for SeedPay
+A payment gateway for Seedpay
 
 == Important Note ==
 
