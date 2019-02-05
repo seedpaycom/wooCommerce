@@ -22,6 +22,7 @@ if (!function_exists('woothemes_queue_update')) {
     require_once('woo-includes/woo-functions.php');
 }
 
+define('WC_SEEDPAY_PLUGIN_ASSETS', plugins_url( 'assets/',  __FILE__ ));
 
 function seedpay_request($function, $fields, $method, $token = NULL)
 {

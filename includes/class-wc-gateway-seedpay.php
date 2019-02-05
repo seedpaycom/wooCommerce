@@ -133,7 +133,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
     </div>
         
         <div class="seedpay-number-form-pending" style="display:none">
-            <p class="seedpay-message-success"> <img src="' . plugins_url('assets/images/loading.gif', 'woocommerce-gateway-seedpay/seedpay.php') . '" style="border:0px;float:none;"> Please accept the payment on your phone</p>
+            <p class="seedpay-message-success"> <img src="' .WC_SEEDPAY_PLUGIN_ASSETS. 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone</p>
              <a href="#" class="seedpay-cancel-payment-submit seed-pay-button">' . __('Cancel Request', 'woocommerce-gateway-seedpay') . '</a>
             
         </div>
@@ -267,14 +267,14 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         }
         
         
-        wp_register_script('woocommerce_seedpay', plugins_url('assets/js/scripts.js', 'woocommerce-gateway-seedpay/seedpay.php'), array(
+        wp_register_script('woocommerce_seedpay',WC_SEEDPAY_PLUGIN_ASSETS.'js/scripts.js', array(
             'jquery'
         ));
         wp_localize_script('woocommerce_seedpay', 'seedpay_params', array(
             'ajax_url' => admin_url('admin-ajax.php')
         ));
         wp_enqueue_script('woocommerce_seedpay');
-        wp_enqueue_style('woocommerce_seedpay_styles', plugins_url('assets/css/style.css', 'woocommerce-gateway-seedpay/seedpay.php'));
+        wp_enqueue_style('woocommerce_seedpay_styles',WC_SEEDPAY_PLUGIN_ASSETS.'css/style.css');
         
     }
     /**

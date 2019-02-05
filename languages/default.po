@@ -29,7 +29,7 @@ msgid "TEST MODE ENABLED. In test mode, you will be using staging api credential
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:111
-msgid "Phone Number"
+msgid "PaySeed Phone Number"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:112
@@ -69,7 +69,7 @@ msgid "Payment method description that the customer will see on your checkout."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:173
-msgid "Please enter your phone number and approve the payment once received."
+msgid "Please enter your PaySeed phone number and approve the payment once received."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:177
