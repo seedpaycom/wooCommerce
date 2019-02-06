@@ -46,8 +46,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   //minify css
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  
+  //clean files
   grunt.loadNpmTasks('grunt-contrib-clean');
+  //remove empty folders
   grunt.loadNpmTasks('grunt-cleanempty');
 
   // Default task(s).

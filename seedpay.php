@@ -172,6 +172,12 @@ function ajax_seedpay_check_request()
             
             seedpay_generate_new_cart_id();
         }
+	   if ($response[0]->status == 'rejected') {
+            
+            $message['error'] = __('Payment was rejected.', 'woocommerce-gateway-seedpay');
+            
+            seedpay_generate_new_cart_id();
+        }
         $message['response'] = $response;
     } else {
         
