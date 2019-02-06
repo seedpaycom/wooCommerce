@@ -221,7 +221,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
                 
                 'desc_tip' => true
             ),
-            'password' => array(
+            'token' => array(
                 'title' => __('Seedpay Token', 'woocommerce-gateway-seedpay'),
                 'type' => 'text',
                 'description' => __('Your Seedpay Token, leave this field empty to generate a new token.', 'woocommerce-gateway-seedpay'),
