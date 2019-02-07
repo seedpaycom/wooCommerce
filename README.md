@@ -1,7 +1,6 @@
-# wooCommerce
 ## Installation
 * Download the zip file at https://github.com/seedpaycom/wooCommerce/archive/master.zip
-* Go to your WordPress/wooCommerce admin site
+* Go to your WordPress/WooCommerce admin site
 * Go to `Plugins`
 * Click `Add New`
 * Click `Upload Plugin`
