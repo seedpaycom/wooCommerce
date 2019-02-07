@@ -33,8 +33,8 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         $this->testmode     = $this->get_option('environment');
         // Define user set variables
         $this->title        = $this->get_option('title');
-        $this->description  = $this->get_option('description');
-        $this->instructions = $this->get_option('instructions', $this->description);
+        
+        $this->instructions = $this->get_option('instructions');
         $this->url          = 'https://api.seedpay.com';
         
         
@@ -119,8 +119,8 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         if ($this->instructions) {
             
             if ($this->testmode == 'yes') {
-                $this->description .= '<p style="color:red;font-weight:bold">' . __('TEST MODE ENABLED. In test mode, you will be using staging api credentials.', 'woocommerce-gateway-seedpay') . '</p>';
-                $this->description = trim($this->description);
+                echo '<p style="color:red;font-weight:bold">' . __('TEST MODE ENABLED. In test mode, you will be using staging api credentials.', 'woocommerce-gateway-seedpay') . '</p>';
+                
             }
             
             echo wpautop(wp_kses_post($this->instructions));
@@ -209,17 +209,11 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
                 'default' => __('Seedpay', 'woocommerce-gateway-seedpay'),
                 'desc_tip' => true
             ),
-            'description' => array(
-                'title' => __('Description', 'woocommerce-gateway-seedpay'),
-                'type' => 'textarea',
-                'description' => __('Payment method description that the customer will see on your checkout.', 'woocommerce-gateway-seedpay'),
-                'default' => __('Please enter your phone number and approve the payment once received.', 'woocommerce-gateway-seedpay'),
-                'desc_tip' => true
-            ),
+          
             'instructions' => array(
                 'title' => __('Instructions', 'woocommerce-gateway-seedpay'),
                 'type' => 'textarea',
-                'description' => __('Instructions that will be added to the thank you page and emails.', 'woocommerce-gateway-seedpay'),
+                'description' => __('Description which will be added on the checkout page.', 'woocommerce-gateway-seedpay'),
                 'default' => '',
                 'desc_tip' => true
             ),
