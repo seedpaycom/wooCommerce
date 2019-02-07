@@ -49,7 +49,6 @@ jQuery(function($) {
             'phone': phone,
         }, function(response) {
             var obj = $.parseJSON(response)
-            console.log(obj)
             if (obj.error == '') {
                 var transaction_id = obj.request.uniqueTransactionId
                 $('.seedpay_payment_cart_hash').val(obj.request.uniqueTransactionId)
