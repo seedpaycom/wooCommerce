@@ -11,7 +11,7 @@
 
 
 ## Setup
-* Go to `wooCommerce->Settings` then go to `Payments` 
+* Go to `WooCommerce->Settings` then go to `Payments` 
 * Make sure the plugin is `enabled`
 * Select `Manage` in the Seedpay row
 * Configure the `Title` and `Descriptions`
