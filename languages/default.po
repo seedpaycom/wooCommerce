@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Woocommerce SeedPay Gateway\n"
+"Project-Id-Version: Woocommerce Seedpay Gateway\n"
 "POT-Creation-Date: 2019-01-31 15:57-0500\n"
 "PO-Revision-Date: 2019-01-31 15:57-0500\n"
 "Last-Translator: \n"
@@ -17,11 +17,11 @@ msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:23
 #: includes/class-wc-gateway-seedpay.php:166
-msgid "SeedPay"
+msgid "Seedpay"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:24
-msgid "Gateway for SeedPay"
+msgid "Gateway for Seedpay"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:82
@@ -29,7 +29,7 @@ msgid "TEST MODE ENABLED. In test mode, you will be using staging api credential
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:111
-msgid "PaySeed Phone Number"
+msgid "Phone Number"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:112
@@ -69,7 +69,7 @@ msgid "Payment method description that the customer will see on your checkout."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:173
-msgid "Please enter your PaySeed phone number and approve the payment once received."
+msgid "Please enter your phone number and approve the payment once received."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:177
