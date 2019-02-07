@@ -59,7 +59,7 @@ jQuery(function($) {
 
     $(document).on("click", ".seedpay-cancel-payment-submit", function() {
 
-        $(".seedpay_payment_cancel").val('1');
+       // $(".seedpay_payment_cancel").val('1');
         $(".seedpay-number-form-pending").hide();
         $(".seedpay-number-form").fadeIn();
         return false;
