@@ -1,0 +1,36 @@
+{
+    "explorer.confirmDelete": false,
+    "window.zoomLevel": 1,
+    "eslint.autoFixOnSave": true,
+    "editor.formatOnSave": true,
+    "gitlens.advanced.messages": {
+        "suppressShowKeyBindingsNotice": true
+    },
+    "gitlens.historyExplorer.enabled": false,
+    "gitlens.hovers.currentLine.over": "line",
+    "gitlens.hovers.currentLine.enabled": false,
+    "editor.wordWrap": "on",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "editor.codeActionsOnSave": {
+        // "source.organizeImports": true,
+        // "editor.action.organizeImports",
+        // "workbench.action.files.saveAll": true,
+    },
+    "explorer.confirmDragAndDrop": false,
+    "cSpell.words": [
+        "coinbase",
+        "datas",
+        "datastore",
+        "devsupport",
+        "errored",
+        "helpdesk",
+        "mailto",
+        "noreply",
+        "seedpay",
+        "seedpay's",
+        "stagingmobileapi",
+        "unrate",
+        "webframework"
+    ],
+    // "breadcrumbs.enabled": false
+}

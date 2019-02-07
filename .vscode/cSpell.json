@@ -1,0 +1,48 @@
+{
+    "version": "0.1",
+    "language": "en",
+    "words": [
+        "bignumber",
+        "blockchain",
+        "builddev",
+        "buildprod",
+        "bytecode",
+        "coinbase",
+        "datas",
+        "datastore",
+        "deployprod",
+        "deploystaging",
+        "devsupport",
+        "edollar",
+        "errored",
+        "Ganache",
+        "gcloud",
+        "helpdesk",
+        "jsbeautifyrc",
+        "mailgun",
+        "mailto",
+        "noreply",
+        "seedpay",
+        "seedpay's",
+        "stagingapiseedpay",
+        "stagingmobileapi",
+        "startandtest",
+        "startdev",
+        "testdev",
+        "twilio",
+        "unrate",
+        "webframework"
+    ],
+    "flagWords": [
+        "stuff"
+    ],
+    "ignoreRegExpList": [
+        "\\woob*\\w"
+    ],
+    "ignorePaths": [
+        "node_modules/**",
+        ".git",
+        "*Tests.js"
+    ],
+    "minWordLength": 0
+}
