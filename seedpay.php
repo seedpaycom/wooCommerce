@@ -147,7 +147,7 @@ function ajax_seedpay_check_request()
     if ($phone != '') {
         
         $request            = array(
-            'password' => $gateway_settings['password'],
+            
             'phoneNumber' => $phone
         );
         $message['request'] = $request;

@@ -19,11 +19,13 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
             $transaction_id = $_COOKIE['seedpay_cart_id'];
         }
         
+		
+		
         $this->id                 = 'seedpay';
         $this->icon               = apply_filters('woocommerce_cheque_icon', '');
         $this->has_fields         = true;
         $this->method_title       = __('Seedpay', 'woocommerce-gateway-seedpay');
-        $this->method_description = __('Gateway for Seedpay', 'woocommerce-gateway-seedpay');
+        
         
         // Load the settings.
         $this->init_form_fields();
@@ -37,19 +39,23 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         
         
         $this->username = $this->get_option('username');
-        $this->password = $this->get_option('password');
+       
         $this->token    = $this->get_option('token');
-        if (($this->username != '' && $this->password != '') && $this->token == '') {
-            
-            $this->login();
-            
-        }
+      
         if ('yes' === $this->testmode) {
             $this->url = 'https://staging.api.seedpay.com';
             
         }
-        
-        
+     
+		 $error = '';
+		if(get_option('_seedpay_login_error') == 1){
+			
+		$error = '<p style="color:red;font-weight:bold">API Disconnected, please enter your username and API token.</p>';	
+		}else{
+		$error = '<p style="color:green;font-weight:bold">API Connected</p>';		
+		}
+		
+        $this->method_description = __('Gateway for Seedpay', 'woocommerce-gateway-seedpay').$error ;
         // Actions
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array(
             $this,
@@ -73,20 +79,35 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         
         
     }
+	
+	 public function process_admin_options() {
+		 
+		 	 $this->login();
+			parent::process_admin_options();
+	  }
+	  
     public function login()
     {
-        
-        $fields   = array(
-            'username' => $this->username,
-            'password' => $this->password
+        #0000000001
+      
+	
+	   $fields   = array(
+            'username' => $_REQUEST['woocommerce_seedpay_username'],
+          
         );
-        $response = seedpay_request('login', $fields, 'POST');
-        
-        if ($response->token != '') {
-            $gateway_settings          = get_option('woocommerce_seedpay_settings');
-            $gateway_settings['token'] = $response->token;
-            update_option('woocommerce_seedpay_settings', $gateway_settings);
-        }
+		
+		
+        $response = seedpay_request('/user', $fields, 'GET',$_REQUEST['woocommerce_seedpay_token']);
+	
+		if($response->errors){
+		update_option('_seedpay_login_error', 1);	
+		
+		}else{
+		update_option('_seedpay_login_error', 0);
+		
+		}
+      
+       
         
         
     }
@@ -171,7 +192,8 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
      */
     public function init_form_fields()
     {
-        
+       
+		
         $this->form_fields = array(
             'enabled' => array(
                 'title' => __('Enable/Disable', 'woocommerce-gateway-seedpay'),
@@ -214,16 +236,10 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
                 
                 'desc_tip' => true
             ),
-            'password' => array(
-                'title' => __('Seedpay Password', 'woocommerce-gateway-seedpay'),
-                'type' => 'password',
-                'description' => __('Your Seedpay Username.', 'woocommerce-gateway-seedpay'),
-                
-                'desc_tip' => true
-            ),
+          
             'token' => array(
                 'title' => __('Seedpay Token', 'woocommerce-gateway-seedpay'),
-                'type' => 'text',
+                'type' => 'password',
                 'description' => __('Your Seedpay Token, leave this field empty to generate a new token.', 'woocommerce-gateway-seedpay'),
                 
                 'desc_tip' => true
