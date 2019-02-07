@@ -213,7 +213,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
             'instructions' => array(
                 'title' => __('Instructions', 'woocommerce-gateway-seedpay'),
                 'type' => 'textarea',
-                'description' => __('Description which will be added on the checkout page.', 'woocommerce-gateway-seedpay'),
+                'description' => __('Instructions which will be added on the checkout page.', 'woocommerce-gateway-seedpay'),
                 'default' => '',
                 'desc_tip' => true
             ),
