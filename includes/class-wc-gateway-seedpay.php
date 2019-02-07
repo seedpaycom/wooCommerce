@@ -116,14 +116,14 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         
         $transaction_id = $_COOKIE['seedpay_cart_id'];
         
-        if ($this->description) {
+        if ($this->instructions) {
             
             if ($this->testmode == 'yes') {
                 $this->description .= '<p style="color:red;font-weight:bold">' . __('TEST MODE ENABLED. In test mode, you will be using staging api credentials.', 'woocommerce-gateway-seedpay') . '</p>';
                 $this->description = trim($this->description);
             }
             
-            echo wpautop(wp_kses_post($this->description));
+            echo wpautop(wp_kses_post($this->instructions));
         }
         
         
@@ -146,7 +146,7 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         
         
         echo '<div class="form-row form-row-wide seedpay-number-form" >
-    
+
     
     <label>' . __('Phone Number', 'woocommerce-gateway-seedpay') . ' <span class="required">*</span></label>
         <input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off" value="' . $phone . '"> <a href="#" class="seedpay-request-payment-submit seed-pay-button">' . __('Request Payment', 'woocommerce-gateway-seedpay') . '</a>
