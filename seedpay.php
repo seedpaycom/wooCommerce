@@ -156,7 +156,7 @@ add_action('plugins_loaded', 'woocommerce_seedpay_init', 0);
 
 function woocommerce_seedpay_add_gateway($methods)
 {
-    $methods[] = 'WC_Gateway_SeedPay';
+    $methods[] = 'WC_Gateway_Seedpay';
     return $methods;
 }
 

@@ -41,7 +41,7 @@ msgid "Cancel Request"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:145
-msgid "SeedPay is currently in Test Mode: "
+msgid "Seedpay is currently in Test Mode: "
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:156
@@ -49,7 +49,7 @@ msgid "Enable/Disable"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:158
-msgid "Enable SeedPay"
+msgid "Enable Seedpay"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:163
@@ -89,28 +89,28 @@ msgid "Enable Test Servers"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:190
-msgid "SeedPay Username"
+msgid "Username"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:192
 #: includes/class-wc-gateway-seedpay.php:199
-msgid "Your SeedPay Username."
+msgid "Your Seedpay Username."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:197
-msgid "SeedPay Password"
+msgid "Password"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:204
-msgid "SeedPay Token"
+msgid "Seedpay Token"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:206
-msgid "Your SeedPay Token, leave this field empty to generate a new token."
+msgid "Your Seedpay Token, leave this field empty to generate a new token."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:267 seedpay.php:105 seedpay.php:172
-msgid "Please add a valid SeedPay phone number."
+msgid "Please add a valid Seedpay phone number."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:268
@@ -125,11 +125,11 @@ msgid "You must first accept payment before continuing."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:295
-msgid "SeedPay Payment Completed: #"
+msgid "Seedpay Payment Completed: #"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:296
-msgid "SeedPay Payment Phone: "
+msgid "Seedpay Payment Phone: "
 msgstr ""
 
 #: seedpay.php:165

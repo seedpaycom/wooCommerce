@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-class WC_Gateway_SeedPay extends WC_Payment_Gateway
+class WC_Gateway_Seedpay extends WC_Payment_Gateway
 {
     public function __construct()
     {
@@ -146,14 +146,12 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
                 'title' => __('Seedpay Username', 'woocommerce-gateway-seedpay'),
                 'type' => 'text',
                 'description' => __('Your Seedpay Username.', 'woocommerce-gateway-seedpay'),
-
                 'desc_tip' => true
             ),
             'token' => array(
                 'title' => __('Seedpay Token', 'woocommerce-gateway-seedpay'),
                 'type' => 'password',
                 'description' => __('Your Seedpay Token, leave this field empty to generate a new token.', 'woocommerce-gateway-seedpay'),
-
                 'desc_tip' => true
             )
         );
@@ -246,9 +244,9 @@ class WC_Gateway_SeedPay extends WC_Payment_Gateway
         }
     }
 }
-function add_WC_Gateway_SeedPay($methods)
+function add_WC_Gateway_Seedpay($methods)
 {
-    $methods[] = 'WC_Gateway_SeedPay';
+    $methods[] = 'WC_Gateway_Seedpay';
     return $methods;
 }
-add_filter('woocommerce_payment_gateways', 'add_WC_Gateway_SeedPay');
+add_filter('woocommerce_payment_gateways', 'add_WC_Gateway_Seedpay');
