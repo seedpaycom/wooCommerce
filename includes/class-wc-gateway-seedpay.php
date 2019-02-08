@@ -92,7 +92,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             </label>
             <input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off" value="' . $phone . '">
             <div>
-                <input type="button" class="seedpay-request-payment-submit seed-pay-button">' . __('Request Payment', 'woocommerce-gateway-seedpay') . '</input>
+                <input type="button" class="seedpay-request-payment-submit seed-pay-button" value="' . __('Request Payment', 'woocommerce-gateway-seedpay') . '"</input>
             </div>
         </div>
         <div class="seedpay-number-form-pending" style="display:none">
