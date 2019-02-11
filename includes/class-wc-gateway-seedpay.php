@@ -211,7 +211,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $order = wc_get_order($order_id);
         $phone = wc_format_phone_number($_REQUEST['seedpay_payment_phone']);
         if ($phone == '') {
-            $error_message = __('Please add a valid Seedpay phone number.', 'woocommerce-gateway-seedpay');
+            $error_message = __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay');
             wc_add_notice(__('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error');
         }
         if ($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid') {

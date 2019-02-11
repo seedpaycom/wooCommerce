@@ -110,7 +110,7 @@ msgid "Your Seedpay Token, leave this field empty to generate a new token."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:267 seedpay.php:105 seedpay.php:172
-msgid "Please add a valid Seedpay phone number."
+msgid "Please enter a valid 10 digit phone number."
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:268

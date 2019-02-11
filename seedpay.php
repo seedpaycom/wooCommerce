@@ -79,7 +79,7 @@ function ajax_seedpay_submit_request()
         $response = seedpay_request('requestPayment', $request, 'POST', $gateway_settings['token']);
         $message['response'] = $response;
     } else {
-        $message['error'] = __('Please add a valid Seedpay phone number.', 'woocommerce-gateway-seedpay');
+        $message['error'] = __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay');
     }
     if ($response->errors[0] != '') {
         $message['error'] = $response->errors[0];
@@ -129,7 +129,7 @@ function ajax_seedpay_check_request()
         }
         $message['response'] = $response;
     } else {
-        $message['error'] = __('Please add a valid Seedpay phone number.', 'woocommerce-gateway-seedpay');
+        $message['error'] = __('Please enter a valid 10 digit phone number', 'woocommerce-gateway-seedpay');
     }
     echo json_encode($message);
     die();
