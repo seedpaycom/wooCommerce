@@ -36,6 +36,8 @@ jQuery(function($) {
     }
 	function seedpay_maybe_submit_payment_request(phone){
 		
+		if($("#confirm-order-flag").val() == 1){
+		
 		var check_user = seedpay_check_user_status(phone);
 	   console.log(check_user);
 	   if($(".seedpay_payment_registered").val() ==1){
@@ -67,7 +69,9 @@ jQuery(function($) {
 	
 		   
 	   }
-		
+		}else{
+		$('.woocommerce-checkout').submit();	
+		}
 	}
 	
 	function seedpay_check_user_status(phone){
@@ -81,15 +85,26 @@ jQuery(function($) {
             if (obj.response.isRegistered == true) {
              
 			  $(".seedpay_payment_registered").val(1);
-			   
+			   $('.seedpay-messages').empty();
             } else {
 				
              $(".seedpay_payment_registered").val(0);
+			 	$('.seedpay-messages').html('Please check your text messages for an invite, once registered this form will continue')
             }
         })	
 		
 		
 	}
+	
+	$('form.woocommerce-checkout').on('checkout_place_order', function () {
+    
+	if($("#payment_method_seedpay").is(':checked')){
+		if ($('#confirm-order-flag').length == 0) {
+			$('form.woocommerce-checkout').append('<input type="hidden" id="confirm-order-flag" name="confirm-order-flag" value="1">');
+		}
+		return true;
+	}
+	});
     $(document).on('click', '.seedpay-cancel-payment-submit', function() {
        
         $('.seedpay-number-form-pending').hide()
