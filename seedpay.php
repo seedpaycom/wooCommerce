@@ -147,7 +147,7 @@ function ajax_seedpay_check_user_status()
 
     $phone = wc_format_phone_number($_REQUEST['phone']);
 
-    $url = '/user/isRegistered/' . $phone . '';
+    $url = 'user/isRegistered/' . $phone . '';
     $message['url'] = $url;
     $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
     $message['response'] = $response;
