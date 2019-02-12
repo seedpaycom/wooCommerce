@@ -87,7 +87,7 @@ jQuery(function($) {
                 isCheckingUserStatus = true
                 setTimeout(function() {
                     if (isCheckingUserStatus) checkUserStatus(true)
-                }, 2000)
+                }, 6000)
             }
         })
     }
