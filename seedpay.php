@@ -96,7 +96,6 @@ function ajax_seedpay_check_request()
 {
     $gateway_settings = get_option('woocommerce_seedpay_settings');
     if ($gateway_settings['environment'] == 'yes') {
-
         $site_url = 'https://staging.api.seedpay.com';
     } else {
         $site_url = 'https://api.seedpay.com';
@@ -140,18 +139,13 @@ add_action('wp_ajax_nopriv_ajax_seedpay_check_request', 'ajax_seedpay_check_requ
 
 function ajax_seedpay_check_user_status()
 {
-
     $message = array();
     $gateway_settings = get_option('woocommerce_seedpay_settings');
-
-
     $phone = wc_format_phone_number($_REQUEST['phone']);
-
     $url = 'user/isRegistered/' . $phone . '';
     $message['url'] = $url;
     $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
     $message['response'] = $response;
-
     echo json_encode($message);
     die();
 }
