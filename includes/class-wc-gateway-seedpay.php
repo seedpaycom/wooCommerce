@@ -222,7 +222,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
                 $getVars = htmlentities(urlencode(json_encode(array(
                     'uniqueTransactionId' => $_REQUEST['seedpay_payment_cart_hash']
                 ))));
-                $posturl = '/transactions/' . $getVars . '';
+                $posturl = 'transactions/' . $getVars . '';
                 $response = seedpay_request($posturl, array(), 'GET', $this->token);
                 if ($response[0]->status == 'acceptedAndPaid') {
                     if ($error_message == '') {

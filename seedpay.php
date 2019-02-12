@@ -110,7 +110,7 @@ function ajax_seedpay_check_request()
         $request = array('phoneNumber' => $phone);
         $message['request'] = $request;
         $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $transaction_id))));
-        $url = '/transactions/' . $getVars . '';
+        $url = 'transactions/' . $getVars . '';
         $message['url'] = $site_url . $url;
         $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
         if ($response[0]->status == 'acceptedAndPaid') {
@@ -137,7 +137,7 @@ function ajax_seedpay_check_request()
 add_action('wp_ajax_ajax_seedpay_check_request', 'ajax_seedpay_check_request');
 add_action('wp_ajax_nopriv_ajax_seedpay_check_request', 'ajax_seedpay_check_request');
 
-function ajax_seedpay_check_user_status()
+function ajax_checkUserStatus()
 {
     $message = array();
     $gateway_settings = get_option('woocommerce_seedpay_settings');
@@ -150,8 +150,8 @@ function ajax_seedpay_check_user_status()
     die();
 }
 
-add_action('wp_ajax_ajax_seedpay_check_user_status', 'ajax_seedpay_check_user_status');
-add_action('wp_ajax_nopriv_ajax_seedpay_check_user_status', 'ajax_seedpay_check_user_status');
+add_action('wp_ajax_ajax_checkUserStatus', 'ajax_checkUserStatus');
+add_action('wp_ajax_nopriv_ajax_checkUserStatus', 'ajax_checkUserStatus');
 
 function seedpay_generate_new_cart_id()
 {
