@@ -101,7 +101,8 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         </div>        
         <div class="seedpay-number-form-success" style="display:none">
             <input type="hidden" name="seedpay_payment_cancel" class="seedpay_payment_cancel" value="0">
-            <input type="hidden" name="seedpay_payment_success" class="seedpay_payment_success" value="">
+            <input type="hidden" name="seedpay_payment_registered" class="seedpay_payment_registered" value="0">
+		    <input type="hidden" name="seedpay_payment_success" class="seedpay_payment_success" value="">
             <input type="hidden" name="seedpay_payment_cart_hash" class="seedpay_payment_cart_hash" value="' . $transaction_id . '">
             <p class="seedpay-message-success">Payment has been confirmed, please continue with your order</p>
         </div>                
