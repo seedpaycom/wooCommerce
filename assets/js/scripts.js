@@ -94,12 +94,4 @@ jQuery(function($) {
         $('.seedpay-number-form').fadeIn()
         return false
     })
-
-    $(document).on('click', '.seedpay-request-payment-submit', function() {
-        $('.seedpay-messages').empty()
-        $('.seedpay_payment_cancel').val('0')
-        var phone = $('#seedpay_payment_phone').val()
-        seedpay_maybe_submit_payment_request(phone)
-        return false
-    })
 })
