@@ -1,17 +1,17 @@
 var isCheckingUserStatus = false
 var isCheckingTransactionStatus = false
+var uniqueTransactionId
 jQuery(function($) {
-    function checkTransactionStatus(transaction_id) {
+    function checkTransactionStatus() {
         let phone = $('#seedpay_payment_phone').val()
         jQuery.post(seedpay_params.ajax_url, {
             'action': 'ajax_seedpay_check_request',
-            'transaction_id': transaction_id,
+            'transaction_id': uniqueTransactionId,
             phone,
         }, function(responseString) {
             var response = $.parseJSON(responseString)
-            if (response.error || $('.seedpay_payment_cancel').val() != 0 || !response.response[0]) {
+            if (response.error || !response.response[0]) {
                 $('.seedpay-messages').html(response.error)
-                $('.seedpay_payment_cancel').val('1')
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form').fadeIn()
                 isCheckingTransactionStatus = false
@@ -26,14 +26,13 @@ jQuery(function($) {
                 $('.woocommerce-checkout').submit()
                 isCheckingTransactionStatus = false
             } else if (status == 'rejected' || status == 'errored') {
-                $('.seedpay_payment_cancel').val('1')
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form').fadeIn()
                 isCheckingTransactionStatus = false
             } else {
                 isCheckingTransactionStatus = true
                 setTimeout(function() {
-                    if (isCheckingTransactionStatus) checkTransactionStatus(transaction_id)
+                    if (isCheckingTransactionStatus) checkTransactionStatus()
                 }, 5000)
             }
         })
@@ -60,12 +59,12 @@ jQuery(function($) {
                 $('.seedpay-messages').html(response.error)
                 return
             }
-            var transaction_id = response.request.uniqueTransactionId
+            uniqueTransactionId = response.request.uniqueTransactionId
             $('.seedpay_payment_cart_hash').val(response.request.uniqueTransactionId)
             $('.seedpay-messages').html(response.response.message)
             $('.seedpay-number-form').fadeOut()
             $('.seedpay-number-form-pending').fadeIn()
-            if (!isCheckingTransactionStatus) checkTransactionStatus(transaction_id)
+            if (!isCheckingTransactionStatus) checkTransactionStatus(uniqueTransactionId)
         })
     }
 
