@@ -14,6 +14,7 @@ jQuery(function($) {
                 $('.seedpay_payment_cancel').val('1')
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form').fadeIn()
+                isCheckingTransactionStatus = false
                 return response.error
             }
             let status = (response.response[0] || {}).status
@@ -52,18 +53,19 @@ jQuery(function($) {
                 $('.seedpay-messages').html(response.response.message)
                 if (response.response.message.toLowerCase().indexOf('inv') >= 0) {
                     if (!isCheckingUserStatus) checkUserStatus()
+                    return
                 }
             }
-            if (!response.error) {
-                var transaction_id = response.request.uniqueTransactionId
-                $('.seedpay_payment_cart_hash').val(response.request.uniqueTransactionId)
-                $('.seedpay-messages').html(response.response.message)
-                $('.seedpay-number-form').fadeOut()
-                $('.seedpay-number-form-pending').fadeIn()
-                if (!isCheckingTransactionStatus) checkTransactionStatus(transaction_id)
-            } else {
+            if (response.error) {
                 $('.seedpay-messages').html(response.error)
+                return
             }
+            var transaction_id = response.request.uniqueTransactionId
+            $('.seedpay_payment_cart_hash').val(response.request.uniqueTransactionId)
+            $('.seedpay-messages').html(response.response.message)
+            $('.seedpay-number-form').fadeOut()
+            $('.seedpay-number-form-pending').fadeIn()
+            if (!isCheckingTransactionStatus) checkTransactionStatus(transaction_id)
         })
     }
 
