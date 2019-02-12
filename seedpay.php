@@ -89,8 +89,6 @@ function ajax_seedpay_submit_request()
     die();
 }
 
-
-
 add_action('wp_ajax_ajax_seedpay_submit_request', 'ajax_seedpay_submit_request');
 add_action('wp_ajax_nopriv_ajax_seedpay_submit_request', 'ajax_seedpay_submit_request');
 
@@ -140,29 +138,26 @@ function ajax_seedpay_check_request()
 add_action('wp_ajax_ajax_seedpay_check_request', 'ajax_seedpay_check_request');
 add_action('wp_ajax_nopriv_ajax_seedpay_check_request', 'ajax_seedpay_check_request');
 
+function ajax_seedpay_check_user_status()
+{
+
+    $message = array();
+    $gateway_settings = get_option('woocommerce_seedpay_settings');
 
 
+    $phone = wc_format_phone_number($_REQUEST['phone']);
 
-function ajax_seedpay_check_user_status(){
-	
-	$message = array();
-	$gateway_settings = get_option('woocommerce_seedpay_settings');
-  
+    $url = '/user/isRegistered/' . $phone . '';
+    $message['url'] = $url;
+    $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
+    $message['response'] = $response;
 
-	$phone = wc_format_phone_number($_REQUEST['phone']);
-	
-		$url = '/user/isRegistered/' . $phone . '';
-        $message['url'] =  $url;
-        $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
-		$message['response'] = $response;
-		
-	echo json_encode($message);
-	die();
+    echo json_encode($message);
+    die();
 }
 
 add_action('wp_ajax_ajax_seedpay_check_user_status', 'ajax_seedpay_check_user_status');
 add_action('wp_ajax_nopriv_ajax_seedpay_check_user_status', 'ajax_seedpay_check_user_status');
-
 
 function seedpay_generate_new_cart_id()
 {
@@ -210,4 +205,5 @@ function seedpay_add_to_cart_validation($passed, $product_id, $quantity)
     }
     return $passed;
 };
+
 add_filter('woocommerce_add_to_cart_validation', 'seedpay_add_to_cart_validation', 10, 3);
