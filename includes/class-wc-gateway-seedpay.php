@@ -93,7 +93,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off" value="' . $phone . '">
             <BR>
             <BR>
-            <input type="button" class="seedpay-request-payment-submit seed-pay-button" value="' . __('Request Payment', 'woocommerce-gateway-seedpay') . '"</input>
+            <input style="display:none" type="button" class="seedpay-request-payment-submit seed-pay-button" value="' . __('Request Payment', 'woocommerce-gateway-seedpay') . '"</input>
         </div>
         <div class="seedpay-number-form-pending" style="display:none">
             <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone</p>
@@ -105,7 +105,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <input type="hidden" name="seedpay_payment_registered" class="seedpay_payment_registered" value="0">
 		    <input type="hidden" name="seedpay_payment_success" class="seedpay_payment_success" value="">
             <input type="hidden" name="seedpay_payment_cart_hash" class="seedpay_payment_cart_hash" value="' . $transaction_id . '">
-            <p class="seedpay-message-success">Payment has been confirmed, please continue with your order</p>
+            
         </div>                
         <div class="clear"></div>
         ';
@@ -214,11 +214,13 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $phone = wc_format_phone_number($_REQUEST['seedpay_payment_phone']);
         if ($phone == '') {
             $error_message = __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay');
-            wc_add_notice(__('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error');
-        }
+            wc_add_notice($error_message, 'error');
+			
+        }else{
+		
         if ($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid') {
-            $error_message = __('You must first accept payment before continuing.', 'woocommerce-gateway-seedpay');
-            wc_add_notice(__('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error');
+            $error_message = __('Please accept payment on your phone.', 'woocommerce-gateway-seedpay');
+            wc_add_notice($error_message, 'error');
         } else {
             $getVars = htmlentities(urlencode(json_encode(array(
                 'uniqueTransactionId' => $_REQUEST['seedpay_payment_cart_hash']
@@ -247,6 +249,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             }
         }
     }
+	}
 }
 function add_WC_Gateway_Seedpay($methods)
 {
