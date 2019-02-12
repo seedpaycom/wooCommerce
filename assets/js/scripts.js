@@ -37,8 +37,7 @@ jQuery(function($) {
 
     function seedpay_maybe_submit_payment_request(phone) {
         var check_user = seedpay_check_user_status(phone)
-        console.log(check_user)
-        if ($(".seedpay_payment_registered").val() == 1) {
+        if ($('.seedpay_payment_registered').val() == 1) {
             jQuery.post(seedpay_params.ajax_url, {
                 'action': 'ajax_seedpay_submit_request',
                 'phone': phone,
@@ -69,7 +68,6 @@ jQuery(function($) {
             'phone': phone,
         }, function(response) {
             var obj = $.parseJSON(response)
-            console.log(obj.response)
             if (obj.response.isRegistered == true) {
                 $('.seedpay_payment_registered').val(1)
                 $('.seedpay-messages').empty()
