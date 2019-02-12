@@ -41,7 +41,28 @@ jQuery(function($) {
         if (!isCheckingTransactionStatus) checkTransactionStatus($('.seedpay_recheck_payment').attr('data-id'))
     }
 
+    function resetForm() {
+        $('.seedpay-number-form-pending').hide()
+        $('.seedpay-number-form').fadeIn()
+        $('.seedpay-messages').empty('')
+        isCheckingTransactionStatus = false
+        isCheckingUserStatus = false
+    }
+    $('form.woocommerce-checkout').on('checkout_place_order', function() {
+        if ($('#payment_method_seedpay').is(':checked')) {
+            if ($('#seedpay_payment_phone').val() != '') {
+                submitPaymentRequest()
+            }
+            return true
+        }
+    })
+    $(document).on('click', '.seedpay-cancel-payment-submit', function() {
+        resetForm()
+        return false
+    })
+
     function submitPaymentRequest() {
+        resetForm()
         let phone = $('#seedpay_payment_phone').val()
         jQuery.post(seedpay_params.ajax_url, {
             'action': 'ajax_seedpay_submit_request',
@@ -78,7 +99,6 @@ jQuery(function($) {
             if (response.isRegistered == true) {
                 isCheckingUserStatus = false
                 $('.seedpay_payment_registered').val(1)
-                $('.seedpay-messages').empty()
                 submitPaymentRequest()
             } else {
                 $('.seedpay_payment_registered').val(0)
@@ -90,21 +110,4 @@ jQuery(function($) {
             }
         })
     }
-
-    $('form.woocommerce-checkout').on('checkout_place_order', function() {
-        if ($('#payment_method_seedpay').is(':checked')) {
-            if ($('#seedpay_payment_phone').val() != '') {
-                submitPaymentRequest()
-            }
-            return true
-        }
-    })
-
-    $(document).on('click', '.seedpay-cancel-payment-submit', function() {
-        $('.seedpay-number-form-pending').hide()
-        $('.seedpay-number-form').fadeIn()
-        isCheckingTransactionStatus = false
-        isCheckingUserStatus = false
-        return false
-    })
 })
