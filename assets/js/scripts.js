@@ -15,7 +15,7 @@ jQuery(function($) {
             phone,
         }, function(responseString) {
             var response = $.parseJSON(responseString)
-            if (response.error || !response.response[0]) {
+            if (response.error || (response.response && !response.response[0])) {
                 $('.seedpay-messages').html(response.error)
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form').fadeIn()
