@@ -1,6 +1,7 @@
 jQuery(function($) {
-    var isCheckingUserStatus = false
-    var isCheckingTransactionStatus = false
+    var shouldContinueCheckingStuffs = true
+    var startedCheckingUserStatus = false
+    var startedCheckingTransactionStatus = false
     var uniqueTransactionId = $('.seedpay_payment_cart_hash').val()
 
     function checkTransactionStatus(callBack) {
@@ -19,7 +20,7 @@ jQuery(function($) {
                 $('.seedpay-messages').html(response.error)
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form').fadeIn()
-                isCheckingTransactionStatus = false
+                shouldContinueCheckingStuffs = false
                 if (callBack) callBack({
                     error: response.error,
                 })
@@ -32,43 +33,48 @@ jQuery(function($) {
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form-success').fadeIn()
                 $('.woocommerce-checkout').submit()
-                isCheckingTransactionStatus = false
+                shouldContinueCheckingStuffs = false
             } else if (status == 'rejected' || status == 'errored') {
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form').fadeIn()
-                isCheckingTransactionStatus = false
+                shouldContinueCheckingStuffs = false
             } else {
-                isCheckingTransactionStatus = true
-                setTimeout(function() {
-                    if (isCheckingTransactionStatus) checkTransactionStatus()
-                }, 5000)
+                if (!startedCheckingTransactionStatus) {
+                    startedCheckingTransactionStatus = true
+                    startTransactionCheckingLoop()
+                }
             }
             if (callBack) callBack()
         })
     }
     if ($('.seedpay_recheck_payment').val() == 1) {
-        if (!isCheckingTransactionStatus) checkTransactionStatus()
+        checkTransactionStatus()
+    }
+
+    function startTransactionCheckingLoop() {
+        if (shouldContinueCheckingStuffs) {
+            setTimeout(function() {
+                checkTransactionStatus()
+                startTransactionCheckingLoop()
+            }, 5000)
+        } else startedCheckingTransactionStatus = false
+    }
+
+    function startUserCheckingLoop() {
+        if (shouldContinueCheckingStuffs) {
+            setTimeout(function() {
+                checkUserStatus()
+                startUserCheckingLoop()
+            }, 5000)
+        } else startedCheckingUserStatus = false
     }
 
     function resetForm() {
         $('.seedpay-number-form-pending').hide()
         $('.seedpay-number-form').fadeIn()
         $('.seedpay-messages').empty('')
-        isCheckingTransactionStatus = false
-        isCheckingUserStatus = false
+        shouldContinueCheckingStuffs = false
     }
-    $('form.woocommerce-checkout').on('checkout_place_order', function() {
-        if ($('#payment_method_seedpay').is(':checked')) {
-            if ($('#seedpay_payment_phone').val() != '') {
-                submitPaymentRequest()
-            }
-            return true
-        }
-    })
-    $(document).on('click', '.seedpay-cancel-payment-submit', function() {
-        resetForm()
-        return false
-    })
 
     function submitPaymentRequest() {
         checkTransactionStatus(function() {
@@ -84,7 +90,7 @@ jQuery(function($) {
                 if (response.response.message) {
                     $('.seedpay-messages').html(response.response.message)
                     if (response.response.message.toLowerCase().indexOf('inv') >= 0) {
-                        if (!isCheckingUserStatus) checkUserStatus()
+                        checkUserStatus()
                         return
                     }
                 }
@@ -97,7 +103,7 @@ jQuery(function($) {
                 $('.seedpay-messages').html(response.response.message)
                 $('.seedpay-number-form').fadeOut()
                 $('.seedpay-number-form-pending').fadeIn()
-                if (!isCheckingTransactionStatus) checkTransactionStatus()
+                checkTransactionStatus()
             })
         })
     }
@@ -110,17 +116,30 @@ jQuery(function($) {
         }, function(responseString) {
             var response = $.parseJSON(responseString).response
             if (response.isRegistered == true) {
-                isCheckingUserStatus = false
                 $('.seedpay_payment_registered').val(1)
                 submitPaymentRequest()
-            } else {
-                $('.seedpay_payment_registered').val(0)
-                $('.seedpay-messages').html('Please check your text messages for an invite.')
-                isCheckingUserStatus = true
-                setTimeout(function() {
-                    if (isCheckingUserStatus) checkUserStatus(true)
-                }, 6000)
+                return
+            }
+            $('.seedpay_payment_registered').val(0)
+            $('.seedpay-messages').html('Please check your text messages for an invite.')
+            shouldContinueCheckingStuffs = true
+            if (!startedCheckingUserStatus) {
+                startedCheckingUserStatus = true
+                startUserCheckingLoop()
             }
         })
     }
+    $('form.woocommerce-checkout').on('checkout_place_order', function() {
+        if ($('#payment_method_seedpay').is(':checked')) {
+            if ($('#seedpay_payment_phone').val() != '') {
+                shouldContinueCheckingStuffs = true
+                submitPaymentRequest()
+            }
+            return true
+        }
+    })
+    $(document).on('click', '.seedpay-cancel-payment-submit', function() {
+        resetForm()
+        return false
+    })
 })
