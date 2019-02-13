@@ -4,7 +4,7 @@ jQuery(function($) {
     var uniqueTransactionId = $('.seedpay_payment_cart_hash').val()
 
     function checkTransactionStatus(callBack) {
-        let phone = $('#seedpay_payment_phone').val()
+        var phone = $('#seedpay_payment_phone').val()
         if (!uniqueTransactionId && callBack) {
             callBack()
             return
@@ -25,7 +25,7 @@ jQuery(function($) {
                 })
                 return response.error
             }
-            let status = (response.response[0] || {}).status
+            var status = (response.response[0] || {}).status
             if (status == 'acceptedAndPaid') {
                 $('.seedpay_payment_success').val(response.response[0].status)
                 $('.seedpay-number-form').hide()
@@ -73,7 +73,7 @@ jQuery(function($) {
     function submitPaymentRequest() {
         checkTransactionStatus(function() {
             resetForm()
-            let phone = $('#seedpay_payment_phone').val()
+            var phone = $('#seedpay_payment_phone').val()
             jQuery.post(seedpay_params.ajax_url, {
                 'action': 'ajax_seedpay_submit_request',
                 phone,
@@ -101,7 +101,7 @@ jQuery(function($) {
     }
 
     function checkUserStatus() {
-        let phone = $('#seedpay_payment_phone').val()
+        var phone = $('#seedpay_payment_phone').val()
         jQuery.post(seedpay_params.ajax_url, {
             'action': 'ajax_checkUserStatus',
             phone,
