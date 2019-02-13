@@ -1,9 +1,14 @@
-var isCheckingUserStatus = false
-var isCheckingTransactionStatus = false
-var uniqueTransactionId
 jQuery(function($) {
-    function checkTransactionStatus() {
+    var isCheckingUserStatus = false
+    var isCheckingTransactionStatus = false
+    var uniqueTransactionId = $('.seedpay_payment_cart_hash').val()
+
+    function checkTransactionStatus(callBack) {
         let phone = $('#seedpay_payment_phone').val()
+        if (!uniqueTransactionId && callBack) {
+            callBack()
+            return
+        }
         jQuery.post(seedpay_params.ajax_url, {
             'action': 'ajax_seedpay_check_request',
             'transaction_id': uniqueTransactionId,
@@ -15,6 +20,9 @@ jQuery(function($) {
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form').fadeIn()
                 isCheckingTransactionStatus = false
+                if (callBack) callBack({
+                    error: response.error,
+                })
                 return response.error
             }
             let status = (response.response[0] || {}).status
@@ -35,10 +43,11 @@ jQuery(function($) {
                     if (isCheckingTransactionStatus) checkTransactionStatus()
                 }, 5000)
             }
+            if (callBack) callBack()
         })
     }
     if ($('.seedpay_recheck_payment').val() == 1) {
-        if (!isCheckingTransactionStatus) checkTransactionStatus($('.seedpay_recheck_payment').attr('data-id'))
+        if (!isCheckingTransactionStatus) checkTransactionStatus()
     }
 
     function resetForm() {
@@ -62,30 +71,32 @@ jQuery(function($) {
     })
 
     function submitPaymentRequest() {
-        resetForm()
-        let phone = $('#seedpay_payment_phone').val()
-        jQuery.post(seedpay_params.ajax_url, {
-            'action': 'ajax_seedpay_submit_request',
-            phone,
-        }, function(responseString) {
-            var response = $.parseJSON(responseString)
-            if (response.response.message) {
-                $('.seedpay-messages').html(response.response.message)
-                if (response.response.message.toLowerCase().indexOf('inv') >= 0) {
-                    if (!isCheckingUserStatus) checkUserStatus()
+        checkTransactionStatus(function() {
+            resetForm()
+            let phone = $('#seedpay_payment_phone').val()
+            jQuery.post(seedpay_params.ajax_url, {
+                'action': 'ajax_seedpay_submit_request',
+                phone,
+            }, function(responseString) {
+                var response = $.parseJSON(responseString)
+                if (response.response.message) {
+                    $('.seedpay-messages').html(response.response.message)
+                    if (response.response.message.toLowerCase().indexOf('inv') >= 0) {
+                        if (!isCheckingUserStatus) checkUserStatus()
+                        return
+                    }
+                }
+                if (response.error) {
+                    $('.seedpay-messages').html(response.error)
                     return
                 }
-            }
-            if (response.error) {
-                $('.seedpay-messages').html(response.error)
-                return
-            }
-            uniqueTransactionId = response.request.uniqueTransactionId
-            $('.seedpay_payment_cart_hash').val(response.request.uniqueTransactionId)
-            $('.seedpay-messages').html(response.response.message)
-            $('.seedpay-number-form').fadeOut()
-            $('.seedpay-number-form-pending').fadeIn()
-            if (!isCheckingTransactionStatus) checkTransactionStatus(uniqueTransactionId)
+                uniqueTransactionId = response.request.uniqueTransactionId
+                $('.seedpay_payment_cart_hash').val(uniqueTransactionId)
+                $('.seedpay-messages').html(response.response.message)
+                $('.seedpay-number-form').fadeOut()
+                $('.seedpay-number-form-pending').fadeIn()
+                if (!isCheckingTransactionStatus) checkTransactionStatus()
+            })
         })
     }
 
