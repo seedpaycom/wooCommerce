@@ -25,7 +25,7 @@ msgid "Gateway for Seedpay"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:82
-msgid "TEST MODE ENABLED. In test mode, you will be using staging api credentials."
+msgid "TEST MODE!!!!!111!!1one!!"
 msgstr ""
 
 #: includes/class-wc-gateway-seedpay.php:111

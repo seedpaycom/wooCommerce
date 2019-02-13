@@ -72,7 +72,9 @@ jQuery(function($) {
 
     function submitPaymentRequest() {
         checkTransactionStatus(function() {
-            resetForm()
+            $('.seedpay-number-form-pending').hide()
+            $('.seedpay-number-form').fadeIn()
+            $('.seedpay-messages').empty('')
             var phone = $('#seedpay_payment_phone').val()
             jQuery.post(seedpay_params.ajax_url, {
                 'action': 'ajax_seedpay_submit_request',
