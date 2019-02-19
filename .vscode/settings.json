@@ -27,6 +27,7 @@
         "mailto",
         "noreply",
         "ommerce",
+        "phpunit",
         "seedpay",
         "seedpay's",
         "stagingmobileapi",
@@ -34,4 +35,7 @@
         "webframework"
     ],
     // "breadcrumbs.enabled": false
+    "search.exclude": {
+        "vendor": true,
+    }
 }
