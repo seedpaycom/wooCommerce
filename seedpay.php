@@ -47,7 +47,7 @@ function seedpay_request($function, $fields, $method, $token = null)
         CURLOPT_FOLLOWLOCATION => false,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_POSTFIELDS => $fields,
+        // CURLOPT_POSTFIELDS => $fields,
         CURLOPT_HTTPHEADER => $headers
     );
     curl_setopt_array($curl, $data);
@@ -60,6 +60,7 @@ function seedpay_request($function, $fields, $method, $token = null)
         return json_decode($response);
     }
 }
+
 
 function ajax_seedpay_submit_request()
 {
@@ -100,7 +101,7 @@ function ajax_seedpay_check_request()
     } else {
         $site_url = 'https://api.seedpay.com';
     }
-    $transaction_id = $_REQUEST['transaction_id'];
+    $transaction_id = get_transient('seedpay_cart_id');
     $phone = wc_format_phone_number($_REQUEST['phone']);
     $cart = WC()->cart;
     $message = array();
@@ -113,18 +114,20 @@ function ajax_seedpay_check_request()
         $url = 'transactions/' . $getVars . '';
         $message['url'] = $site_url . $url;
         $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
-        if ($response[0]->status == 'acceptedAndPaid') {
-            set_transient('seedpay_order_status_' . $transaction_id . '', $response[0], 168 * HOUR_IN_SECONDS);
-            set_transient('seedpay_order_statusname_' . $transaction_id . '', $response[0]->status, 168 * HOUR_IN_SECONDS);
-            set_transient('seedpay_order_phone_' . $transaction_id . '', $phone, 168 * HOUR_IN_SECONDS);
-        }
-        if ($response[0]->status == 'errored') {
-            $message['error'] = __('There was an error with this transaction.', 'woocommerce-gateway-seedpay');
-            seedpay_generate_new_cart_id();
-        }
-        if ($response[0]->status == 'rejected') {
-            $message['error'] = __('Payment was rejected.', 'woocommerce-gateway-seedpay');
-            seedpay_generate_new_cart_id();
+        if (sizeof($response) > 0) {
+            if ($response[0]->status == 'acceptedAndPaid') {
+                set_transient('seedpay_order_status_' . $transaction_id . '', $response[0], 168 * HOUR_IN_SECONDS);
+                set_transient('seedpay_order_statusname_' . $transaction_id . '', $response[0]->status, 168 * HOUR_IN_SECONDS);
+                set_transient('seedpay_order_phone_' . $transaction_id . '', $phone, 168 * HOUR_IN_SECONDS);
+            }
+            if ($response[0]->status == 'errored') {
+                $message['error'] = __('There was an error with this transaction.', 'woocommerce-gateway-seedpay');
+                seedpay_generate_new_cart_id();
+            }
+            if ($response[0]->status == 'rejected') {
+                $message['error'] = __('Payment was rejected.', 'woocommerce-gateway-seedpay');
+                seedpay_generate_new_cart_id();
+            }
         }
         $message['response'] = $response;
     } else {
@@ -157,8 +160,9 @@ function seedpay_generate_new_cart_id()
 {
     $transaction_id = wp_rand();
     setcookie('seedpay_cart_id', '', time() - (15 * 60), COOKIEPATH, COOKIE_DOMAIN);
-    setcookie('seedpay_cart_id', $transaction_id, time() + (60 * 20), COOKIEPATH, COOKIE_DOMAIN);
-    return $transaction_id;
+    setcookie('seedpay_cart_id', $transactionId, time() + (60 * 20), COOKIEPATH, COOKIE_DOMAIN);
+    set_transient('seedpayTransactionId', $transactionId, 168 * HOUR_IN_SECONDS);
+    return $transactionId;
 }
 
 function woocommerce_seedpay_init()
