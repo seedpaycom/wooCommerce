@@ -1,5 +1,5 @@
 {
-    "name": "wooCommerce",
+    "name": "seedpay/woo",
     "description": "Seedpay wooCommerce payment plugin",
     "autoload": {
         "classmap": [
