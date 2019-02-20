@@ -1,15 +1,12 @@
 <?php
-if (!defined('ABSPATH')) {
-    exit;
-}
-class configs
+function apiUrl(callable $getOptions = null)
 {
-    public function apiUrl()
-    {
-        $gateway_settings = get_option('woocommerce_seedpay_settings');
-        if ($gateway_settings['environment'] == 'yes') {
-            return 'http://localhost:8080';
-        }
-        return $site_url = 'https://api.seedpay.com';
+    if (!$getOptions) {
+        $getOptions = get_options;
     }
+
+    if ($getOptions('woocommerce_seedpay_settings')['environment'] == 'yes') {
+        return $_ENV['NODE_ENV'] == 'production' ? 'https://staging.api.seedpay.com' : 'http://localhost';
+    }
+    return 'https://api.seedpay.com';
 }

@@ -4,10 +4,11 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit265e5cfdb058704ea65c081ac55e0613
+class ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
     );
 
@@ -16,18 +17,44 @@ class ComposerStaticInit265e5cfdb058704ea65c081ac55e0613
         array (
             'phpDocumentor\\Reflection\\' => 25,
         ),
+        'Y' => 
+        array (
+            'Yosymfony\\ResourceWatcher\\' => 26,
+        ),
         'W' => 
         array (
             'Webmozart\\Assert\\' => 17,
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
+            'Symfony\\Contracts\\' => 18,
+            'Symfony\\Component\\Yaml\\' => 23,
+            'Symfony\\Component\\Process\\' => 26,
+            'Symfony\\Component\\Finder\\' => 25,
+            'Symfony\\Component\\Console\\' => 26,
+            'Spatie\\PhpUnitWatcher\\' => 22,
+        ),
+        'R' => 
+        array (
+            'React\\Stream\\' => 13,
+            'React\\EventLoop\\' => 16,
+        ),
+        'J' => 
+        array (
+            'Joli\\JoliNotif\\' => 15,
         ),
         'D' => 
         array (
             'Doctrine\\Instantiator\\' => 22,
             'DeepCopy\\' => 9,
+        ),
+        'C' => 
+        array (
+            'Clue\\React\\Utf8\\' => 16,
+            'Clue\\React\\Term\\' => 16,
+            'Clue\\React\\Stdio\\' => 17,
         ),
     );
 
@@ -38,13 +65,57 @@ class ComposerStaticInit265e5cfdb058704ea65c081ac55e0613
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
+        'Yosymfony\\ResourceWatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yosymfony/resource-watcher/src',
+        ),
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
         ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
         'Symfony\\Polyfill\\Ctype\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
+        'Symfony\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/contracts',
+        ),
+        'Symfony\\Component\\Yaml\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/yaml',
+        ),
+        'Symfony\\Component\\Process\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/process',
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
+        'Symfony\\Component\\Console\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'Spatie\\PhpUnitWatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spatie/phpunit-watcher/src',
+        ),
+        'React\\Stream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/stream/src',
+        ),
+        'React\\EventLoop\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/event-loop/src',
+        ),
+        'Joli\\JoliNotif\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jolicode/jolinotif/src',
         ),
         'Doctrine\\Instantiator\\' => 
         array (
@@ -54,6 +125,18 @@ class ComposerStaticInit265e5cfdb058704ea65c081ac55e0613
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
+        'Clue\\React\\Utf8\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/clue/utf8-react/src',
+        ),
+        'Clue\\React\\Term\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/clue/term-react/src',
+        ),
+        'Clue\\React\\Stdio\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/clue/stdio-react/src',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -62,6 +145,13 @@ class ComposerStaticInit265e5cfdb058704ea65c081ac55e0613
             'Prophecy\\' => 
             array (
                 0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
+            ),
+        ),
+        'E' => 
+        array (
+            'Evenement' => 
+            array (
+                0 => __DIR__ . '/..' . '/evenement/evenement/src',
             ),
         ),
     );
@@ -620,10 +710,10 @@ class ComposerStaticInit265e5cfdb058704ea65c081ac55e0613
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit265e5cfdb058704ea65c081ac55e0613::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit265e5cfdb058704ea65c081ac55e0613::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit265e5cfdb058704ea65c081ac55e0613::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit265e5cfdb058704ea65c081ac55e0613::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a::$classMap;
 
         }, null, ClassLoader::class);
     }
