@@ -6,7 +6,7 @@ function apiUrl(callable $getOptions = null)
     }
 
     if ($getOptions('woocommerce_seedpay_settings')['environment'] == 'yes') {
-        return $_ENV['NODE_ENV'] == 'production' ? 'https://staging.api.seedpay.com' : 'http://localhost';
+        return $_ENV['seedpayTestModeApiUrl'] ?? 'https://staging.api.seedpay.com';
     }
-    return 'https://api.seedpay.com';
+    return $_ENV['seedpayApiUrl'] ?? 'https://api.seedpay.com';
 }

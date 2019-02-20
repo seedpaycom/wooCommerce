@@ -2,7 +2,6 @@
 require_once __DIR__ . '/configs.php';
 use PHPUnit\Framework\TestCase;
 
-
 class configsTests extends TestCase
 {
     function setUp() : void
@@ -11,9 +10,9 @@ class configsTests extends TestCase
         $GLOBALS['getOptions'] = function () {
             return array('environment' => $GLOBALS['isTestMode']);
         };
-        $_ENV['NODE_ENV'] = 'production';
+        $_ENV['seedpayTestModeApiUrl'] = null;
+        $_ENV['seedpayApiUrl'] = null;
     }
-
     function testReturnsTheSecureProdUrlWhenNotInTestMode() : void
     {
         $this->assertStringContainsStringIgnoringCase('https', apiUrl($GLOBALS['getOptions']), 'prod is secure');
@@ -24,10 +23,15 @@ class configsTests extends TestCase
         $GLOBALS['isTestMode'] = 'yes';
         $this->assertStringContainsStringIgnoringCase('staging', apiUrl($GLOBALS['getOptions']));
     }
-    function testReturnsTheLocalUrlWhenInTestModeAndDevelopmentEnvironment() : void
+    function testUsesTheTestModeApiUrl() : void
     {
-        $_ENV['NODE_ENV'] = 'development';
+        $_ENV['seedpayTestModeApiUrl'] = 'i amzor urlz';
         $GLOBALS['isTestMode'] = 'yes';
-        $this->assertStringContainsStringIgnoringCase('localhost', apiUrl($GLOBALS['getOptions']));
+        $this->assertEquals($_ENV['seedpayTestModeApiUrl'], apiUrl($GLOBALS['getOptions']));
+    }
+    function testUsesTheApiUrl() : void
+    {
+        $_ENV['seedpayApiUrl'] = 'i amzor prodzor urlz';
+        $this->assertEquals($_ENV['seedpayApiUrl'], apiUrl($GLOBALS['getOptions']));
     }
 }
