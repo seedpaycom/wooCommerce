@@ -11,32 +11,18 @@
     "gitlens.hovers.currentLine.enabled": false,
     "editor.wordWrap": "on",
     "javascript.updateImportsOnFileMove.enabled": "always",
-    "editor.codeActionsOnSave": {
-        // "source.organizeImports": true,
-        // "editor.action.organizeImports",
-        // "workbench.action.files.saveAll": true,
-    },
     "explorer.confirmDragAndDrop": false,
     "cSpell.words": [
-        "coinbase",
-        "datas",
-        "datastore",
-        "devsupport",
-        "errored",
-        "helpdesk",
-        "mailto",
-        "noreply",
-        "ommerce",
         "phpunit",
         "seedpay",
         "seedpay's",
-        "stagingmobileapi",
-        "unrate",
-        "webframework"
     ],
-    // "breadcrumbs.enabled": false
     "search.exclude": {
         "vendor": true,
         "node_modules": true,
+        "*.cache": true
+    },
+    "files.exclude": {
+        "*.cache": true
     }
 }
