@@ -1,11 +1,15 @@
 <?php
-function apiUrl(callable $getOptions = null)
+function apiUrl(callable $getOption = null)
 {
-    if (!$getOptions) {
-        $getOptions = get_options;
+    if (!$getOption) {
+        if (!function_exists('woothemes_queue_update')) {
+            require_once('woo-includes/woo-functions.php');
+        }
+        $getOption = function ($key) {
+            return get_option($key);
+        };
     }
-
-    if ($getOptions('woocommerce_seedpay_settings')['environment'] == 'yes') {
+    if ($getOption('woocommerce_seedpay_settings')['environment'] == 'yes') {
         return $_ENV['seedpayTestModeApiUrl'] ?? 'https://staging.api.seedpay.com';
     }
     return $_ENV['seedpayApiUrl'] ?? 'https://api.seedpay.com';
