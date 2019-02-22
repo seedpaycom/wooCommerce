@@ -14,8 +14,7 @@ jQuery(function($) {
             'action': 'ajax_seedpay_check_request',
             'transaction_id': uniqueTransactionId,
             phone,
-        }, function(responseString) {
-            var response = $.parseJSON(responseString)
+        }, function(response) {
             if (response.error || (response.response && !response.response[0])) {
                 $('.seedpay-messages').html(response.error)
                 $('.seedpay-number-form-pending').hide()
@@ -77,7 +76,10 @@ jQuery(function($) {
     }
 
     function submitPaymentRequest() {
-        checkTransactionStatus(function() {
+        checkTransactionStatus(function(response) {
+            if (response && response.error) {
+                return
+            }
             $('.seedpay-number-form-pending').hide()
             $('.seedpay-number-form').fadeIn()
             $('.seedpay-messages').empty('')
@@ -106,6 +108,7 @@ jQuery(function($) {
                 checkTransactionStatus()
             })
         })
+        return false
     }
 
     function checkUserStatus() {
@@ -131,11 +134,9 @@ jQuery(function($) {
     }
     $('form.woocommerce-checkout').on('checkout_place_order', function() {
         if ($('#payment_method_seedpay').is(':checked')) {
-            if ($('#seedpay_payment_phone').val() != '') {
-                shouldContinueCheckingStuffs = true
-                submitPaymentRequest()
-            }
-            return true
+            shouldContinueCheckingStuffs = true
+            submitPaymentRequest()
+            return false
         }
     })
     $(document).on('click', '.seedpay-cancel-payment-submit', function() {
