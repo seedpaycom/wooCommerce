@@ -15,15 +15,22 @@ jQuery(function($) {
             'transaction_id': uniqueTransactionId,
             phone,
         }, function(response) {
-            if (response.error || (response.response && !response.response[0])) {
-                $('.seedpay-messages').html(response.error)
+            var showErrorAndCallCallback = function(errorMessage, callBack) {
+                $('.seedpay-messages').html(errorMessage)
                 $('.seedpay-number-form-pending').hide()
                 $('.seedpay-number-form').fadeIn()
                 shouldContinueCheckingStuffs = false
-                if (callBack) callBack({
-                    error: response.error,
-                })
-                return response.error
+                var errorWrappedError = {
+                    error: errorMessage,
+                }
+                if (callBack) callBack(errorWrappedError)
+                return errorWrappedError
+            }
+            if (typeof response == typeof '') {
+                return showErrorAndCallCallback(response, callBack)
+            }
+            if ((response && response.error) || (response.response && !response.response[0])) {
+                return showErrorAndCallCallback(response.error, callBack)
             }
             var status = (response.response[0] || {}).status
             if (status == 'acceptedAndPaid') {
@@ -45,9 +52,6 @@ jQuery(function($) {
             }
             if (callBack) callBack()
         })
-    }
-    if ($('.seedpay_recheck_payment').val() == 1) {
-        checkTransactionStatus()
     }
 
     function startTransactionCheckingLoop() {
@@ -132,6 +136,7 @@ jQuery(function($) {
             }
         })
     }
+
     $('form.woocommerce-checkout').on('checkout_place_order', function() {
         if ($('#payment_method_seedpay').is(':checked')) {
             shouldContinueCheckingStuffs = true
@@ -143,4 +148,7 @@ jQuery(function($) {
         resetForm()
         return false
     })
+    if ($('.seedpay_recheck_payment').val() == 1) {
+        checkTransactionStatus()
+    }
 })
