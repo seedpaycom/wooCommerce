@@ -1,0 +1,26 @@
+{
+    "name": "woocommerce",
+    "version": "1.0.0",
+    "description": "Seedpay wooCommerce payment plugin",
+    "main": "",
+    "dependencies": {},
+    "devDependencies": {
+        "watch": "^1.0.2"
+    },
+    "watch": {
+        "test": "*/*.php"
+    },
+    "scripts": {
+        "test": "watch 'clear && clear && vendor/bin/phpunit' ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/seedpaycom/wooCommerce.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/seedpaycom/wooCommerce/issues"
+    },
+    "homepage": "https://github.com/seedpaycom/wooCommerce#readme"
+}
