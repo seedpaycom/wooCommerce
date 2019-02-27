@@ -23,10 +23,10 @@ define('WC_SEEDPAY_PLUGIN_ASSETS', plugins_url('assets/', __FILE__));
 require_once __DIR__ . '/configs.php';
 require_once __DIR__ . '/api.php';
 
-function ajax_seedpay_submit_request()
+function requestPayment()
 {
     wp_send_json(
-        requestPayment(
+        submitRequestPayment(
             wc_format_phone_number($_REQUEST['phone']),
             WC()->cart->total,
             get_transient('uniqueTransactionId')
@@ -34,12 +34,12 @@ function ajax_seedpay_submit_request()
     );
 }
 
-add_action('wp_ajax_ajax_seedpay_submit_request', 'ajax_seedpay_submit_request');
-add_action('wp_ajax_nopriv_ajax_seedpay_submit_request', 'ajax_seedpay_submit_request');
+add_action('wp_ajax_requestPayment', 'requestPayment');
+add_action('wp_ajax_nopriv_requestPayment', 'requestPayment');
 
 function ajax_seedpay_check_request()
 {
-    $response = getTransactionStatus(get_transient('uniqueTransactionId'));
+    $response = submitGetTransactionStatus(get_transient('uniqueTransactionId'));
     wp_send_json($response);
     return;
     // if (gettype($response) == "array") {

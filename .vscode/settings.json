@@ -23,6 +23,7 @@
         "*.cache": true,
         "*.lock": true,
         "package-lock.json": true,
+        "*.min.js": true,
     },
     "files.exclude": {
         "*.cache": true,

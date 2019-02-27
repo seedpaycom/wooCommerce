@@ -23,7 +23,6 @@ function submitRequest($resource, $body, $method)
     if ($body) {
         $data[CURLOPT_POSTFIELDS] = json_encode($body);
     }
-
     curl_setopt_array($request, $data);
     $response = curl_exec($request);
     $err = curl_error($request);
@@ -36,7 +35,7 @@ function submitRequest($resource, $body, $method)
     );
 }
 
-function requestPayment($fromPhoneNumber, $amount, $uniqueTransactionId)
+function submitRequestPayment($fromPhoneNumber, $amount, $uniqueTransactionId)
 {
     if (!$fromPhoneNumber) {
         return array('error' => __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay'));
@@ -52,7 +51,7 @@ function requestPayment($fromPhoneNumber, $amount, $uniqueTransactionId)
     return submitRequest('requestPayment', $body, 'POST');
 }
 
-function getTransactionStatus($uniqueTransactionId)
+function submitGetTransactionStatus($uniqueTransactionId)
 {
     if (!$uniqueTransactionId) {
         return array('error' => __('Amount must be larger than $0.50', 'woocommerce-gateway-seedpay'));
@@ -64,3 +63,4 @@ function getTransactionStatus($uniqueTransactionId)
     $response = submitRequest($url, null, 'GET');
     return $response;
 }
+

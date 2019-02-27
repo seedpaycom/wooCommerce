@@ -89,7 +89,7 @@ jQuery(function($) {
             $('.seedpay-messages').empty('')
             var phone = $('#seedpayPhoneNumber').val()
             jQuery.post(seedpay_params.ajax_url, {
-                'action': 'ajax_seedpay_submit_request',
+                'action': 'requestPayment',
                 phone,
             }, function(responseString) {
                 var response = $.parseJSON(responseString)
