@@ -11,7 +11,7 @@ jQuery(function($) {
             return
         }
         jQuery.post(seedpay_params.ajax_url, {
-            'action': 'ajax_seedpay_check_request',
+            'action': 'checkTransactionStatus',
             'transaction_id': uniqueTransactionId,
             phone,
         }, function(response) {

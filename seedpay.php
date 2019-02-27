@@ -37,7 +37,7 @@ function requestPayment()
 add_action('wp_ajax_requestPayment', 'requestPayment');
 add_action('wp_ajax_nopriv_requestPayment', 'requestPayment');
 
-function ajax_seedpay_check_request()
+function checkTransactionStatus()
 {
     $response = submitGetTransactionStatus(get_transient('uniqueTransactionId'));
     wp_send_json($response);
@@ -70,8 +70,8 @@ function ajax_seedpay_check_request()
     // }
 }
 
-add_action('wp_ajax_ajax_seedpay_check_request', 'ajax_seedpay_check_request');
-add_action('wp_ajax_nopriv_ajax_seedpay_check_request', 'ajax_seedpay_check_request');
+add_action('wp_ajax_checkTransactionStatus', 'checkTransactionStatus');
+add_action('wp_ajax_nopriv_checkTransactionStatus', 'checkTransactionStatus');
 
 function ajax_checkUserStatus()
 {

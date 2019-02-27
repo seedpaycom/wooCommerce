@@ -199,7 +199,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         wp_enqueue_style('woocommerce_seedpay_styles', WC_SEEDPAY_PLUGIN_ASSETS . 'css/style' . $min . '.css');
     }
 
-    public function ajax_seedpay_check_request()
+    public function checkTransactionStatus()
     {
         $transaction_id = get_transient('uniqueTransactionId');
         $phone = wc_format_phone_number($_REQUEST['phone']);
