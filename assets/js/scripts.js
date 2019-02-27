@@ -118,7 +118,7 @@ jQuery(function($) {
     function checkUserStatus() {
         var phone = $('#seedpayPhoneNumber').val()
         jQuery.post(seedpay_params.ajax_url, {
-            'action': 'ajax_checkUserStatus',
+            'action': 'checkUserStatus',
             phone,
         }, function(responseString) {
             var response = $.parseJSON(responseString).response

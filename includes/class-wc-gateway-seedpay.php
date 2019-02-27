@@ -9,7 +9,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     public function __construct()
     {
         if (get_transient('uniqueTransactionId') == null) {
-            seedpay_generate_new_cart_id();
+            generateNewUniqueTransactionId();
         }
         $this->id = 'seedpay';
         $this->icon = apply_filters('woocommerce_cheque_icon', '');
@@ -223,11 +223,11 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             }
             if ($response[0]->status == 'errored') {
                 $message['error'] = __('There was an error with this transaction.', 'woocommerce-gateway-seedpay');
-                seedpay_generate_new_cart_id();
+                generateNewUniqueTransactionId();
             }
             if ($response[0]->status == 'rejected') {
                 $message['error'] = __('Payment was rejected.', 'woocommerce-gateway-seedpay');
-                seedpay_generate_new_cart_id();
+                generateNewUniqueTransactionId();
             }
         }
         $message['response'] = $response;

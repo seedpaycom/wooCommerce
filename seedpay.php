@@ -50,7 +50,7 @@ function checkTransactionStatus()
     //         return;
     //     }
     //     if ($response[0]->status == 'errored') {
-    //         seedpay_generate_new_cart_id();
+    //         generateNewUniqueTransactionId();
     //         wp_send_json(
     //             array(
     //                 'error' => __('There was an error with this transaction.', 'woocommerce-gateway-seedpay')
@@ -59,7 +59,7 @@ function checkTransactionStatus()
     //         return;
     //     }
     //     if ($response[0]->status == 'rejected') {
-    //         seedpay_generate_new_cart_id();
+    //         generateNewUniqueTransactionId();
     //         wp_send_json(
     //             array(
     //                 'error' => __('Payment was rejected.', 'woocommerce-gateway-seedpay')
@@ -73,7 +73,7 @@ function checkTransactionStatus()
 add_action('wp_ajax_checkTransactionStatus', 'checkTransactionStatus');
 add_action('wp_ajax_nopriv_checkTransactionStatus', 'checkTransactionStatus');
 
-function ajax_checkUserStatus()
+function checkUserStatus()
 {
     $message = array();
     $gateway_settings = get_option('woocommerce_seedpay_settings');
@@ -86,10 +86,10 @@ function ajax_checkUserStatus()
     die();
 }
 
-add_action('wp_ajax_ajax_checkUserStatus', 'ajax_checkUserStatus');
-add_action('wp_ajax_nopriv_ajax_checkUserStatus', 'ajax_checkUserStatus');
+add_action('wp_ajax_checkUserStatus', 'checkUserStatus');
+add_action('wp_ajax_nopriv_checkUserStatus', 'checkUserStatus');
 
-function seedpay_generate_new_cart_id()
+function generateNewUniqueTransactionId()
 {
     $transactionId = wp_rand();
     set_transient('uniqueTransactionId', $transactionId, 168 * HOUR_IN_SECONDS);
