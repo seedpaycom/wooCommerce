@@ -87,7 +87,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <label>' . __('Phone Number', 'woocommerce-gateway-seedpay') . ' 
                 <span class="required">*</span>
             </label>
-            <input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off" value="' . $phone . '">
+            <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="text" value="' . $phone . '">
         </div>
         <div class="seedpay-number-form-pending" style="display:none">
             <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone</p>
@@ -243,7 +243,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     public function process_payment($order_id)
     {
         $order = wc_get_order($order_id);
-        $phone = wc_format_phone_number($_REQUEST['seedpay_payment_phone']);
+        $phone = wc_format_phone_number($_REQUEST['seedpayPhoneNumber']);
         if ($phone == '') {
             $error_message = __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay');
             wc_add_notice($error_message, 'error');
@@ -264,9 +264,9 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $order->payment_complete();
         $order->update_status('wc-processing');
         $order->add_order_note(__('Seedpay Payment Completed: #' . $response[0]->_id . '', 'woocommerce-gateway-seedpay'));
-        $order->add_order_note(__('Seedpay Payment Phone: ' . $_REQUEST['seedpay_payment_phone'] . '', 'woocommerce-gateway-seedpay'));
+        $order->add_order_note(__('Seedpay Payment Phone: ' . $_REQUEST['seedpayPhoneNumber'] . '', 'woocommerce-gateway-seedpay'));
         $order->update_meta_data('_seedpay_payment', $response[0]);
-        $order->update_meta_data('_seedpay_payment_phone', $_REQUEST['seedpay_payment_phone']);
+        $order->update_meta_data('_seedpayPhoneNumber', $_REQUEST['seedpayPhoneNumber']);
         $order->reduce_order_stock();
         set_transient('uniqueTransactionId', null);
         WC()->cart->empty_cart();

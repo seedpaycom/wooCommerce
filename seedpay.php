@@ -21,43 +21,17 @@ if (!function_exists('woothemes_queue_update')) {
 define('WC_SEEDPAY_PLUGIN_ASSETS', plugins_url('assets/', __FILE__));
 
 require_once __DIR__ . '/configs.php';
+require_once __DIR__ . '/api.php';
 
 function ajax_seedpay_submit_request()
 {
-    $phone = wc_format_phone_number($_REQUEST['phone']);
-    $cart = WC()->cart;
-    if ($phone == '') {
-        wp_send_json(
-            array(
-                'error' => __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay')
-            )
-        );
-        return;
-    }
-    $request = array(
-        'fromPhoneNumber' => $phone,
-        'amount' => $cart->total,
-        'uniqueTransactionId' => get_transient('uniqueTransactionId') ?? seedpay_generate_new_cart_id()
+    wp_send_json(
+        requestPayment(
+            wc_format_phone_number($_REQUEST['phone']),
+            WC()->cart->total,
+            get_transient('uniqueTransactionId')
+        )
     );
-    $response = submitRequest('requestPayment', $request, 'POST');
-    if (gettype($response) == 'string') {
-        seedpay_generate_new_cart_id();
-        wp_send_json(
-            array(
-                'error' => $response
-            )
-        );
-        return;
-    }
-    if ($response && $response->errors && $response->errors[0] != '') {
-        seedpay_generate_new_cart_id();
-        wp_send_json(
-            array(
-                'error' => $response->errors[0]
-            )
-        );
-        return;
-    }
 }
 
 add_action('wp_ajax_ajax_seedpay_submit_request', 'ajax_seedpay_submit_request');
@@ -65,54 +39,35 @@ add_action('wp_ajax_nopriv_ajax_seedpay_submit_request', 'ajax_seedpay_submit_re
 
 function ajax_seedpay_check_request()
 {
-    $transaction_id = get_transient('uniqueTransactionId');
-    $phone = wc_format_phone_number($_REQUEST['phone']);
-    if ($phone == '') {
-        wp_send_json(
-            array(
-                'error' => __('Please enter a valid 10 digit phone number', 'woocommerce-gateway-seedpay')
-            )
-        );
-        return;
-    }
-    $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $transaction_id))));
-    $url = 'transactions/' . $getVars . '';
-    $response = submitRequest($url, null, 'GET');
-    if (gettype($response) == 'string') {
-        seedpay_generate_new_cart_id();
-        wp_send_json(
-            array(
-                'error' => $response
-            )
-        );
-        return;
-    }
-    if (gettype($response) == "array") {
-        if ($response[0]->status == 'acceptedAndPaid') {
-            set_transient('seedpay_order_status_' . $transaction_id . '', $response[0], 168 * HOUR_IN_SECONDS);
-            set_transient('seedpay_order_statusname_' . $transaction_id . '', $response[0]->status, 168 * HOUR_IN_SECONDS);
-            set_transient('seedpay_order_phone_' . $transaction_id . '', $phone, 168 * HOUR_IN_SECONDS);
-            return;
-        }
-        if ($response[0]->status == 'errored') {
-            seedpay_generate_new_cart_id();
-            wp_send_json(
-                array(
-                    'error' => __('There was an error with this transaction.', 'woocommerce-gateway-seedpay')
-                )
-            );
-            return;
-        }
-        if ($response[0]->status == 'rejected') {
-            seedpay_generate_new_cart_id();
-            wp_send_json(
-                array(
-                    'error' => __('Payment was rejected.', 'woocommerce-gateway-seedpay')
-                )
-            );
-            return;
-        }
-    }
+    $response = getTransactionStatus(get_transient('uniqueTransactionId'));
+    wp_send_json($response);
+    return;
+    // if (gettype($response) == "array") {
+    //     if ($response[0]->status == 'acceptedAndPaid') {
+    //         set_transient('seedpay_order_status_' . $transaction_id . '', $response[0], 168 * HOUR_IN_SECONDS);
+    //         set_transient('seedpay_order_statusname_' . $transaction_id . '', $response[0]->status, 168 * HOUR_IN_SECONDS);
+    //         set_transient('seedpay_order_phone_' . $transaction_id . '', $phone, 168 * HOUR_IN_SECONDS);
+    //         return;
+    //     }
+    //     if ($response[0]->status == 'errored') {
+    //         seedpay_generate_new_cart_id();
+    //         wp_send_json(
+    //             array(
+    //                 'error' => __('There was an error with this transaction.', 'woocommerce-gateway-seedpay')
+    //             )
+    //         );
+    //         return;
+    //     }
+    //     if ($response[0]->status == 'rejected') {
+    //         seedpay_generate_new_cart_id();
+    //         wp_send_json(
+    //             array(
+    //                 'error' => __('Payment was rejected.', 'woocommerce-gateway-seedpay')
+    //             )
+    //         );
+    //         return;
+    //     }
+    // }
 }
 
 add_action('wp_ajax_ajax_seedpay_check_request', 'ajax_seedpay_check_request');

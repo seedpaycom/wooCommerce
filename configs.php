@@ -10,7 +10,7 @@ function apiUrl(callable $getOption = null)
         };
     }
     if ($getOption('woocommerce_seedpay_settings')['environment'] == 'yes') {
-        return $_ENV['seedpayTestModeApiUrl'] ?? 'https://staging.api.seedpay.com';
+        return getenv('seedpayTestModeApiUrl') ? getenv('seedpayTestModeApiUrl') : 'https://staging.api.seedpay.com';
     }
-    return $_ENV['seedpayApiUrl'] ?? 'https://api.seedpay.com';
+    return getenv('seedpayApiUrl') ? getenv('seedpayApiUrl') : 'https://api.seedpay.com';
 }

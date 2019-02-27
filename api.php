@@ -6,14 +6,11 @@ require_once __DIR__ . '/configs.php';
 function submitRequest($resource, $body, $method)
 {
     $request = curl_init();
-    $gateway_settings = get_option('woocommerce_seedpay_settings');
-    $url = apiUrl();
     $headers = array();
     $headers[] = "Content-Type: application/json";
-    $token = $gateway_settings['token'];
-    $headers[] = "x-access-token: " . $token . "";
+    $headers[] = "x-access-token: " . get_option('woocommerce_seedpay_settings')['token'] . "";
     $data = array(
-        CURLOPT_URL => "" . $url . "/" . $resource . "",
+        CURLOPT_URL => "" . apiUrl() . "/" . $resource . "",
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -21,103 +18,49 @@ function submitRequest($resource, $body, $method)
         CURLOPT_FOLLOWLOCATION => false,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_POSTFIELDS => json_encode($body || ''),
         CURLOPT_HTTPHEADER => $headers
     );
+    if ($body) {
+        $data[CURLOPT_POSTFIELDS] = json_encode($body);
+    }
+
     curl_setopt_array($request, $data);
     $response = curl_exec($request);
     $err = curl_error($request);
-
-    if ($err) {
-        curl_close($request);
-        return $err;
-    } else {
-        $statusCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
-        curl_close($request);
-        wp_send_json($response);
-    }
+    $statusCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+    curl_close($request);
+    return array(
+        'response' => $response,
+        'error' => $err,
+        'statusCode' => $statusCode
+    );
 }
 
-function requestPayment($phone, $amount)
+function requestPayment($fromPhoneNumber, $amount, $uniqueTransactionId)
 {
-    $message = array();
-    if ($phone == '') {
-        $message['error'] = __('Please enter a valid 10 digit phone number', 'woocommerce-gateway-seedpay');
-        return $message;
+    if (!$fromPhoneNumber) {
+        return array('error' => __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay'));
     }
-    if ($amount < 0.5) {
-        $message['error'] = __('Amount must be larger than $0.50', 'woocommerce-gateway-seedpay');
-        return $message;
+    if (!$amount || $amount < 0.5) {
+        return array('error' => __('Amount must be larger than $0.50', 'woocommerce-gateway-seedpay'));
     }
     $body = array(
-        'fromPhoneNumber' => $phone,
+        'fromPhoneNumber' => $fromPhoneNumber,
         'amount' => $amount,
-        'uniqueTransactionId' => get_transient('uniqueTransactionId')
+        'uniqueTransactionId' => $uniqueTransactionId
     );
-    $response = submitApiRequest('requestPayment', $body, 'POST');
-    $message['response'] = $response;
-    return $message;
+    return submitRequest('requestPayment', $body, 'POST');
 }
 
-// function ajax_seedpay_check_request()
-// {
-//     $gateway_settings = get_option('woocommerce_seedpay_settings');
-//     if ($gateway_settings['environment'] == 'yes') {
-//         $site_url = 'http://localhost:8080';
-//     } else {
-//         $site_url = 'https://api.seedpay.com';
-//     }
-//     $transaction_id = get_transient(uniqueTransactionId');
-//     $phone = wc_format_phone_number($_REQUEST['phone']);
-//     $cart = WC()->cart;
-//     $message = array();
-//     $message['error'] = '';
-//     $message['post'] = $_REQUEST;
-//     if ($phone != '') {
-//         $request = array('phoneNumber' => $phone);
-//         $message['request'] = $request;
-//         $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $transaction_id))));
-//         $url = 'transactions/' . $getVars . '';
-//         $message['url'] = $site_url . $url;
-//         $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
-//         if (sizeof($response) > 0) {
-//             if ($response[0]->status == 'acceptedAndPaid') {
-//                 set_transient('seedpay_order_status_' . $transaction_id . '', $response[0], 168 * HOUR_IN_SECONDS);
-//                 set_transient('seedpay_order_statusname_' . $transaction_id . '', $response[0]->status, 168 * HOUR_IN_SECONDS);
-//                 set_transient('seedpay_order_phone_' . $transaction_id . '', $phone, 168 * HOUR_IN_SECONDS);
-//             }
-//             if ($response[0]->status == 'errored') {
-//                 $message['error'] = __('There was an error with this transaction.', 'woocommerce-gateway-seedpay');
-//                 seedpay_generate_new_cart_id();
-//             }
-//             if ($response[0]->status == 'rejected') {
-//                 $message['error'] = __('Payment was rejected.', 'woocommerce-gateway-seedpay');
-//                 seedpay_generate_new_cart_id();
-//             }
-//         }
-//         $message['response'] = $response;
-//     } else {
-//         $message['error'] = __('Please enter a valid 10 digit phone number', 'woocommerce-gateway-seedpay');
-//     }
-//     echo json_encode($message);
-//     die();
-// }
+function getTransactionStatus($uniqueTransactionId)
+{
+    if (!$uniqueTransactionId) {
+        return array('error' => __('Amount must be larger than $0.50', 'woocommerce-gateway-seedpay'));
+    }
 
-// add_action('wp_ajax_ajax_seedpay_check_request', 'ajax_seedpay_check_request');
-// add_action('wp_ajax_nopriv_ajax_seedpay_check_request', 'ajax_seedpay_check_request');
-
-// function ajax_checkUserStatus()
-// {
-//     $message = array();
-//     $gateway_settings = get_option('woocommerce_seedpay_settings');
-//     $phone = wc_format_phone_number($_REQUEST['phone']);
-//     $url = 'user/isRegistered/' . $phone . '';
-//     $message['url'] = $url;
-//     $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
-//     $message['response'] = $response;
-//     echo json_encode($message);
-//     die();
-// }
-
-// add_action('wp_ajax_ajax_checkUserStatus', 'ajax_checkUserStatus');
-// add_action('wp_ajax_nopriv_ajax_checkUserStatus', 'ajax_checkUserStatus');
+    $url = 'transactions/' . htmlentities(urlencode(json_encode(array(
+        'uniqueTransactionId' => $uniqueTransactionId
+    )))) . '';
+    $response = submitRequest($url, null, 'GET');
+    return $response;
+}
