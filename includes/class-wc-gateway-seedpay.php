@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
 require_once __DIR__ . '/../configs.php';
 require_once __DIR__ . '/../api.php';
