@@ -19,4 +19,30 @@ class apiTests extends TestCase
             $response
         );
     }
+    /**
+     * @group getTransactionOrErrorFromRequestPaymentResponse
+     */
+    function testReturnsAGenericErrorWhenNoResponseGiven(): void
+    {
+        $response = getTransactionOrErrorFromRequestPaymentResponse(null);
+        $this->assertEquals(
+            array(
+                'error' => $GLOBALS['genericRequestPaymentError']
+            ),
+            $response
+        );
+    }
+    /**
+     * @group getTransactionOrErrorFromRequestPaymentResponse
+     */
+    function testReturnsAGenericErrorWhenNoStatusCodeIsProvided(): void
+    {
+        $response = getTransactionOrErrorFromRequestPaymentResponse(array());
+        $this->assertEquals(
+            array(
+                'error' => $GLOBALS['genericRequestPaymentError']
+            ),
+            $response
+        );
+    }
 }

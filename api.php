@@ -80,7 +80,13 @@ function submitGetUserStatus($phoneNumber)
 $GLOBALS['genericRequestPaymentError'] = 'Error while requesting payment.';
 function getTransactionOrErrorFromRequestPaymentResponse($response)
 {
-    if (!$response || gettype($response) != gettype(array())) {
+    if (
+        !$response ||
+        gettype($response) != gettype(array()) ||
+        !$response['statusCode'] ||
+        $response['statusCode'] != 200 ||
+        $response['statusCode'] != 400
+    ) {
         return array(
             'error' => $GLOBALS['genericRequestPaymentError']
         );
@@ -98,8 +104,5 @@ function getTransactionOrErrorFromRequestPaymentResponse($response)
             wc_add_notice($responseObject['errors'][0] ?? $GLOBALS['genericRequestPaymentError'], 'error');
             return;
         }
-    } else {
-        wc_add_notice($GLOBALS['genericRequestPaymentError'], 'error');
-        return;
     }
 }
