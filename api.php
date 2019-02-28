@@ -80,29 +80,27 @@ function submitGetUserStatus($phoneNumber)
 $GLOBALS['genericRequestPaymentError'] = 'Error while requesting payment.';
 function getTransactionOrErrorFromRequestPaymentResponse($response)
 {
-    if (
-        !$response ||
-        gettype($response) != gettype(array()) ||
-        !$response['statusCode'] ||
-        $response['statusCode'] != 200 ||
-        $response['statusCode'] != 400
-    ) {
+    if (!$response || gettype($response) != gettype(array()) || !$response['statusCode'] || ($response['statusCode'] != 200 && $response['statusCode'] != 400) || !json_decode($response['response'])) {
         return array(
             'error' => $GLOBALS['genericRequestPaymentError']
         );
     }
+    $responseObject = json_decode($response['response']);
     if ($response['statusCode'] == 200) {
-        $responseObject = json_decode($response['response']);
-        if ($responseObject['message']) {
-            wc_add_notice($responseObject['message'], 'notice');
-        } else {
-            $orderObject = $responseObject;
-        }
+        return $responseObject;
     } else if ($response['statusCode'] == 400) {
-        $responseObject = json_decode($response['response']);
-        if ($responseObject['errors'][0] != 'Payment already received') {
-            wc_add_notice($responseObject['errors'][0] ?? $GLOBALS['genericRequestPaymentError'], 'error');
-            return;
+        if ($responseObject->errors[0]) {
+            if ($responseObject->errors[0] == 'Payment already received') {
+                return '';
+            }
+            print_r($responseObject);
+            return array(
+                'error' => $responseObject->errors[0]
+            );
+        } else {
+            return array(
+                'error' => $GLOBALS['genericRequestPaymentError']
+            );
         }
     }
 }
