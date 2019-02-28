@@ -1,7 +1,4 @@
 <?php
-if (!defined('ABSPATH')) {
-    exit;
-}
 require_once __DIR__ . '/configs.php';
 function submitRequest($resource, $body, $method)
 {
@@ -48,7 +45,11 @@ function submitRequestPayment($fromPhoneNumber, $amount, $uniqueTransactionId)
         'amount' => $amount,
         'uniqueTransactionId' => $uniqueTransactionId
     );
-    return submitRequest('requestPayment', $body, 'POST');
+    return submitRequest(
+        'requestPayment',
+        $body,
+        'POST'
+    );
 }
 
 function submitGetTransactionStatus($uniqueTransactionId)
@@ -56,11 +57,49 @@ function submitGetTransactionStatus($uniqueTransactionId)
     if (!$uniqueTransactionId) {
         return array('error' => __('Amount must be larger than $0.50', 'woocommerce-gateway-seedpay'));
     }
-
     $url = 'transactions/' . htmlentities(urlencode(json_encode(array(
         'uniqueTransactionId' => $uniqueTransactionId
     )))) . '';
-    $response = submitRequest($url, null, 'GET');
-    return $response;
+    return submitRequest(
+        $url,
+        null,
+        'GET'
+    );
 }
-
+function submitGetUserStatus($phoneNumber)
+{
+    if (!$phoneNumber) {
+        return array('error' => __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay'));
+    }
+    return submitRequest(
+        'user/isRegistered/' . $phoneNumber . '',
+        null,
+        'GET'
+    );
+}
+$GLOBALS['genericRequestPaymentError'] = 'Error while requesting payment.';
+function getTransactionOrErrorFromRequestPaymentResponse($response)
+{
+    if (!$response || gettype($response) != gettype(array())) {
+        return array(
+            'error' => $GLOBALS['genericRequestPaymentError']
+        );
+    }
+    if ($response['statusCode'] == 200) {
+        $responseObject = json_decode($response['response']);
+        if ($responseObject['message']) {
+            wc_add_notice($responseObject['message'], 'notice');
+        } else {
+            $orderObject = $responseObject;
+        }
+    } else if ($response['statusCode'] == 400) {
+        $responseObject = json_decode($response['response']);
+        if ($responseObject['errors'][0] != 'Payment already received') {
+            wc_add_notice($responseObject['errors'][0] ?? $GLOBALS['genericRequestPaymentError'], 'error');
+            return;
+        }
+    } else {
+        wc_add_notice($GLOBALS['genericRequestPaymentError'], 'error');
+        return;
+    }
+}

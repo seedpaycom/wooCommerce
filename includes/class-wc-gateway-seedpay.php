@@ -20,7 +20,6 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $this->testmode = $this->get_option('environment');
         $this->title = $this->get_option('title');
         $this->instructions = $this->get_option('instructions');
-        $this->url = apiUrl();
         $this->username = $this->get_option('username');
         $this->token = $this->get_option('token');
         $error = '';
@@ -242,13 +241,27 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
+        $uniqueTransactionId = get_transient('uniqueTransactionId');
         $order = wc_get_order($order_id);
         $phone = wc_format_phone_number($_REQUEST['seedpayPhoneNumber']);
-        if ($phone == '') {
-            $error_message = __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay');
-            wc_add_notice($error_message, 'error');
-            return;
+        if (!$uniqueTransactionId) {
+            $uniqueTransactionId = generateNewUniqueTransactionId();
+            $submitRequestPaymentResponse = submitRequestPayment(
+                $phone,
+                WC()->cart->total,
+                get_transient('uniqueTransactionId')
+            );
+            $errorOrTransaction = getTransactionOrErrorFromRequestPaymentResponse($submitRequestPaymentResponse);
+            if ($errorOrTransaction['error']) {
+                wc_add_notice($errorOrTransaction['error'], 'notice');
+            } else {
+                $transactionObject = $errorOrTransaction['transaction'];
+            }
         }
+
+
+        if ($transactionObject)
+
         if ($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid') {
             $error_message = __('Please follow the instructions on your phone to continue.', 'woocommerce-gateway-seedpay');
             wc_add_notice($error_message, 'notice');

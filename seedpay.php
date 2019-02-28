@@ -33,59 +33,28 @@ function requestPayment()
         )
     );
 }
-
 add_action('wp_ajax_requestPayment', 'requestPayment');
 add_action('wp_ajax_nopriv_requestPayment', 'requestPayment');
 
 function checkTransactionStatus()
 {
-    $response = submitGetTransactionStatus(get_transient('uniqueTransactionId'));
-    wp_send_json($response);
-    return;
-    // if (gettype($response) == "array") {
-    //     if ($response[0]->status == 'acceptedAndPaid') {
-    //         set_transient('seedpay_order_status_' . $transaction_id . '', $response[0], 168 * HOUR_IN_SECONDS);
-    //         set_transient('seedpay_order_statusname_' . $transaction_id . '', $response[0]->status, 168 * HOUR_IN_SECONDS);
-    //         set_transient('seedpay_order_phone_' . $transaction_id . '', $phone, 168 * HOUR_IN_SECONDS);
-    //         return;
-    //     }
-    //     if ($response[0]->status == 'errored') {
-    //         generateNewUniqueTransactionId();
-    //         wp_send_json(
-    //             array(
-    //                 'error' => __('There was an error with this transaction.', 'woocommerce-gateway-seedpay')
-    //             )
-    //         );
-    //         return;
-    //     }
-    //     if ($response[0]->status == 'rejected') {
-    //         generateNewUniqueTransactionId();
-    //         wp_send_json(
-    //             array(
-    //                 'error' => __('Payment was rejected.', 'woocommerce-gateway-seedpay')
-    //             )
-    //         );
-    //         return;
-    //     }
-    // }
+    wp_send_json(
+        submitGetTransactionStatus(
+            get_transient('uniqueTransactionId')
+        )
+    );
 }
-
 add_action('wp_ajax_checkTransactionStatus', 'checkTransactionStatus');
 add_action('wp_ajax_nopriv_checkTransactionStatus', 'checkTransactionStatus');
 
 function checkUserStatus()
 {
-    $message = array();
-    $gateway_settings = get_option('woocommerce_seedpay_settings');
-    $phone = wc_format_phone_number($_REQUEST['phone']);
-    $url = 'user/isRegistered/' . $phone . '';
-    $message['url'] = $url;
-    $response = seedpay_request($url, array(), 'GET', $gateway_settings['token']);
-    $message['response'] = $response;
-    wp_send_json($message);
-    die();
+    wp_send_json(
+        submitGetUserStatus(
+            wc_format_phone_number($_REQUEST['phone'])
+        )
+    );
 }
-
 add_action('wp_ajax_checkUserStatus', 'checkUserStatus');
 add_action('wp_ajax_nopriv_checkUserStatus', 'checkUserStatus');
 
