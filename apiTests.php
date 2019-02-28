@@ -14,7 +14,7 @@ class apiTests extends TestCase
         $response = getTransactionOrErrorFromRequestPaymentResponse('wtf just happened');
         $this->assertEquals(
             array(
-                'error' => $GLOBALS['genericRequestPaymentError']
+                'errors' => array($GLOBALS['genericRequestPaymentError'])
             ),
             $response
         );
@@ -27,7 +27,7 @@ class apiTests extends TestCase
         $response = getTransactionOrErrorFromRequestPaymentResponse(null);
         $this->assertEquals(
             array(
-                'error' => $GLOBALS['genericRequestPaymentError']
+                'errors' => array($GLOBALS['genericRequestPaymentError'])
             ),
             $response
         );
@@ -40,7 +40,7 @@ class apiTests extends TestCase
         $response = getTransactionOrErrorFromRequestPaymentResponse(array());
         $this->assertEquals(
             array(
-                'error' => $GLOBALS['genericRequestPaymentError']
+                'errors' => array($GLOBALS['genericRequestPaymentError'])
             ),
             $response
         );
@@ -58,8 +58,28 @@ class apiTests extends TestCase
         $response = getTransactionOrErrorFromRequestPaymentResponse($options);
         $this->assertEquals(
             array(
-                'error' => $GLOBALS['genericRequestPaymentError']
+                'errors' => array($GLOBALS['genericRequestPaymentError'])
             ),
+            $response
+        );
+    }
+    /**
+     * @group getTransactionOrErrorFromRequestPaymentResponse
+     */
+    function testReturnsAcceptedAndPaidStatusWhenPaymentAlreadyReceived(): void
+    {
+        $options = array(
+            'statusCode' => 400,
+            'response' => '{
+                "errors": [
+                    "Payment already received"
+                ]
+            }',
+            'errors' => ''
+        );
+        $response = getTransactionOrErrorFromRequestPaymentResponse($options);
+        $this->assertEquals(
+            json_decode($options['response']),
             $response
         );
     }
@@ -97,7 +117,7 @@ class apiTests extends TestCase
         );
         $response = getTransactionOrErrorFromRequestPaymentResponse($options);
         $this->assertEquals(
-            array('error' => json_decode($options['response'])->errors[0]),
+            json_decode($options['response']),
             $response
         );
     }

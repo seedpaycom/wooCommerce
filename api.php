@@ -82,25 +82,14 @@ function getTransactionOrErrorFromRequestPaymentResponse($response)
 {
     if (!$response || gettype($response) != gettype(array()) || !$response['statusCode'] || ($response['statusCode'] != 200 && $response['statusCode'] != 400) || !json_decode($response['response'])) {
         return array(
-            'error' => $GLOBALS['genericRequestPaymentError']
+            'errors' => array($GLOBALS['genericRequestPaymentError'])
         );
     }
     $responseObject = json_decode($response['response']);
-    if ($response['statusCode'] == 200) {
-        return $responseObject;
-    } else if ($response['statusCode'] == 400) {
-        if ($responseObject->errors[0]) {
-            if ($responseObject->errors[0] == 'Payment already received') {
-                return '';
-            }
-            print_r($responseObject);
-            return array(
-                'error' => $responseObject->errors[0]
-            );
-        } else {
-            return array(
-                'error' => $GLOBALS['genericRequestPaymentError']
-            );
-        }
+    if ($response['statusCode'] == 400 && !$responseObject->errors[0]) {
+        return array(
+            'errors' => array($GLOBALS['genericRequestPaymentError'])
+        );
     }
+    return $responseObject;
 }
