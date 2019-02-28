@@ -80,7 +80,7 @@ function submitGetUserStatus($phoneNumber)
 $GLOBALS['genericRequestPaymentError'] = 'Error while requesting payment.';
 function getTransactionOrErrorFromRequestPaymentResponse($response)
 {
-    if (!$response || gettype($response) != gettype(array()) || !$response['statusCode'] || ($response['statusCode'] != 200 && $response['statusCode'] != 400) || !json_decode($response['response'])) {
+    if (!$response || gettype($response) != gettype(array()) || !$response['statusCode'] || ($response['statusCode'] != 200 && $response['statusCode'] != 400) || !json_decode($response['response']) || $response['error']) {
         return array(
             'errors' => array($GLOBALS['genericRequestPaymentError'])
         );

@@ -53,7 +53,25 @@ class apiTests extends TestCase
         $options = array(
             'statusCode' => 200,
             'response' => 'oh noz',
-            'errors' => ''
+            'error' => ''
+        );
+        $response = getTransactionOrErrorFromRequestPaymentResponse($options);
+        $this->assertEquals(
+            array(
+                'errors' => array($GLOBALS['genericRequestPaymentError'])
+            ),
+            $response
+        );
+    }
+    /**
+     * @group getTransactionOrErrorFromRequestPaymentResponse
+     */
+    function testReturnsAGenericErrorWhenGivenAnError(): void
+    {
+        $options = array(
+            'statusCode' => 200,
+            'response' => '{}',
+            'error' => 'i amz errorz'
         );
         $response = getTransactionOrErrorFromRequestPaymentResponse($options);
         $this->assertEquals(
@@ -75,7 +93,7 @@ class apiTests extends TestCase
                     "Payment already received"
                 ]
             }',
-            'errors' => ''
+            'error' => ''
         );
         $response = getTransactionOrErrorFromRequestPaymentResponse($options);
         $this->assertEquals(
@@ -93,7 +111,7 @@ class apiTests extends TestCase
             'response' => '{
                 "message": "Invitation sent to 5038661114"
             }',
-            'errors' => ''
+            'error' => ''
         );
         $response = getTransactionOrErrorFromRequestPaymentResponse($options);
         $this->assertEquals(
@@ -113,7 +131,7 @@ class apiTests extends TestCase
                     "wtf mate?"
                 ]
             }',
-            'errors' => ''
+            'error' => ''
         );
         $response = getTransactionOrErrorFromRequestPaymentResponse($options);
         $this->assertEquals(
