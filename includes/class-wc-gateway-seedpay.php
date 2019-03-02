@@ -96,7 +96,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <input type="hidden" name="seedpay_checkout_validated" class="seedpay_checkout_validated" value="0">
             <input type="hidden" name="seedpay_payment_registered" class="seedpay_payment_registered" value="0">
 		    <input type="hidden" name="seedpay_payment_success" class="seedpay_payment_success" value="">
-            <input type="hidden" name="seedpay_payment_cart_hash" class="seedpay_payment_cart_hash" value="' . $transaction_id . '">
+            <input type="hidden" name="uniqueTransactionIdHiddenForm" class="uniqueTransactionIdHiddenForm" value="' . $transaction_id . '">
             
         </div>                
         <div class="clear"></div>
@@ -267,7 +267,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             wc_add_notice($error_message, 'notice');
             return;
         }
-        $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $_REQUEST['seedpay_payment_cart_hash']))));
+        $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $_REQUEST['uniqueTransactionIdHiddenForm']))));
         $posturl = 'transactions/' . $getVars . '';
         $response = seedpay_request($posturl, array(), 'GET', $this->token);
         if (!$response[0]->status == 'acceptedAndPaid') {
