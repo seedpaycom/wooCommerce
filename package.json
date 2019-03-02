@@ -2,25 +2,25 @@
     "name": "woocommerce",
     "version": "1.0.0",
     "description": "Seedpay wooCommerce payment plugin",
-    "main": "",
+    "scripts": {
+        "test": " ./node_modules/.bin/mocha --colors --require=babel-core/register --require ./assets/js/test/beforeAllTests --slow=10 ./assets/**/*Tests.js ./assets/js/test/** --exit --forbidOnly"
+    },
     "dependencies": {},
     "devDependencies": {
-        "watch": "^1.0.2"
-    },
-    "watch": {
-        "test": "*/*.php"
-    },
-    "scripts": {
-        "test": "watch 'clear && clear && vendor/bin/phpunit' ."
+        "babel-core": "^6.26.3",
+        "babel-preset-es2015": "^6.24.1",
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "chai-http": "^4.2.1",
+        "chai-string": "^1.5.0",
+        "mocha": "^6.0.2",
+        "wallaby-webpack": "^3.9.13",
+        "webpack": "4.29.6"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/seedpaycom/wooCommerce.git"
     },
     "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/seedpaycom/wooCommerce/issues"
-    },
-    "homepage": "https://github.com/seedpaycom/wooCommerce#readme"
+    "license": "ISC"
 }

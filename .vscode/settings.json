@@ -27,5 +27,6 @@
     },
     "files.exclude": {
         "*.cache": true,
-    }
+    },
+    "git.ignoreLimitWarning": true
 }
