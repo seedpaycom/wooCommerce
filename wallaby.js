@@ -23,9 +23,7 @@ module.exports = function(wallaby) {
         },
         postprocessor: webpackPostprocessor,
         setup: function() {
-            // window.expect = chai.expect
-            // chai.use(chai.should)
-            // window.should = chai.should
+            chai.use(chai.should)
             window.__moduleBundler.loadTests()
         },
     }

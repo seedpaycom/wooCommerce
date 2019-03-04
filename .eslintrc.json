@@ -15,7 +15,8 @@
         "process": true,
         "__dirname": true,
         "Buffer": true,
-        "seedpay_params": true
+        "seedpay_params": true,
+        "chai": true
     },
     "rules": {
         "no-unused-vars": ["off"],
