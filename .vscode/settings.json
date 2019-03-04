@@ -14,8 +14,9 @@
     "explorer.confirmDragAndDrop": false,
     "cSpell.words": [
         "phpunit",
+        "polyfill",
         "seedpay",
-        "seedpay's",
+        "seedpay's"
     ],
     "search.exclude": {
         "vendor": true,
