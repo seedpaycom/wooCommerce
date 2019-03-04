@@ -3,12 +3,14 @@
     "version": "1.0.0",
     "description": "Seedpay wooCommerce payment plugin",
     "scripts": {
-        "test": " ./node_modules/.bin/mocha --colors --require=babel-core/register --require ./assets/js/test/beforeAllTests --slow=10 ./assets/**/*Tests.js ./assets/js/test/** --exit --forbidOnly"
+        "test": " ./node_modules/.bin/mocha --colors --require=babel-core/register --require ./assets/js/test/beforeAllTests --slow=10 ./assets/**/*Tests.js ./assets/js/test/** --exit --forbidOnly",
+        "buildprod": "./node_modules/.bin/webpack --config=webpack.js --mode='production'",
+        "builddev": "./node_modules/.bin/webpack --config=webpack.js --mode='development'"
     },
     "dependencies": {},
     "devDependencies": {
-        "babel-cli": "^6.26.0",
-        "babel-core": "^6.26.3",
+        "@babel/cli": "^7.2.3",
+        "@babel/core": "^7.3.4",
         "babel-loader": "^8.0.5",
         "babel-preset-env": "^1.7.0",
         "chai": "^4.2.0",
@@ -18,7 +20,8 @@
         "jquery": "^3.3.1",
         "mocha": "^6.0.2",
         "wallaby-webpack": "^3.9.13",
-        "webpack": "4.29.6"
+        "webpack": "4.29.6",
+        "webpack-cli": "^3.2.3"
     },
     "repository": {
         "type": "git",
