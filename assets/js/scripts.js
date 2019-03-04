@@ -1,16 +1,10 @@
+require('./prototypes/string')
 jQuery(function($) {
     var shouldContinueCheckingStuffs = true
     var startedCheckingUserStatus = false
     var startedCheckingTransactionStatus = false
     var uniqueTransactionId = $('.uniqueTransactionIdHiddenForm').val()
 
-    function tryParseJson(str) {
-        try {
-            return JSON.parse(str)
-        } catch (e) {
-            return false
-        }
-    }
 
     function checkTransactionStatus(callBack) {
         var phone = $('#seedpayPhoneNumber').val()
@@ -37,7 +31,7 @@ jQuery(function($) {
             if (typeof response == typeof '') {
                 return showErrorAndCallCallback(response, callBack)
             }
-            let responseObject = tryParseJson(response.response)
+            let responseObject = response.response.tryParseJson()
             if (response.error || responseObject.errors || !(responseObject || responseObject[0] || responseObject[0].status)) {
                 return showErrorAndCallCallback(responseObject.errors[0] || response.error || 'Error while checking your transaction\'s status', callBack)
             }
@@ -96,7 +90,9 @@ jQuery(function($) {
             'action': 'requestPayment',
             phone,
         }, function(response) {
-            var responseResponseObject = tryParseJson((response || {}).response)
+            var responseResponseObject = (response || {
+                'response': '',
+            }).response.tryParseJson()
             if (response && responseResponseObject && responseResponseObject.message) {
                 $('.seedpay-messages').html(responseResponseObject.message)
                 if (responseResponseObject.message.toLowerCase().indexOf('inv') >= 0) {
