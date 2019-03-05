@@ -13,7 +13,7 @@ stages:
 jobs:
   include:
   - stage: Compile test and deploy
-    script: npm run buildprod && npm test
+    script: npm install && npm run buildprod && npm test
     # deploy:
     #   provider: script
     #   skip_cleanup: true
