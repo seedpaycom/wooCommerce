@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import '@babel/polyfill'
 let ajax = require('./ajax').default
 describe('submitRequest', function() {
     var options
