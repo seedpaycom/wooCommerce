@@ -9,11 +9,9 @@ env:
   global:
   - NODE_ENV=travis
 stages:
-- Compile and test js
+- Compile and test
 - Test php
 jobs:
   include:
-  - stage: Compile and test js
-    script: npm install && npm run buildprod && npm test
-  - stage: Test php 
-    script: composer install && composer test
+  - stage: Compile and test
+    script: npm install && npm run buildprod && npm test && composer install && composer test
