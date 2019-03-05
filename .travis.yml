@@ -14,9 +14,3 @@ jobs:
   include:
   - stage: Compile test and deploy
     script: npm install && npm run buildprod && npm test
-    # deploy:
-    #   provider: script
-    #   skip_cleanup: true
-    #   script: ./dev/deploy.sh
-    #   on:
-    #     branch: master
