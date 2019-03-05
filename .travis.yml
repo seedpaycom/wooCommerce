@@ -1,0 +1,22 @@
+notifications:
+  slack: seedpay:DLzoxbzAuv42TZ4EnoK91xJk
+cache:
+  directories:
+  - node_modules
+  - vendor
+fail_fast: true
+env:
+  global:
+  - NODE_ENV=travis
+stages:
+- Compile test and deploy
+jobs:
+  include:
+  - stage: Compile test and deploy
+    script: npm run buildprod && npm test
+    # deploy:
+    #   provider: script
+    #   skip_cleanup: true
+    #   script: ./dev/deploy.sh
+    #   on:
+    #     branch: master
