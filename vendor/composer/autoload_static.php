@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a
+class ComposerStaticInit56063c31381d172f67a26f938de830b7
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -62,8 +62,8 @@ class ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'Yosymfony\\ResourceWatcher\\' => 
         array (
@@ -710,10 +710,10 @@ class ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitebbaab8b565252e6c3b7bc9639b1992a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit56063c31381d172f67a26f938de830b7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit56063c31381d172f67a26f938de830b7::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit56063c31381d172f67a26f938de830b7::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit56063c31381d172f67a26f938de830b7::$classMap;
 
         }, null, ClassLoader::class);
     }
