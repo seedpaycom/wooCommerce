@@ -17,4 +17,4 @@ stages:
 jobs:
   include:
   - stage: Compile and test
-    script: composer --version && npm install && npm run buildprod && npm test && composer install && composer test
+    script: npm install && npm run buildprod && npm test && composer install && composer test

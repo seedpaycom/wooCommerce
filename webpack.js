@@ -4,6 +4,5 @@ module.exports = {
     output: {
         path: path.join(__dirname, './assets/js'),
         filename: 'scripts.min.js',
-        libraryTarget: 'commonjs',
     },
 }

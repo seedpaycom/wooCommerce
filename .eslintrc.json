@@ -15,7 +15,7 @@
         "process": true,
         "__dirname": true,
         "Buffer": true,
-        "seedpay_params": true,
+        "ajaxUrl": true,
         "chai": true
     },
     "rules": {

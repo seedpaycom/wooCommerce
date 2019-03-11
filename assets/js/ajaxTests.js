@@ -10,8 +10,8 @@ describe('submitRequest', function() {
             jQuery: {
                 post: (url, actionAndParameters, callback) => {
                     options.postUrl = url
-                    options.postAction = actionAndParameters.action //?
-                    options.postParameters = actionAndParameters.parameters //?
+                    options.postAction = actionAndParameters.action
+                    options.postParameters = actionAndParameters.parameters
                     callback()
                 },
             },
@@ -25,10 +25,12 @@ describe('submitRequest', function() {
         let parameters = {
             phone: 'asdf',
         }
-        let as = Object.assign({}, parameters) //?
+        let as = Object.assign({
+            'action': 'POST',
+        }, parameters)
         options.callback = (response) => {
-            options.postUrl //?
+            options.postUrl
         }
-        ajax.submitRequest(options) //?
+        ajax.submitRequest(options)
     })
 })

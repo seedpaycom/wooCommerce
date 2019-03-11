@@ -180,22 +180,15 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         if (!is_cart() && !is_checkout() && !isset($_GET['pay_for_order'])) {
             return;
         }
-        if ('no' === $this->enabled) {
+        if ($this->enabled === 'no') {
             return;
         }
-        if ('yes' === $this->testmode) {
-            $min = '';
-        } else {
-            $min = '.min';
-        }
-        wp_register_script('woocommerce_seedpay', WC_SEEDPAY_PLUGIN_ASSETS . 'js/scripts' . $min . '.js', array(
+        wp_register_script('woocommerce_seedpay', WC_SEEDPAY_PLUGIN_ASSETS . 'js/scripts.min.js', array(
             'jquery'
         ));
-        wp_localize_script('woocommerce_seedpay', 'seedpay_params', array(
-            'ajax_url' => admin_url('admin-ajax.php')
-        ));
+        wp_localize_script('woocommerce_seedpay', 'ajaxUrl', admin_url('admin-ajax.php'));
         wp_enqueue_script('woocommerce_seedpay');
-        wp_enqueue_style('woocommerce_seedpay_styles', WC_SEEDPAY_PLUGIN_ASSETS . 'css/style' . $min . '.css');
+        wp_enqueue_style('woocommerce_seedpay_styles', WC_SEEDPAY_PLUGIN_ASSETS . 'css/style.min.css');
     }
 
     public function checkTransactionStatus()
@@ -262,11 +255,11 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
 
         if ($transactionObject)
 
-        if ($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid') {
-            $error_message = __('Please follow the instructions on your phone to continue.', 'woocommerce-gateway-seedpay');
-            wc_add_notice($error_message, 'notice');
-            return;
-        }
+            if ($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid') {
+                $error_message = __('Please follow the instructions on your phone to continue.', 'woocommerce-gateway-seedpay');
+                wc_add_notice($error_message, 'notice');
+                return;
+            }
         $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $_REQUEST['uniqueTransactionIdHiddenForm']))));
         $posturl = 'transactions/' . $getVars . '';
         $response = seedpay_request($posturl, array(), 'GET', $this->token);

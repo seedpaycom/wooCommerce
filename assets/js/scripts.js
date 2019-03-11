@@ -1,18 +1,14 @@
-require('./prototypes/string')
 jQuery(function($) {
+    require('./prototypes/string')
+    let ajax = require('./ajax')
     var shouldContinueCheckingStuffs = true
     var startedCheckingUserStatus = false
     var startedCheckingTransactionStatus = false
     var uniqueTransactionId = $('.uniqueTransactionIdHiddenForm').val()
 
-
     function checkTransactionStatus(callBack) {
         var phone = $('#seedpayPhoneNumber').val()
-        if (!uniqueTransactionId && callBack) {
-            callBack()
-            return
-        }
-        jQuery.post(seedpay_params.ajax_url, {
+        jQuery.post(ajaxUrl, {
             'action': 'checkTransactionStatus',
             'transaction_id': uniqueTransactionId,
             phone,
@@ -86,7 +82,7 @@ jQuery(function($) {
         $('.seedpay-number-form').fadeIn()
         $('.seedpay-messages').empty('')
         var phone = $('#seedpayPhoneNumber').val()
-        jQuery.post(seedpay_params.ajax_url, {
+        jQuery.post(ajaxUrl, {
             'action': 'requestPayment',
             phone,
         }, function(response) {
@@ -116,7 +112,7 @@ jQuery(function($) {
 
     function checkUserStatus() {
         var phone = $('#seedpayPhoneNumber').val()
-        jQuery.post(seedpay_params.ajax_url, {
+        jQuery.post(ajaxUrl, {
             'action': 'checkUserStatus',
             phone,
         }, function(responseString) {
