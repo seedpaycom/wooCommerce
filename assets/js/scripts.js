@@ -7,12 +7,7 @@ jQuery(function($) {
     var uniqueTransactionId = $('.uniqueTransactionIdHiddenForm').val()
 
     function checkTransactionStatus(callBack) {
-        var phone = $('#seedpayPhoneNumber').val()
-        jQuery.post(ajaxUrl, {
-            'action': 'checkTransactionStatus',
-            'transaction_id': uniqueTransactionId,
-            phone,
-        }, function(response) {
+        ajax.checkTransactionStatus(function(response) {
             var showErrorAndCallCallback = function(errorMessage, callBack) {
                 $('.seedpay-messages').html(errorMessage)
                 $('.seedpay-number-form-pending').hide()
@@ -81,11 +76,7 @@ jQuery(function($) {
         $('.seedpay-number-form-pending').hide()
         $('.seedpay-number-form').fadeIn()
         $('.seedpay-messages').empty('')
-        var phone = $('#seedpayPhoneNumber').val()
-        jQuery.post(ajaxUrl, {
-            'action': 'requestPayment',
-            phone,
-        }, function(response) {
+        ajax.submitPaymentRequest($('#seedpayPhoneNumber').val(), function(response) {
             var responseResponseObject = (response || {
                 'response': '',
             }).response.tryParseJson()

@@ -21,6 +21,19 @@ describe('submitRequest', function() {
             },
         }
     })
+
+    it('errors when no url is provided', function() {
+        let parameters = {
+            phone: 'asdf',
+        }
+        let as = Object.assign({
+            'action': 'POST',
+        }, parameters)
+        options.callback = (response) => {
+            options.postUrl
+        }
+        ajax.submitRequest(options)
+    })
     it('jquery posts to the url', function() {
         let parameters = {
             phone: 'asdf',
