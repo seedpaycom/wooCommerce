@@ -1,13 +1,12 @@
 require('./prototypes/string')
+let appConfig = require('./appConfig').default
 let ajax = {
-    submitRequest: function({
+    submitRequest: async function({
         parameters,
         callback,
         jQuery = require('jquery'),
-        ajaxUrl = ajax.ajaxUrl,
     }) {
-        // if()
-        jQuery.post(ajaxUrl, parameters, function(response) {
+        jQuery.post(appConfig.ajaxUrl, parameters, (response) => {
             if (callback) callback(response)
         })
     },
@@ -15,7 +14,7 @@ let ajax = {
     checkTransactionStatus: function(callBack) {
         ajax.submitRequest({
             'action': 'checkTransactionStatus',
-        }, function(response) {
+        }, (response) => {
             if (callBack) callBack(response)
         })
     },
@@ -23,7 +22,7 @@ let ajax = {
         ajax.submitRequest({
             'action': 'submitPaymentRequest',
             phoneNumber,
-        }, function(response) {
+        }, (response) => {
             if (callBack) callBack(response)
         })
     },

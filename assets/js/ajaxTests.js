@@ -1,6 +1,7 @@
 import '@babel/polyfill'
+import appConfig from './appConfig'
 let ajax = require('./ajax').default
-describe('submitRequest', function() {
+describe('submitRequest', () => {
     var options
     beforeEach(() => {
         options = {
@@ -22,19 +23,18 @@ describe('submitRequest', function() {
         }
     })
 
-    it('errors when no url is provided', function() {
-        let parameters = {
-            phone: 'asdf',
-        }
-        let as = Object.assign({
-            'action': 'POST',
-        }, parameters)
-        options.callback = (response) => {
-            options.postUrl
+    it('uses the appConfig`s ajax url', () => {
+        let url = 'yay me!'
+        appConfig.ajaxUrl = url
+        options.callback = () => {
+            options.postUrl.should.equal(url)
         }
         ajax.submitRequest(options)
     })
-    it('jquery posts to the url', function() {
+    it('awaits', async () => {
+        let response = await ajax.submitRequest()
+    })
+    it('posts to the url', () => {
         let parameters = {
             phone: 'asdf',
         }

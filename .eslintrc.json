@@ -19,6 +19,7 @@
         "chai": true
     },
     "rules": {
+        "prefer-arrow-callback": "error",
         "no-unused-vars": ["off"],
         "indent": [
             "error",

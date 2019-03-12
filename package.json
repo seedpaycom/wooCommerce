@@ -5,7 +5,10 @@
     "scripts": {
         "test": " ./node_modules/.bin/mocha --colors --require=@babel/register --require=@babel/polyfill --require ./assets/js/test/beforeAllTests --slow=10 ./assets/js/**/**/*Tests.js --exit --forbidOnly",
         "buildprod": "./node_modules/.bin/webpack --config=webpack.js --mode='production'",
-        "builddev": "./node_modules/.bin/webpack --config=webpack.js --mode='development'"
+        "builddev": "./node_modules/.bin/webpack --config=webpack.js --mode='development'",
+        "beautify": "js-beautify --config .jsbeautifyrc -f `find ./assets -type f -name '*.js' -not -name '*.min.js'` -r -n",
+        "linter": "eslint --config .eslintrc.json --fix `find ./assets -type f -name '*.js' -not -name '*.min.js'`",
+        "format": "npm run beautify && npm run linter"
     },
     "dependencies": {},
     "devDependencies": {

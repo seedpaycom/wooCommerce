@@ -1,7 +1,7 @@
-describe('submitRequest', function() {
+describe('submitRequest', () => {
     beforeEach(() => {})
 
-    it('lets you set global settings at runtime', function() {
+    it('lets you set global settings at runtime', () => {
         let appConfig = require('./appConfig')
         appConfig.someSetting = 'yay!  i amz a settingzor'
         let appConfig2 = require('./appConfig')

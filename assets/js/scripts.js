@@ -1,4 +1,4 @@
-jQuery(function($) {
+jQuery(($) => {
     require('./prototypes/string')
     let ajax = require('./ajax')
     var shouldContinueCheckingStuffs = true
@@ -7,7 +7,7 @@ jQuery(function($) {
     var uniqueTransactionId = $('.uniqueTransactionIdHiddenForm').val()
 
     function checkTransactionStatus(callBack) {
-        ajax.checkTransactionStatus(function(response) {
+        ajax.checkTransactionStatus((response) => {
             var showErrorAndCallCallback = function(errorMessage, callBack) {
                 $('.seedpay-messages').html(errorMessage)
                 $('.seedpay-number-form-pending').hide()
@@ -49,7 +49,7 @@ jQuery(function($) {
 
     function startTransactionCheckingLoop() {
         if (shouldContinueCheckingStuffs) {
-            setTimeout(function() {
+            setTimeout(() => {
                 checkTransactionStatus()
                 startTransactionCheckingLoop()
             }, 5000)
@@ -58,7 +58,7 @@ jQuery(function($) {
 
     function startUserCheckingLoop() {
         if (shouldContinueCheckingStuffs) {
-            setTimeout(function() {
+            setTimeout(() => {
                 checkUserStatus()
                 startUserCheckingLoop()
             }, 5000)
@@ -76,7 +76,7 @@ jQuery(function($) {
         $('.seedpay-number-form-pending').hide()
         $('.seedpay-number-form').fadeIn()
         $('.seedpay-messages').empty('')
-        ajax.submitPaymentRequest($('#seedpayPhoneNumber').val(), function(response) {
+        ajax.submitPaymentRequest($('#seedpayPhoneNumber').val(), (response) => {
             var responseResponseObject = (response || {
                 'response': '',
             }).response.tryParseJson()
@@ -106,7 +106,7 @@ jQuery(function($) {
         jQuery.post(ajaxUrl, {
             'action': 'checkUserStatus',
             phone,
-        }, function(responseString) {
+        }, (responseString) => {
             var response = $.parseJSON(responseString).response
             if (response.isRegistered == true) {
                 $('.seedpay_payment_registered').val(1)
@@ -123,7 +123,7 @@ jQuery(function($) {
         })
     }
 
-    $('form.woocommerce-checkout').on('checkout_place_order', function() {
+    $('form.woocommerce-checkout').on('checkout_place_order', () => {
         if ($('#payment_method_seedpay').is(':checked')) {
             shouldContinueCheckingStuffs = true
             $('#seedpayPhoneNumber').val($('#seedpayPhoneNumber').val().replace(/\D/g, ''))
@@ -131,7 +131,7 @@ jQuery(function($) {
             return false
         }
     })
-    $(document).on('click', '.seedpay-cancel-payment-submit', function() {
+    $(document).on('click', '.seedpay-cancel-payment-submit', () => {
         resetForm()
         return false
     })

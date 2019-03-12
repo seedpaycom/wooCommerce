@@ -1,4 +1,4 @@
-console.log('beforingAllTests')
+console.log('beforingAllTests') //eslint-disable-line
 let chai = require('chai')
 let should = chai.should
 chai.use(should)
