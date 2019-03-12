@@ -1,7 +1,7 @@
 let appConfig = require('./appConfig').default
 let ajax = {
-    submitRequest: async function(parameters, jQuery = require('jquery')) {
-        return await jQuery.post(appConfig.ajaxUrl, parameters)
+    submitRequest: async function(parameters) {
+        return await ajax.jQuery.post(appConfig.ajaxUrl, parameters)
     },
 
     checkTransactionStatus: async () => {
@@ -11,9 +11,10 @@ let ajax = {
     },
     requestPayment: async (phoneNumber) => {
         return await ajax.submitRequest({
-            'action': 'submitPaymentRequest',
+            'action': 'requestPayment',
             phoneNumber,
         })
     },
+    jQuery: require('jquery'),
 }
 export default ajax

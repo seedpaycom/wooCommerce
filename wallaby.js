@@ -18,6 +18,7 @@ module.exports = function(wallaby) {
             pattern: `${prefix}*Tests.js`,
             load: false,
         }, ],
+        testFramework: 'mocha',
         compilers: {
             '**/*.js': wallaby.compilers.babel(),
         },
