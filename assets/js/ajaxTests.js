@@ -5,46 +5,42 @@ describe('submitRequest', () => {
     var options
     beforeEach(() => {
         options = {
-            url: 'urlz',
-            action: 'actionz',
-            parameters: 'parameterz',
+            parameters: {
+                'parameterz': 'o-boy',
+            },
             jQuery: {
-                post: (url, actionAndParameters, callback) => {
+                post: (url, parameters) => {
                     options.postUrl = url
-                    options.postAction = actionAndParameters.action
-                    options.postParameters = actionAndParameters.parameters
+                    options.postAction = parameters.action
+                    options.postParameters = parameters
                     return 'fake response'
                 },
             },
-            callback: (response) => {
-                options.calledCallback = true
-                options.response = response
-            },
         }
+        options.oldAppConfig = Object.assign({}, appConfig)
+    })
+    afterEach(() => {
+        appConfig.ajaxUrl = options.oldAppConfig.ajaxUrl
     })
 
-    it('uses the appConfig`s ajax url', asYNC() => {
+    it('uses the appConfig`s ajax url', async () => {
         let url = 'yay me!'
         appConfig.ajaxUrl = url
-        options.callback = () => {
-            options.postUrl.should.equal(url)
-        }
-        await ajax.submitRequest(options)
+
+        await ajax.submitRequest(options.parameters, options.jQuery)
+
+        options.postUrl.should.equal(url)
     })
-    it('awaits', async () => {
-        let response = await ajax.submitRequest({})
-        response //?
-    })
-    it('posts to the url', () => {
+    it('posts with url and parameters', async () => {
+        let url = 'yay me 2!'
+        appConfig.ajaxUrl = url
         let parameters = {
-            phone: 'asdf',
+            moobzor: 'wowozor',
         }
-        let as = Object.assign({
-            'action': 'POST',
-        }, parameters)
-        options.callback = (response) => {
-            options.postUrl
-        }
-        ajax.submitRequest(options)
+
+        await ajax.submitRequest(parameters, options.jQuery)
+
+        options.postUrl.should.equal(url)
+        options.postParameters.should.equal(parameters)
     })
 })

@@ -1,12 +1,7 @@
-require('./prototypes/string')
 let appConfig = require('./appConfig').default
 let ajax = {
-    submitRequest: async function({
-        parameters,
-        jQuery = require('jquery'),
-    }) {
+    submitRequest: async function(parameters, jQuery = require('jquery')) {
         return await jQuery.post(appConfig.ajaxUrl, parameters)
-
     },
 
     checkTransactionStatus: async () => {
@@ -14,7 +9,7 @@ let ajax = {
             'action': 'checkTransactionStatus',
         })
     },
-    submitPaymentRequest: async (phoneNumber) => {
+    requestPayment: async (phoneNumber) => {
         return await ajax.submitRequest({
             'action': 'submitPaymentRequest',
             phoneNumber,
