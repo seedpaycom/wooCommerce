@@ -3,27 +3,21 @@ let appConfig = require('./appConfig').default
 let ajax = {
     submitRequest: async function({
         parameters,
-        callback,
         jQuery = require('jquery'),
     }) {
-        jQuery.post(appConfig.ajaxUrl, parameters, (response) => {
-            if (callback) callback(response)
-        })
+        return await jQuery.post(appConfig.ajaxUrl, parameters)
+
     },
 
-    checkTransactionStatus: function(callBack) {
-        ajax.submitRequest({
+    checkTransactionStatus: async () => {
+        return await ajax.submitRequest({
             'action': 'checkTransactionStatus',
-        }, (response) => {
-            if (callBack) callBack(response)
         })
     },
-    submitPaymentRequest: function(phoneNumber, callBack) {
-        ajax.submitRequest({
+    submitPaymentRequest: async (phoneNumber) => {
+        return await ajax.submitRequest({
             'action': 'submitPaymentRequest',
             phoneNumber,
-        }, (response) => {
-            if (callBack) callBack(response)
         })
     },
 }

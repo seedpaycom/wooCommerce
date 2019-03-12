@@ -13,7 +13,7 @@ describe('submitRequest', () => {
                     options.postUrl = url
                     options.postAction = actionAndParameters.action
                     options.postParameters = actionAndParameters.parameters
-                    callback()
+                    return 'fake response'
                 },
             },
             callback: (response) => {
@@ -23,16 +23,17 @@ describe('submitRequest', () => {
         }
     })
 
-    it('uses the appConfig`s ajax url', () => {
+    it('uses the appConfig`s ajax url', asYNC() => {
         let url = 'yay me!'
         appConfig.ajaxUrl = url
         options.callback = () => {
             options.postUrl.should.equal(url)
         }
-        ajax.submitRequest(options)
+        await ajax.submitRequest(options)
     })
     it('awaits', async () => {
-        let response = await ajax.submitRequest()
+        let response = await ajax.submitRequest({})
+        response //?
     })
     it('posts to the url', () => {
         let parameters = {
