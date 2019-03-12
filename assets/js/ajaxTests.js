@@ -5,6 +5,7 @@ describe('ajax', () => {
     var options
     beforeEach(() => {
         options = {
+            response: 'og response',
             parameters: {
                 'parameterz': 'og parameters',
             },
@@ -13,7 +14,7 @@ describe('ajax', () => {
                     options.postUrl = url
                     options.postAction = parameters.action
                     options.postParameters = parameters
-                    return 'fake response'
+                    return options.response
                 },
             },
             url: 'og url',
@@ -31,7 +32,7 @@ describe('ajax', () => {
             let url = 'yay me!'
             appConfig.ajaxUrl = url
 
-            await ajax.submitRequest(options.parameters, options.jQuery)
+            await ajax.submitRequest(options.parameters)
 
             options.postUrl.should.equal(url)
         })
@@ -40,9 +41,14 @@ describe('ajax', () => {
                 moobzor: 'wowozor',
             }
 
-            await ajax.submitRequest(parameters, options.jQuery)
+            await ajax.submitRequest(parameters)
 
             options.postParameters.should.equal(parameters)
+        })
+        it('returns the jquery post response', async () => {
+            let response = await ajax.submitRequest(options.parameters)
+
+            response.should.equal(options.response)
         })
     })
     describe('checkTransactionStatus', () => {
@@ -51,12 +57,24 @@ describe('ajax', () => {
 
             options.postAction.should.equal('checkTransactionStatus')
         })
+        it('returns the jquery post response', async () => {
+            let response = await ajax.checkTransactionStatus()
+
+            response.should.equal(options.response)
+        })
     })
     describe('requestPayment', () => {
-        it('posts with correct action', async () => {
-            await ajax.requestPayment()
+        it('posts with correct action and phone number', async () => {
+            let phoneNumber = 'omgeezus'
+            await ajax.requestPayment(phoneNumber)
 
             options.postAction.should.equal('requestPayment')
+            options.postParameters.phoneNumber.should.equal(phoneNumber)
+        })
+        it('returns the jquery post response', async () => {
+            let response = await ajax.requestPayment()
+
+            response.should.equal(options.response)
         })
     })
 })
