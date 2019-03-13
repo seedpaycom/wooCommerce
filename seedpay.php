@@ -62,7 +62,6 @@ function generateNewUniqueTransactionId()
 {
     $transactionId = wp_rand();
     set_transient('uniqueTransactionId', $transactionId, 168 * HOUR_IN_SECONDS);
-    //setcookie('seedpay_cart_id', $transaction_id, time() + (60 * 20), COOKIEPATH, COOKIE_DOMAIN);
     return $transactionId;
 }
 
