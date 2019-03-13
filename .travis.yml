@@ -3,8 +3,7 @@ php:
   - '7.3'
 notifications:
   slack: seedpay:DLzoxbzAuv42TZ4EnoK91xJk
-  template: 
-    - "Build <%{build_url}|#%{build_number}> (github: <%{compare_url}|%{commit_message}>) of %{repository_slug}@%{branch} by %{author} %{result} in %{duration}"
+  template: "Build <%{build_url}|#%{build_number}> (github: <%{compare_url}|%{commit_message}>) of %{repository_slug}@%{branch} by %{author} %{result} in %{duration}"
 cache:
   directories:
   - node_modules
