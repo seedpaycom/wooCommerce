@@ -26,7 +26,7 @@ function submitRequest($resource, $body, $method)
     $statusCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
     curl_close($request);
     return array(
-        'response' => $response,
+        'response' => json_decode($response),
         'error' => $err,
         'statusCode' => $statusCode
     );
