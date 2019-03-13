@@ -1,6 +1,6 @@
 let appConfig = require('./appConfig').default
 let ajax = {
-    submitRequest: async function(parameters) {
+    submitRequest: async (parameters) => {
         return await ajax.jQuery.post(appConfig.ajaxUrl, parameters)
     },
 

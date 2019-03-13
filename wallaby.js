@@ -1,7 +1,7 @@
 const wallabyWebpack = require('wallaby-webpack')
 const webpackPostprocessor = wallabyWebpack({})
 let prefix = 'assets/**/'
-module.exports = function(wallaby) {
+module.exports = (wallaby) => {
     return {
         files: [
             // loading chai globally

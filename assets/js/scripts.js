@@ -33,18 +33,12 @@ jQuery(($) => {
         $('.seedpay-messages').empty('')
 
         let response = await ajax.requestPayment($('#seedpayPhoneNumber').val())
+        ajax.processAjaxResponse({
+            response,
+            handleError: errorHandler,
+            messageHandler,
+        })
 
-        if (response && (response.error || response.response.errors[0])) {
-            handleError(response.error || response.response.errors[0])
-            return false
-        }
-        if (response && response.response && response.response.message) {
-            $('.seedpay-messages').html(response.response.message)
-            if (response.response.message.toLowerCase().indexOf('inv') >= 0) {
-                checkUserStatus()
-                return false
-            }
-        }
         uniqueTransactionId = response.request.uniqueTransactionId
         $('.uniqueTransactionIdHiddenForm').val(uniqueTransactionId)
         $('.seedpay-messages').html(response.response.message)
@@ -53,7 +47,14 @@ jQuery(($) => {
         checkTransactionStatus()
         return false
     }
-    let handleError = function(errorMessage) {
+    let messageHandler = (message) => {
+        $('.seedpay-messages').html(message)
+        if (message.toLowerCase().indexOf('inv') >= 0) {
+            checkUserStatus()
+            return false
+        }
+    }
+    let errorHandler = (errorMessage) => {
         $('.seedpay-messages').html(errorMessage)
         $('.seedpay-number-form-pending').hide()
         $('.seedpay-number-form').fadeIn()
@@ -67,11 +68,11 @@ jQuery(($) => {
         let response = await ajax.checkTransactionStatus()
 
         if (typeof response == typeof '') {
-            return handleError(response)
+            return errorHandler(response)
         }
         let responseObject = response.response.tryParseJson()
         if (response.error || responseObject.errors || !(responseObject || responseObject[0] || responseObject[0].status)) {
-            return handleError(responseObject.errors[0] || response.error || 'Error while checking your transaction\'s status')
+            return errorHandler(responseObject.errors[0] || response.error || 'Error while checking your transaction\'s status')
         }
         var status = responseObject[0].status
         if (status == 'acceptedAndPaid') {
