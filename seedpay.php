@@ -27,7 +27,7 @@ function requestPayment()
 {
     wp_send_json(
         submitRequestPayment(
-            wc_format_phone_number($_REQUEST['phone']),
+            wc_format_phone_number($_REQUEST['phoneNumber']),
             WC()->cart->total,
             get_transient('uniqueTransactionId')
         )
@@ -51,7 +51,7 @@ function checkUserStatus()
 {
     wp_send_json(
         submitGetUserStatus(
-            wc_format_phone_number($_REQUEST['phone'])
+            wc_format_phone_number($_REQUEST['phoneNumber'])
         )
     );
 }
@@ -62,6 +62,7 @@ function generateNewUniqueTransactionId()
 {
     $transactionId = wp_rand();
     set_transient('uniqueTransactionId', $transactionId, 168 * HOUR_IN_SECONDS);
+    //setcookie('seedpay_cart_id', $transaction_id, time() + (60 * 20), COOKIEPATH, COOKIE_DOMAIN);
     return $transactionId;
 }
 

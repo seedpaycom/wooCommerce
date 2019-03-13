@@ -86,7 +86,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <label>' . __('Phone Number', 'woocommerce-gateway-seedpay') . ' 
                 <span class="required">*</span>
             </label>
-            <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="text" value="' . $phone . '">
+            <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="tel" autocomplete="tel" value="' . $phone . '">
         </div>
         <div class="seedpay-number-form-pending" style="display:none">
             <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone</p>
@@ -194,7 +194,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     public function checkTransactionStatus()
     {
         $transaction_id = get_transient('uniqueTransactionId');
-        $phone = wc_format_phone_number($_REQUEST['phone']);
+        $phone = wc_format_phone_number($_REQUEST['phoneNumber']);
         $message = array();
         $message['error'] = '';
         $message['post'] = $_REQUEST;
