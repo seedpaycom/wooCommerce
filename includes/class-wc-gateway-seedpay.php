@@ -1,15 +1,15 @@
 <?php
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
+require_once __DIR__ . '/../configs.php';
+require_once __DIR__ . '/../api.php';
 class WC_Gateway_Seedpay extends WC_Payment_Gateway
 {
     public function __construct()
     {
-        if (!isset($_COOKIE['seedpay_cart_id'])) {
-            $transaction_id = seedpay_generate_new_cart_id();
-        } else {
-            $transaction_id = $_COOKIE['seedpay_cart_id'];
+        if (get_transient('uniqueTransactionId') == null) {
+            generateNewUniqueTransactionId();
         }
         $this->id = 'seedpay';
         $this->icon = apply_filters('woocommerce_cheque_icon', '');
@@ -20,12 +20,8 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $this->testmode = $this->get_option('environment');
         $this->title = $this->get_option('title');
         $this->instructions = $this->get_option('instructions');
-        $this->url = 'https://api.seedpay.com';
         $this->username = $this->get_option('username');
         $this->token = $this->get_option('token');
-        if ($this->testmode === 'yes') {
-            $this->url = 'https://staging.api.seedpay.com';
-        }
         $error = '';
         if (get_option('_seedpay_login_error') == 1) {
             $error = '<p style="color:red;font-weight:bold">API Disconnected, please enter your username and API token.</p>';
@@ -69,7 +65,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     }
     public function payment_fields()
     {
-        $transaction_id = $_COOKIE['seedpay_cart_id'];
+        $transaction_id = get_transient('uniqueTransactionId');
         if ($this->instructions) {
             if ($this->testmode == 'yes') {
                 echo '<p style="color:red;font-weight:bold">' . __('TEST MODE!!!!!111!!1one!!', 'woocommerce-gateway-seedpay') . '</p>';
@@ -90,7 +86,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <label>' . __('Phone Number', 'woocommerce-gateway-seedpay') . ' 
                 <span class="required">*</span>
             </label>
-            <input id="seedpay_payment_phone" name="seedpay_payment_phone" type="text" autocomplete="off" value="' . $phone . '">
+            <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="tel" autocomplete="tel" value="' . $phone . '">
         </div>
         <div class="seedpay-number-form-pending" style="display:none">
             <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone</p>
@@ -100,7 +96,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <input type="hidden" name="seedpay_checkout_validated" class="seedpay_checkout_validated" value="0">
             <input type="hidden" name="seedpay_payment_registered" class="seedpay_payment_registered" value="0">
 		    <input type="hidden" name="seedpay_payment_success" class="seedpay_payment_success" value="">
-            <input type="hidden" name="seedpay_payment_cart_hash" class="seedpay_payment_cart_hash" value="' . $transaction_id . '">
+            <input type="hidden" name="uniqueTransactionIdHiddenForm" class="uniqueTransactionIdHiddenForm" value="' . $transaction_id . '">
             
         </div>                
         <div class="clear"></div>
@@ -133,7 +129,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
                 'title' => __('Instructions', 'woocommerce-gateway-seedpay'),
                 'type' => 'textarea',
                 'description' => __('Instructions which will be added on the checkout page.', 'woocommerce-gateway-seedpay'),
-                'default' => '',
+                'default' => 'Enter your 10 digit phone number to request a payment on your phone. If you do not have a Seedpay account, we will send an invite link to your phone.',
                 'desc_tip' => true
             ),
             'environment' => array(
@@ -158,8 +154,12 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     }
     public function thankyou_page()
     {
-        if ($this->instructions)
+        if ($this->instructions) {
+            $order = wc_get_order($order_id);
+            echo json_encode($order);
+            echo wpautop(wptexturize($order));
             echo wpautop(wptexturize($this->instructions));
+        }
     }
     /**
      * Add content to the WC emails.
@@ -180,24 +180,52 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         if (!is_cart() && !is_checkout() && !isset($_GET['pay_for_order'])) {
             return;
         }
-        if ('no' === $this->enabled) {
+        if ($this->enabled === 'no') {
             return;
         }
-        if ('yes' === $this->testmode) {
-            $min = '';
-        } else {
-
-            $min = '.min';
-        }
-        wp_register_script('woocommerce_seedpay', WC_SEEDPAY_PLUGIN_ASSETS . 'js/scripts' . $min . '.js', array(
+        wp_register_script('woocommerce_seedpay', WC_SEEDPAY_PLUGIN_ASSETS . 'js/scripts.min.js', array(
             'jquery'
         ));
-        wp_localize_script('woocommerce_seedpay', 'seedpay_params', array(
-            'ajax_url' => admin_url('admin-ajax.php')
-        ));
+        wp_localize_script('woocommerce_seedpay', 'ajaxUrl', admin_url('admin-ajax.php'));
         wp_enqueue_script('woocommerce_seedpay');
-        wp_enqueue_style('woocommerce_seedpay_styles', WC_SEEDPAY_PLUGIN_ASSETS . 'css/style' . $min . '.css');
+        wp_enqueue_style('woocommerce_seedpay_styles', WC_SEEDPAY_PLUGIN_ASSETS . 'css/style.min.css');
     }
+
+    public function checkTransactionStatus()
+    {
+        $transaction_id = get_transient('uniqueTransactionId');
+        $phone = wc_format_phone_number($_REQUEST['phoneNumber']);
+        $message = array();
+        $message['error'] = '';
+        $message['post'] = $_REQUEST;
+        if ($phone == '') {
+            $message['error'] = __('Please enter a valid 10 digit phone number', 'woocommerce-gateway-seedpay');
+            echo json_encode($message);
+            return;
+        }
+        $request = array('phoneNumber' => $phone);
+        $message['request'] = $request;
+        $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $transaction_id))));
+        $response = submitRequest('transactions/' . $getVars . '', array(), 'GET');
+        if (gettype($response) == 'array') {
+            if ($response[0]->status == 'acceptedAndPaid') {
+                set_transient('seedpay_order_status_' . $transaction_id . '', $response[0], 168 * HOUR_IN_SECONDS);
+                set_transient('seedpay_order_statusname_' . $transaction_id . '', $response[0]->status, 168 * HOUR_IN_SECONDS);
+                set_transient('seedpay_order_phone_' . $transaction_id . '', $phone, 168 * HOUR_IN_SECONDS);
+            }
+            if ($response[0]->status == 'errored') {
+                $message['error'] = __('There was an error with this transaction.', 'woocommerce-gateway-seedpay');
+                generateNewUniqueTransactionId();
+            }
+            if ($response[0]->status == 'rejected') {
+                $message['error'] = __('Payment was rejected.', 'woocommerce-gateway-seedpay');
+                generateNewUniqueTransactionId();
+            }
+        }
+        $message['response'] = $response;
+        echo json_encode($message);
+    }
+
     /**
      * Process the payment and return the result
      *
@@ -206,39 +234,52 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
+        $uniqueTransactionId = get_transient('uniqueTransactionId');
         $order = wc_get_order($order_id);
-        $phone = wc_format_phone_number($_REQUEST['seedpay_payment_phone']);
-        if ($phone == '') {
-            $error_message = __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay');
-            wc_add_notice($error_message, 'error');
-            return;
+        $phone = wc_format_phone_number($_REQUEST['seedpayPhoneNumber']);
+        if (!$uniqueTransactionId) {
+            $uniqueTransactionId = generateNewUniqueTransactionId();
+            $submitRequestPaymentResponse = submitRequestPayment(
+                $phone,
+                WC()->cart->total,
+                get_transient('uniqueTransactionId')
+            );
+            $errorOrTransaction = getTransactionOrErrorFromRequestPaymentResponse($submitRequestPaymentResponse);
+            if ($errorOrTransaction['error']) {
+                wc_add_notice($errorOrTransaction['error'], 'notice');
+            } else {
+                $transactionObject = $errorOrTransaction['transaction'];
+            }
         }
-        if ($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid') {
-            $error_message = __('Please follow the instructions on your phone to continue.', 'woocommerce-gateway-seedpay');
-            wc_add_notice($error_message, 'error');
-            return;
-        }
-        $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $_REQUEST['seedpay_payment_cart_hash']))));
+
+
+        if ($transactionObject)
+
+            if ($_REQUEST['seedpay_payment_success'] != 'acceptedAndPaid') {
+                $error_message = __('Please follow the instructions on your phone to continue.', 'woocommerce-gateway-seedpay');
+                wc_add_notice($error_message, 'notice');
+                return;
+            }
+        $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $_REQUEST['uniqueTransactionIdHiddenForm']))));
         $posturl = 'transactions/' . $getVars . '';
         $response = seedpay_request($posturl, array(), 'GET', $this->token);
-        if ($response[0]->status == 'acceptedAndPaid' && $error_message == '') {
-            $order->payment_complete();
-            $order->update_status('wc-processing');
-            $order->add_order_note(__('Seedpay Payment Completed: #' . $response[0]->_id . '', 'woocommerce-gateway-seedpay'));
-            $order->add_order_note(__('Seedpay Payment Phone: ' . $_REQUEST['seedpay_payment_phone'] . '', 'woocommerce-gateway-seedpay'));
-            $order->update_meta_data('_seedpay_payment', $response[0]);
-            $order->update_meta_data('_seedpay_payment_phone', $_REQUEST['seedpay_payment_phone']);
-            $order->reduce_order_stock();
-            setcookie('seedpay_cart_id', '', time() - (15 * 60), COOKIEPATH, COOKIE_DOMAIN);
-            WC()->cart->empty_cart();
-            return array(
-                'result' => 'success',
-                'redirect' => $this->get_return_url($order)
-            );
-        } else {
+        if (!$response[0]->status == 'acceptedAndPaid') {
             $error_message = __('You must first accept payment before continuing.', 'woocommerce-gateway-seedpay');
             wc_add_notice(__('Payment error: ', 'woocommerce-gateway-seedpay') . $error_message, 'error');
         }
+        $order->payment_complete();
+        $order->update_status('wc-processing');
+        $order->add_order_note(__('Seedpay Payment Completed: #' . $response[0]->_id . '', 'woocommerce-gateway-seedpay'));
+        $order->add_order_note(__('Seedpay Payment Phone: ' . $_REQUEST['seedpayPhoneNumber'] . '', 'woocommerce-gateway-seedpay'));
+        $order->update_meta_data('_seedpay_payment', $response[0]);
+        $order->update_meta_data('_seedpayPhoneNumber', $_REQUEST['seedpayPhoneNumber']);
+        $order->reduce_order_stock();
+        set_transient('uniqueTransactionId', null);
+        WC()->cart->empty_cart();
+        return array(
+            'result' => 'success',
+            'redirect' => $this->get_return_url($order)
+        );
     }
 }
 function add_WC_Gateway_Seedpay($methods)

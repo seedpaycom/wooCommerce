@@ -1,0 +1,11 @@
+<phpunit 
+bootstrap="vendor/autoload.php"
+colors="true"
+verbose="true">
+  <testsuites>
+    <testsuite name="wooCommerce">
+      <file>configsTests.php</file>
+      <file>apiTests.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>

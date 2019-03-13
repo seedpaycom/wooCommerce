@@ -1,0 +1,37 @@
+{
+    "name": "woocommerce",
+    "version": "1.0.0",
+    "description": "Seedpay wooCommerce payment plugin",
+    "scripts": {
+        "test": " ./node_modules/.bin/mocha --colors --require=@babel/register --require=@babel/polyfill --require ./assets/js/test/beforeAllTests --slow=10 ./assets/js/**/**/*Tests.js --exit --forbidOnly",
+        "buildprod": "./node_modules/.bin/webpack --config=webpack.js --mode='production'",
+        "builddev": "./node_modules/.bin/webpack --config=webpack.js --mode='development'",
+        "beautify": "js-beautify --config .jsbeautifyrc -f `find ./assets -type f -name '*.js' -not -name '*.min.js'` -r -n",
+        "linter": "eslint --config .eslintrc.json --fix `find ./assets -type f -name '*.js' -not -name '*.min.js'`",
+        "format": "npm run beautify && npm run linter"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@babel/cli": "^7.2.3",
+        "@babel/core": "^7.3.4",
+        "@babel/polyfill": "^7.2.5",
+        "@babel/preset-env": "^7.3.4",
+        "@babel/register": "^7.0.0",
+        "babel-loader": "^8.0.5",
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "chai-http": "^4.2.1",
+        "chai-string": "^1.5.0",
+        "jquery": "^3.3.1",
+        "mocha": "^6.0.2",
+        "wallaby-webpack": "^3.9.14",
+        "webpack": "4.29.6",
+        "webpack-cli": "^3.2.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/seedpaycom/wooCommerce.git"
+    },
+    "author": "",
+    "license": "ISC"
+}

@@ -1,5 +1,10 @@
+language: php
+php:
+  - '7.3'
 notifications:
   slack: seedpay:DLzoxbzAuv42TZ4EnoK91xJk
+  template: 
+    - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit_message}>) of %{repository_slug}@%{branch} by %{author} %{result} in %{duration}"
 cache:
   directories:
   - node_modules
@@ -9,8 +14,9 @@ env:
   global:
   - NODE_ENV=travis
 stages:
-- Compile test and deploy
+- Compile and test
+- Test php
 jobs:
   include:
-  - stage: Compile test and deploy
-    script: npm install && npm run buildprod && npm test
+  - stage: Compile and test
+    script: npm install && npm run buildprod && npm test && composer install && composer test
