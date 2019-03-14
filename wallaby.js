@@ -25,6 +25,7 @@ module.exports = (wallaby) => {
         postprocessor: webpackPostprocessor,
         setup: function() {
             chai.use(chai.should)
+            window.should = chai.should()
             window.__moduleBundler.loadTests()
         },
     }

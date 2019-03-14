@@ -1,5 +1,6 @@
 jQuery(($) => {
     require('./prototypes/string')
+    let processTransaction = require('./processTransaction')
     let ajax = require('./ajax').default
     let appConfig = require('./appConfig').default
     appConfig.ajaxUrl = ajaxUrl
@@ -27,13 +28,14 @@ jQuery(($) => {
 
     let submitPaymentRequest = async () => {
         resetPage()
-        let transaction = ajax.processAjaxResponse({
+        let maybeTransaction = ajax.processAjaxResponse({
             response: await ajax.requestPayment($('#seedpayPhoneNumber').val()),
             errorHandler,
             messageHandler,
             successHandler: transactionSuccessHandler,
             genericError: ajax.generateGenericErrorMessage('requesting payment'),
         })
+        processTransaction(maybeTransaction)
     }
     let transactionSuccessHandler = (transaction) => {
         $('.seedpayPhoneNumberPrompt').fadeOut()
