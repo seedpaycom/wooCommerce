@@ -178,12 +178,12 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         if ($this->enabled === 'no') {
             return;
         }
-        wp_register_script('woocommerce_seedpay', WC_SEEDPAY_PLUGIN_ASSETS . 'js/index.min.js', array(
+        wp_register_script('woocommerce_seedpay', WC_SEEDPAY_PLUGIN_ASSETS . 'js/app.min.js', array(
             'jquery'
         ));
         wp_localize_script('woocommerce_seedpay', 'ajaxUrl', admin_url('admin-ajax.php'));
         wp_enqueue_script('woocommerce_seedpay');
-        wp_enqueue_style('woocommerce_seedpay_styles', WC_SEEDPAY_PLUGIN_ASSETS . 'css/index.min.css');
+        wp_enqueue_style('woocommerce_seedpay_styles', WC_SEEDPAY_PLUGIN_ASSETS . 'css/app.min.css');
     }
 
     public function checkTransactionStatus()

@@ -1,4 +1,4 @@
-import scripts from '.'
+import app from './app'
 describe('scripts', () => {
     var options
     beforeEach(() => {
@@ -6,7 +6,7 @@ describe('scripts', () => {
     })
     describe('submitPaymentRequest', () => {
         it('does stuffs', () => {
-            scripts //?
+            app //?
             global.submitPaymentRequest //?
             window.submitPaymentRequest //?
         })
