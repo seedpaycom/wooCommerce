@@ -1,6 +1,7 @@
 console.log('beforingAllTests') //eslint-disable-line
 let chai = require('chai')
 let should = chai.should
+global.should = should()
 chai.use(should)
 // chai.use(require('chai-as-promised'))
 // chai.use(require('chai-http'))

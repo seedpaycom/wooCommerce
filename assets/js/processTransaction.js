@@ -1,8 +1,5 @@
-import transactionStatus from './transactionStatus'
-
 export default ({
     maybeTransaction,
-    pendingHandler,
     transactionStatusHandlers,
 }) => {
     if (!maybeTransaction) return null

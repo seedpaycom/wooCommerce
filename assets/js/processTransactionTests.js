@@ -17,8 +17,9 @@ describe('transaction', () => {
     describe('processTransaction', () => {
         it('returns null when not given a transaction', () => {
             delete options.maybeTransaction
-
-            should.not.exist(processTransaction(options))
+            let transaction = processTransaction(options)
+            transaction //?
+            should.not.exist(transaction)
         })
         it('can deal with transaction.transaction she·nan·i·gans', () => {
             options.maybeTransaction = {
