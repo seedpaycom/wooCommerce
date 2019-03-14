@@ -1,6 +1,7 @@
 import ajax from './ajax'
 import appConfig from './appConfig'
 import transactionStatus from './transactionStatus'
+import processTransaction from './processTransaction'
 
 appConfig.ajaxUrl = ajaxUrl
 var shouldContinueCheckingStuffs = true
@@ -11,7 +12,6 @@ let submitPaymentRequest = async ({
     errorHandler,
     messageHandler,
     requestSuccessHandler,
-    receivedTransaction,
     transactionAccepted,
 }) => {
     let maybeTransaction = ajax.processAjaxResponse({
@@ -24,7 +24,7 @@ let submitPaymentRequest = async ({
     })
     if (!maybeTransaction) return null
     let transaction = maybeTransaction.transaction || maybeTransaction
-    receivedTransaction({
+    processTransaction({
         transaction,
         errorHandler,
         transactionAccepted,
@@ -154,7 +154,6 @@ jQuery(($) => {
                 errorHandler,
                 messageHandler,
                 submitPaymentRequestSuccessHandler,
-                receivedTransaction,
                 transactionAccepted,
                 pendingTransactionHandler,
             })
