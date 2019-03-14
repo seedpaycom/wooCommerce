@@ -7,8 +7,6 @@ export default ({
 }) => {
     if (!maybeTransaction) return null
     let transaction = maybeTransaction.transaction || maybeTransaction
-    transaction //?
-    // if (transactionStatusHandlers[transaction.status]) 
-    transactionStatusHandlers[transaction.status](transaction)
+    if (transactionStatusHandlers[transaction.status]) transactionStatusHandlers[transaction.status](transaction)
     return transaction
 }

@@ -7,6 +7,12 @@ describe('transaction', () => {
         options = {
             maybeTransaction: {},
         }
+        options.transactionStatusHandlers = {
+            errored: (transaction) => {
+                options.calledErrored = true
+                options.erroredTransaction = transaction
+            },
+        }
     })
     describe('processTransaction', () => {
         it('returns null when not given a transaction', () => {
@@ -15,14 +21,9 @@ describe('transaction', () => {
             should.not.exist(processTransaction(options))
         })
         it('can deal with transaction.transaction she·nan·i·gans', () => {
-            options.maybeTransaction = {}
-            options.maybeTransaction.transaction = {
-                status: transactionStatus.errored,
-            }
-            options.transactionStatusHandlers = {
-                errored: (transaction) => {
-                    options.calledErrored = true
-                    options.erroredTransaction = transaction
+            options.maybeTransaction = {
+                transaction: {
+                    status: transactionStatus.errored,
                 },
             }
 
@@ -34,16 +35,17 @@ describe('transaction', () => {
         })
         it('calls the appropriate handler with the expected transaction', () => {
             options.maybeTransaction.status = transactionStatus.errored
-            options.transactionStatusHandlers = {
-                errored: (transaction) => {
-                    options.calledErrored = true
-                    options.erroredTransaction = transaction
-                },
-            }
             let response = processTransaction(options)
 
             options.calledErrored.should.be.true
             options.erroredTransaction.should.equal(options.maybeTransaction)
+            response.should.equal(options.maybeTransaction)
+        })
+        it('does not esplode if the handler does not exist', () => {
+            options.maybeTransaction.status = transactionStatus.accepting
+
+            let response = processTransaction(options)
+
             response.should.equal(options.maybeTransaction)
         })
     })
