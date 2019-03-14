@@ -1,5 +1,4 @@
 import processTransaction from './processTransaction'
-import chai from 'chai'
 import transactionStatus from './transactionStatus'
 describe('transaction', () => {
     var options

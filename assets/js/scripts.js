@@ -1,14 +1,14 @@
+import ajax from './ajax'
+import appConfig from './appConfig'
+import processTransaction from './processTransaction'
+import transactionStatus from './transactionStatus'
+
+appConfig.ajaxUrl = ajaxUrl
+var shouldContinueCheckingStuffs = true
+var startedCheckingUserStatus = false
+var startedCheckingTransactionStatus = false
+
 jQuery(($) => {
-    require('./prototypes/string')
-    let processTransaction = require('./processTransaction')
-    let ajax = require('./ajax').default
-    let appConfig = require('./appConfig').default
-    appConfig.ajaxUrl = ajaxUrl
-
-    var shouldContinueCheckingStuffs = true
-    var startedCheckingUserStatus = false
-    var startedCheckingTransactionStatus = false
-
     $('form.woocommerce-checkout').on('checkout_place_order', async () => {
         if ($('#payment_method_seedpay').is(':checked')) {
             shouldContinueCheckingStuffs = true
@@ -35,7 +35,12 @@ jQuery(($) => {
             successHandler: transactionSuccessHandler,
             genericError: ajax.generateGenericErrorMessage('requesting payment'),
         })
-        processTransaction(maybeTransaction)
+        processTransaction({
+            maybeTransaction,
+            transactionStatusHandlers: {
+                transactionStatus,
+            },
+        })
     }
     let transactionSuccessHandler = (transaction) => {
         $('.seedpayPhoneNumberPrompt').fadeOut()
