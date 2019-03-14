@@ -73,29 +73,24 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             echo wpautop(wp_kses_post($this->instructions));
         }
         echo '
-    <div class="seedpay-messages"></div>
+    <div class="seedpayErrorMessage"></div>
     <fieldset id="wc-' . esc_attr($this->id) . '-cc-form" class="wc-credit-card-form wc-payment-form" style="background:transparent;">';
         do_action('woocommerce_credit_card_form_start', $this->id);
-        $check_payment = get_transient('seedpay_order_status_' . $transaction_id . '');
         $phone = get_transient('seedpay_order_phone_' . $transaction_id . '');
-        if ($check_payment != "") {
-            echo '<input type="hidden" class="seedpay_recheck_payment" value="1" data-id="' . $transaction_id . '" data-pn="' . $phone . '">';
-        }
         echo '
-        <div class="form-row form-row-wide seedpay-number-form" >
+        <div class="form-row form-row-wide seedpayPhoneNumberPrompt" >
             <label>' . __('Phone Number', 'woocommerce-gateway-seedpay') . ' 
                 <span class="required">*</span>
             </label>
             <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="tel" autocomplete="tel" value="' . $phone . '">
         </div>
-        <div class="seedpay-number-form-pending" style="display:none">
+        <div class="seedpayRequestingPaymentIndicator" style="display:none">
             <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone</p>
-            <a href="#" class="seedpay-cancel-payment-submit seed-pay-button">' . __('Cancel Request', 'woocommerce-gateway-seedpay') . '</a>
+            <a href="#" class="seedpayCancelButton seed-pay-button">' . __('Cancel Request', 'woocommerce-gateway-seedpay') . '</a>
         </div>        
-        <div class="seedpay-number-form-success" style="display:none">
+        <div class="seedpaySuccessMessage" style="display:none">
             <input type="hidden" name="seedpay_checkout_validated" class="seedpay_checkout_validated" value="0">
-            <input type="hidden" name="seedpay_payment_registered" class="seedpay_payment_registered" value="0">
-		    <input type="hidden" name="seedpay_payment_success" class="seedpay_payment_success" value="">
+            <input type="hidden" name="seedpay_payment_success" class="seedpay_payment_success" value="">
             <input type="hidden" name="uniqueTransactionIdHiddenForm" class="uniqueTransactionIdHiddenForm" value="' . $transaction_id . '">
             
         </div>                

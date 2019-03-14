@@ -29,18 +29,17 @@ let ajax = {
             if (errorHandler) errorHandler(genericError || ajax.generateGenericErrorMessage('sending your request'))
             return
         }
+        let responseDotResponse = typeof response.response == typeof {} ? response.response : null
         if (response.error || (response.response && response.response.errors && response.response.errors[0])) {
             if (errorHandler) errorHandler(response.error || response.response.errors[0])
-            return
+            return responseDotResponse
         }
         if (response.response && response.response.message) {
             if (messageHandler) messageHandler(response.response.message)
-            return
+            return responseDotResponse
         }
-        if (response.response) {
-            if (successHandler) successHandler(response.response)
-            return
-        }
+        if (responseDotResponse && successHandler) successHandler(response.response)
+        return responseDotResponse
     },
     checkUserStatus: async (phoneNumber) => {
         return await ajax.submitRequest({

@@ -164,5 +164,21 @@ describe('ajax', () => {
 
             options.handlerCalled.should.be.true
         })
+        it('returns the responseDotResponse', () => {
+            let response = {
+                response: {},
+            }
+
+            let responseDotResponse = ajax.processAjaxResponse({
+                response,
+                successHandler: (successResponse) => {
+                    options.handlerCalled = true
+                    successResponse.should.equal(response.response)
+                },
+            })
+
+            options.handlerCalled.should.be.true
+            responseDotResponse.should.equal(response.response)
+        })
     })
 })

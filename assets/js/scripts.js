@@ -7,7 +7,6 @@ jQuery(($) => {
     var shouldContinueCheckingStuffs = true
     var startedCheckingUserStatus = false
     var startedCheckingTransactionStatus = false
-    var uniqueTransactionId = $('.uniqueTransactionIdHiddenForm').val()
 
     $('form.woocommerce-checkout').on('checkout_place_order', async () => {
         if ($('#payment_method_seedpay').is(':checked')) {
@@ -15,49 +14,43 @@ jQuery(($) => {
             let cleanedUpPhoneNumber = $('#seedpayPhoneNumber').val().replace(/\D/g, '')
             if (cleanedUpPhoneNumber[0] == '1') cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(1)
             $('#seedpayPhoneNumber').val(cleanedUpPhoneNumber)
-            return await submitPaymentRequest()
+            submitPaymentRequest()
+            return false
         }
         return true
     })
-    $(document).on('click', '.seedpay-cancel-payment-submit', () => {
-        resetForm()
+    $(document).on('click', '.seedpayCancelButton', () => {
+        resetPage()
+        shouldContinueCheckingStuffs = false
         return false
     })
-    if ($('.seedpay_recheck_payment').val() == 1) {
-        checkTransactionStatus()
-    }
 
     let submitPaymentRequest = async () => {
-        $('.seedpay-number-form-pending').hide()
-        $('.seedpay-number-form').fadeIn()
-        $('.seedpay-messages').empty('')
-
-        let response = await ajax.requestPayment($('#seedpayPhoneNumber').val())
-        ajax.processAjaxResponse({
-            response,
-            handleError: errorHandler,
+        resetPage()
+        let transaction = ajax.processAjaxResponse({
+            response: await ajax.requestPayment($('#seedpayPhoneNumber').val()),
+            errorHandler,
             messageHandler,
+            successHandler: transactionSuccessHandler,
+            genericError: ajax.generateGenericErrorMessage('requesting payment'),
         })
-
-        uniqueTransactionId = response.request.uniqueTransactionId
-        $('.uniqueTransactionIdHiddenForm').val(uniqueTransactionId)
-        $('.seedpay-messages').html(response.response.message)
-        $('.seedpay-number-form').fadeOut()
-        $('.seedpay-number-form-pending').fadeIn()
+    }
+    let transactionSuccessHandler = (transaction) => {
+        $('.seedpayPhoneNumberPrompt').fadeOut()
+        $('.seedpayRequestingPaymentIndicator').fadeIn()
         checkTransactionStatus()
-        return false
     }
     let messageHandler = (message) => {
-        $('.seedpay-messages').html(message)
+        $('.seedpayErrorMessage').html(message)
         if (message.toLowerCase().indexOf('inv') >= 0) {
             checkUserStatus()
             return false
         }
     }
     let errorHandler = (errorMessage) => {
-        $('.seedpay-messages').html(errorMessage)
-        $('.seedpay-number-form-pending').hide()
-        $('.seedpay-number-form').fadeIn()
+        $('.seedpayErrorMessage').html(errorMessage)
+        $('.seedpayRequestingPaymentIndicator').hide()
+        $('.seedpayPhoneNumberPrompt').fadeIn()
         shouldContinueCheckingStuffs = false
         let errorWrappedError = {
             error: errorMessage,
@@ -76,14 +69,14 @@ jQuery(($) => {
         }
         var status = responseObject[0].status
         if (status == 'acceptedAndPaid') {
-            $('.seedpay-number-form').hide()
-            $('.seedpay-number-form-pending').hide()
-            $('.seedpay-number-form-success').fadeIn()
+            $('.seedpayPhoneNumberPrompt').hide()
+            $('.seedpayRequestingPaymentIndicator').hide()
+            $('.seedpaySuccessMessage').fadeIn()
             $('.woocommerce-checkout').submit()
             shouldContinueCheckingStuffs = false
         } else if (status == 'rejected' || status == 'errored') {
-            $('.seedpay-number-form-pending').hide()
-            $('.seedpay-number-form').fadeIn()
+            $('.seedpayRequestingPaymentIndicator').hide()
+            $('.seedpayPhoneNumberPrompt').fadeIn()
             shouldContinueCheckingStuffs = false
         } else {
             if (!startedCheckingTransactionStatus) {
@@ -113,11 +106,11 @@ jQuery(($) => {
         } else startedCheckingUserStatus = false
     }
 
-    function resetForm() {
-        $('.seedpay-number-form-pending').hide()
-        $('.seedpay-number-form').fadeIn()
-        $('.seedpay-messages').empty('')
-        shouldContinueCheckingStuffs = false
+    function resetPage() {
+        $('.seedpayRequestingPaymentIndicator').hide()
+        $('.seedpayPhoneNumberPrompt').fadeIn()
+        $('.seedpaySuccessMessage').hide()
+        $('.seedpayErrorMessage').empty('')
     }
 
     function checkUserStatus() {
@@ -128,12 +121,10 @@ jQuery(($) => {
         }, (responseString) => {
             var response = $.parseJSON(responseString).response
             if (response.isRegistered == true) {
-                $('.seedpay_payment_registered').val(1)
                 submitPaymentRequest()
                 return
             }
-            $('.seedpay_payment_registered').val(0)
-            $('.seedpay-messages').html('Please check your text messages for an invite.')
+            $('.seedpayErrorMessage').html('Please check your text messages for an invite.')
             shouldContinueCheckingStuffs = true
             if (!startedCheckingUserStatus) {
                 startedCheckingUserStatus = true
