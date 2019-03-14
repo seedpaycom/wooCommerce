@@ -1,52 +1,85 @@
 import processTransaction from './processTransaction'
 import transactionStatus from './transactionStatus'
-describe('transaction', () => {
+
+describe('processTransaction', () => {
     var options
     beforeEach(() => {
         options = {
-            maybeTransaction: {},
-        }
-        options.transactionStatusHandlers = {
-            errored: (transaction) => {
-                options.calledErrored = true
-                options.erroredTransaction = transaction
+            transaction: {},
+            transactionAccepted: () => {
+                options.transactionAcceptedCalled = true
+            },
+            errorHandler: (errorMessage) => {
+                options.errorHandlerCalled = true
+                options.errorMessage = errorMessage
+            },
+            pendingTransactionHandler: () => {
+                options.pendingTransactionHandlerCalled = true
             },
         }
     })
-    describe('processTransaction', () => {
-        it('returns null when not given a transaction', () => {
-            delete options.maybeTransaction
-            let transaction = processTransaction(options)
-            transaction //?
-            should.not.exist(transaction)
-        })
-        it('can deal with transaction.transaction she·nan·i·gans', () => {
-            options.maybeTransaction = {
-                transaction: {
-                    status: transactionStatus.errored,
-                },
-            }
+    it('returns null and does not call stuff when wtf is given', async () => {
+        processTransaction('wtf')
 
-            let response = processTransaction(options)
+        should.not.exist(options.transactionAcceptedCalled)
+        should.not.exist(options.errorHandlerCalled)
+        should.not.exist(options.pendingTransactionHandlerCalled)
+    })
+    it('calls transactionAccepted', async () => {
+        options.transaction.status = transactionStatus.acceptedAndPaid
 
-            options.calledErrored.should.be.true
-            options.erroredTransaction.should.equal(options.maybeTransaction.transaction)
-            response.should.equal(options.maybeTransaction.transaction)
-        })
-        it('calls the appropriate handler with the expected transaction', () => {
-            options.maybeTransaction.status = transactionStatus.errored
-            let response = processTransaction(options)
+        processTransaction(options)
 
-            options.calledErrored.should.be.true
-            options.erroredTransaction.should.equal(options.maybeTransaction)
-            response.should.equal(options.maybeTransaction)
-        })
-        it('does not esplode if the handler does not exist', () => {
-            options.maybeTransaction.status = transactionStatus.accepting
+        options.transactionAcceptedCalled.should.be.true
+        should.not.exist(options.errorHandlerCalled)
+        should.not.exist(options.pendingTransactionHandlerCalled)
+    })
+    it('calls errorHandler when transaction has been rejected', async () => {
+        options.transaction.status = transactionStatus.rejected
 
-            let response = processTransaction(options)
+        processTransaction(options)
 
-            response.should.equal(options.maybeTransaction)
-        })
+        options.errorHandlerCalled.should.be.true
+        should.not.exist(options.transactionAcceptedCalled)
+        should.not.exist(options.pendingTransactionHandlerCalled)
+        options.errorMessage.should.contain('rejected').and.not.contain('@seedpay', 'dont show support email for rejected transactions')
+    })
+    it('calls errorHandler when transaction has errored', async () => {
+        options.transaction.status = transactionStatus.errored
+
+        processTransaction(options)
+
+        options.errorHandlerCalled.should.be.true
+        should.not.exist(options.transactionAcceptedCalled)
+        should.not.exist(options.pendingTransactionHandlerCalled)
+        options.errorMessage.should.contain('failed').and.contain('@seedpay', 'show the support email for failed transactions')
+    })
+    it('calls errorHandler when transaction has an unknown status', async () => {
+        options.transaction.status = 'moobz status'
+
+        processTransaction(options)
+
+        options.errorHandlerCalled.should.be.true
+        should.not.exist(options.transactionAcceptedCalled)
+        should.not.exist(options.pendingTransactionHandlerCalled)
+        options.errorMessage.toLowerCase().should.contain('unknown').and.contain('@seedpay', 'show support email for unknown statuses')
+    })
+    it('calls pending handler when pending', async () => {
+        options.transaction.status = transactionStatus.pending
+
+        processTransaction(options)
+
+        options.pendingTransactionHandlerCalled.should.be.true
+        should.not.exist(options.errorHandlerCalled)
+        should.not.exist(options.transactionAcceptedCalled)
+    })
+    it('calls pending handler when accepting', async () => {
+        options.transaction.status = transactionStatus.accepting
+
+        processTransaction(options)
+
+        options.pendingTransactionHandlerCalled.should.be.true
+        should.not.exist(options.errorHandlerCalled)
+        should.not.exist(options.transactionAcceptedCalled)
     })
 })

@@ -1,6 +1,5 @@
 import ajax from './ajax'
 import appConfig from './appConfig'
-import processTransaction from './processTransaction'
 import transactionStatus from './transactionStatus'
 
 appConfig.ajaxUrl = ajaxUrl
@@ -8,23 +7,45 @@ var shouldContinueCheckingStuffs = true
 var startedCheckingUserStatus = false
 var startedCheckingTransactionStatus = false
 
-let submitPaymentRequest = async () => {
-    resetPage()
+let submitPaymentRequest = async ({
+    errorHandler,
+    messageHandler,
+    requestSuccessHandler,
+    receivedTransaction,
+    transactionAccepted,
+}) => {
     let maybeTransaction = ajax.processAjaxResponse({
         response: await ajax.requestPayment($('#seedpayPhoneNumber').val()),
         errorHandler,
         messageHandler,
-        successHandler: transactionSuccessHandler,
+        successHandler: requestSuccessHandler,
+        pendingTransactionHandler,
         genericError: ajax.generateGenericErrorMessage('requesting payment'),
     })
-    processTransaction({
-        maybeTransaction,
-        transactionStatusHandlers: {
-            transactionStatus,
-        },
+    if (!maybeTransaction) return null
+    let transaction = maybeTransaction.transaction || maybeTransaction
+    receivedTransaction({
+        transaction,
+        errorHandler,
+        transactionAccepted,
+        pendingTransactionHandler,
     })
+    return transaction
 }
-let transactionSuccessHandler = (transaction) => {
+let pendingTransactionHandler = () => {
+    if (!startedCheckingTransactionStatus) {
+        startedCheckingTransactionStatus = true
+        startTransactionCheckingLoop()
+    }
+}
+let transactionAccepted = () => {
+    $('.seedpayPhoneNumberPrompt').hide()
+    $('.seedpayRequestingPaymentIndicator').hide()
+    $('.seedpaySuccessMessage').fadeIn()
+    $('.woocommerce-checkout').submit()
+    shouldContinueCheckingStuffs = false
+}
+let submitPaymentRequestSuccessHandler = (transaction) => {
     $('.seedpayPhoneNumberPrompt').fadeOut(0.2, 'linear', () => {
         $('.seedpayRequestingPaymentIndicator').fadeIn()
     })
@@ -128,7 +149,15 @@ jQuery(($) => {
             let cleanedUpPhoneNumber = $('#seedpayPhoneNumber').val().replace(/\D/g, '')
             if (cleanedUpPhoneNumber[0] == '1') cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(1)
             $('#seedpayPhoneNumber').val(cleanedUpPhoneNumber)
-            submitPaymentRequest()
+
+            submitPaymentRequest({
+                errorHandler,
+                messageHandler,
+                submitPaymentRequestSuccessHandler,
+                receivedTransaction,
+                transactionAccepted,
+                pendingTransactionHandler,
+            })
             return false
         }
         return true

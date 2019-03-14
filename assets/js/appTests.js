@@ -1,14 +1,7 @@
 import app from './app'
-describe('scripts', () => {
+describe.skip('app', () => {
     var options
     beforeEach(() => {
         options = {}
-    })
-    describe('submitPaymentRequest', () => {
-        it('does stuffs', () => {
-            app //?
-            global.submitPaymentRequest //?
-            window.submitPaymentRequest //?
-        })
     })
 })
