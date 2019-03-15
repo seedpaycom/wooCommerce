@@ -14,9 +14,13 @@ let submitPaymentRequest = async ({
     requestSuccessHandler,
     transactionAccepted,
 }) => {
+    let submitPaymentRequestErrorHandler = (errorMessage) => {
+        if (errorMessage.includes('received')) return transactionAccepted()
+        errorHandler(errorMessage)
+    }
     let maybeTransaction = ajax.processAjaxResponse({
         response: await ajax.requestPayment($('#seedpayPhoneNumber').val()),
-        errorHandler,
+        errorHandler: submitPaymentRequestErrorHandler,
         messageHandler,
         successHandler: requestSuccessHandler,
         genericError: ajax.generateGenericErrorMessage('requesting payment'),

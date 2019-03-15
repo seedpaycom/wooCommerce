@@ -1,9 +1,9 @@
-.seedpay-message-success {
-    color: green;
-    font-weight: 700
+.seedpaySuccessMessage {
+    color: green !important;
+    font-weight: bold !important;
 }
 
 .seedpayErrorMessage {
-    color: red;
-    font-weight: 700
+    color: red !important;
+    font-weight: bold !important;
 }
