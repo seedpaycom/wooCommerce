@@ -19,8 +19,13 @@ describe('processTransaction', () => {
         }
     })
     it('returns null and does not call stuff when wtf is given', async () => {
-        processTransaction('wtf')
-
+        should.not.exist(processTransaction('wtf'))
+        should.not.exist(options.transactionAcceptedCalled)
+        should.not.exist(options.errorHandlerCalled)
+        should.not.exist(options.pendingTransactionHandlerCalled)
+    })
+    it('returns null when no status is given', async () => {
+        should.not.exist(processTransaction(options))
         should.not.exist(options.transactionAcceptedCalled)
         should.not.exist(options.errorHandlerCalled)
         should.not.exist(options.pendingTransactionHandlerCalled)

@@ -6,7 +6,7 @@ export default ({
     transactionAccepted,
     pendingTransactionHandler,
 }) => {
-    if (!transaction) return null
+    if (!transaction || !transaction.status) return null
     let status = transaction.status
     if (status == transactionStatus.acceptedAndPaid) {
         transactionAccepted()

@@ -19,11 +19,29 @@ let submitPaymentRequest = async ({
         errorHandler,
         messageHandler,
         successHandler: requestSuccessHandler,
-        pendingTransactionHandler,
         genericError: ajax.generateGenericErrorMessage('requesting payment'),
     })
     if (!maybeTransaction) return null
     let transaction = maybeTransaction.transaction || maybeTransaction
+    processTransaction({
+        transaction,
+        errorHandler,
+        transactionAccepted,
+        pendingTransactionHandler,
+    })
+    return transaction
+}
+
+let checkTransactionStatus = async () => {
+    let maybeTransactions = ajax.processAjaxResponse({
+        response: await ajax.checkTransactionStatus(),
+        errorHandler,
+        messageHandler,
+        pendingTransactionHandler,
+        genericError: ajax.generateGenericErrorMessage('checking your transaction status'),
+    })
+    if (!maybeTransactions) return null
+    let transaction = maybeTransactions[0]
     processTransaction({
         transaction,
         errorHandler,
@@ -67,34 +85,6 @@ let errorHandler = (errorMessage) => {
         error: errorMessage,
     }
     return errorWrappedError
-}
-let checkTransactionStatus = async () => {
-    let response = await ajax.checkTransactionStatus()
-
-    if (typeof response == typeof '') {
-        return errorHandler(response)
-    }
-    let responseObject = response.response.tryParseJson()
-    if (response.error || responseObject.errors || !(responseObject || responseObject[0] || responseObject[0].status)) {
-        return errorHandler(responseObject.errors[0] || response.error || 'Error while checking your transaction\'s status')
-    }
-    var status = responseObject[0].status
-    if (status == 'acceptedAndPaid') {
-        $('.seedpayPhoneNumberPrompt').hide()
-        $('.seedpayRequestingPaymentIndicator').hide()
-        $('.seedpaySuccessMessage').fadeIn()
-        $('.woocommerce-checkout').submit()
-        shouldContinueCheckingStuffs = false
-    } else if (status == 'rejected' || status == 'errored') {
-        $('.seedpayRequestingPaymentIndicator').hide()
-        $('.seedpayPhoneNumberPrompt').fadeIn()
-        shouldContinueCheckingStuffs = false
-    } else {
-        if (!startedCheckingTransactionStatus) {
-            startedCheckingTransactionStatus = true
-            startTransactionCheckingLoop()
-        }
-    }
 }
 
 function startTransactionCheckingLoop() {
