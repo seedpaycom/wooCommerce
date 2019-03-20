@@ -4,23 +4,17 @@ if (!defined('ABSPATH')) {
 }
 require_once __DIR__ . '/../configs.php';
 require_once __DIR__ . '/../api.php';
+require_once __DIR__ . '/../transactionId.php';
 class WC_Gateway_Seedpay extends WC_Payment_Gateway
 {
     public function __construct()
     {
-        if (!session_id()) {
-            session_start();
-        }
-        if (get_transient('uniqueTransactionId' . session_id()) == null) {
-            generateNewUniqueTransactionId();
-        }
         $this->id = 'seedpay';
         $this->icon = apply_filters('woocommerce_cheque_icon', '');
         $this->has_fields = true;
         $this->method_title = __('Seedpay', 'woocommerce-gateway-seedpay');
         $this->init_form_fields();
         $this->init_settings();
-        $this->testmode = $this->get_option('environment');
         $this->title = $this->get_option('title');
         $this->instructions = $this->get_option('instructions');
         $this->username = $this->get_option('username');
@@ -68,9 +62,8 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     }
     public function payment_fields()
     {
-        $transaction_id = get_transient('uniqueTransactionId' . session_id());
         if ($this->instructions) {
-            if ($this->testmode == 'yes') {
+            if ($this->get_option('environment') == 'yes') {
                 echo '<p style="color:red;font-weight:bold">' . __('TEST MODE!!!!!111!!1one!!', 'woocommerce-gateway-seedpay') . '</p>';
             }
             echo wpautop(wp_kses_post($this->instructions));
@@ -79,20 +72,18 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     <p class="seedpayErrorMessage"></p>
     <fieldset id="wc-' . esc_attr($this->id) . '-cc-form" class="wc-credit-card-form wc-payment-form" style="background:transparent;">';
         do_action('woocommerce_credit_card_form_start', $this->id);
-        $phone = get_transient('seedpay_order_phone_' . $transaction_id . '');
         echo '
         <div class="form-row form-row-wide seedpayPhoneNumberPrompt" >
             <label>' . __('Phone Number', 'woocommerce-gateway-seedpay') . ' 
                 <span class="required">*</span>
             </label>
-            <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="tel" autocomplete="tel" value="' . $phone . '">
+            <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="tel" autocomplete="tel" value="">
         </div>
         <div class="seedpayRequestingPaymentIndicator" style="display:none">
             <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone</p>
             <a href="#" class="seedpayCancelButton seed-pay-button">' . __('Cancel Request', 'woocommerce-gateway-seedpay') . '</a>
         </div>        
         <div class="seedpaySuccessMessage" style="display:none">
-            <input type="hidden" name="uniqueTransactionIdHiddenForm" class="uniqueTransactionIdHiddenForm" value="' . $transaction_id . '">
             <p class="seedpaySuccessMessage">Payment received.  You will now be directed to the confirmation page.</p> 
         </div>                
         <div class="clear"></div>
@@ -187,41 +178,6 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         wp_enqueue_style('woocommerce_seedpay_styles', WC_SEEDPAY_PLUGIN_ASSETS . 'css/app.min.css');
     }
 
-    public function checkTransactionStatus()
-    {
-        $transaction_id = get_transient('uniqueTransactionId' . session_id());
-        $phone = wc_format_phone_number($_REQUEST['phoneNumber']);
-        $message = array();
-        $message['error'] = '';
-        $message['post'] = $_REQUEST;
-        if ($phone == '') {
-            $message['error'] = __('Please enter a valid 10 digit phone number', 'woocommerce-gateway-seedpay');
-            echo json_encode($message);
-            return;
-        }
-        $request = array('phoneNumber' => $phone);
-        $message['request'] = $request;
-        $getVars = htmlentities(urlencode(json_encode(array('uniqueTransactionId' => $transaction_id))));
-        $response = submitRequest('transactions/' . $getVars . '', array(), 'GET');
-        if (gettype($response) == 'array') {
-            if ($response[0]->status == 'acceptedAndPaid') {
-                set_transient('seedpay_order_status_' . $transaction_id . '', $response[0], 168 * HOUR_IN_SECONDS);
-                set_transient('seedpay_order_statusname_' . $transaction_id . '', $response[0]->status, 168 * HOUR_IN_SECONDS);
-                set_transient('seedpay_order_phone_' . $transaction_id . '', $phone, 168 * HOUR_IN_SECONDS);
-            }
-            if ($response[0]->status == 'errored') {
-                $message['error'] = __('There was an error with this transaction.', 'woocommerce-gateway-seedpay');
-                generateNewUniqueTransactionId();
-            }
-            if ($response[0]->status == 'rejected') {
-                $message['error'] = __('Payment was rejected.', 'woocommerce-gateway-seedpay');
-                generateNewUniqueTransactionId();
-            }
-        }
-        $message['response'] = $response;
-        echo json_encode($message);
-    }
-
     /**
      * Process the payment and return the result
      *
@@ -230,15 +186,11 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
-        $uniqueTransactionId = get_transient('uniqueTransactionId' . session_id());
         $phone = wc_format_phone_number($_REQUEST['seedpayPhoneNumber']);
-        if (!$uniqueTransactionId) {
-            $uniqueTransactionId = generateNewUniqueTransactionId();
-        }
         $submitRequestPaymentResponse = submitRequestPayment(
             $phone,
             WC()->cart->total,
-            get_transient('uniqueTransactionId' . session_id())
+            getTransactionId()
         );
         $responseOrGenericError = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($submitRequestPaymentResponse);
         $status = $responseOrGenericError->transaction->status;
@@ -251,16 +203,16 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             wc_add_notice($error_message, 'notice');
             return;
         }
-        set_transient('seedpayOrderStatus' . get_transient('uniqueTransactionId' . session_id()) . '', $status);
+        set_transient('seedpayOrderStatus' . getTransactionId() . '', $status);
         $order = wc_get_order($order_id);
         $order->payment_complete();
         $order->update_status('wc-processing');
-        $order->add_order_note(__('Seedpay Payment Completed: #' . $uniqueTransactionId . '', 'woocommerce-gateway-seedpay'));
+        $order->add_order_note(__('Seedpay Payment Completed: #' . getTransactionId() . '', 'woocommerce-gateway-seedpay'));
         $order->add_order_note(__('Seedpay Payment Phone: ' . $phone . '', 'woocommerce-gateway-seedpay'));
         $order->update_meta_data('seedpayOrderResponse', $responseOrGenericError);
         $order->update_meta_data('seedpayOrderPhoneNumber', $phone);
         $order->reduce_order_stock();
-        set_transient('uniqueTransactionId' . session_id(), null);
+        generateNewTransactionId();
         WC()->cart->empty_cart();
         return array(
             'result' => 'success',
