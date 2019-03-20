@@ -8,7 +8,10 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
 {
     public function __construct()
     {
-        if (get_transient('uniqueTransactionId') == null) {
+        if (!session_id()) {
+            session_start();
+        }
+        if (get_transient('uniqueTransactionId' . session_id()) == null) {
             generateNewUniqueTransactionId();
         }
         $this->id = 'seedpay';
@@ -65,7 +68,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     }
     public function payment_fields()
     {
-        $transaction_id = get_transient('uniqueTransactionId');
+        $transaction_id = get_transient('uniqueTransactionId' . session_id());
         if ($this->instructions) {
             if ($this->testmode == 'yes') {
                 echo '<p style="color:red;font-weight:bold">' . __('TEST MODE!!!!!111!!1one!!', 'woocommerce-gateway-seedpay') . '</p>';
@@ -186,7 +189,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
 
     public function checkTransactionStatus()
     {
-        $transaction_id = get_transient('uniqueTransactionId');
+        $transaction_id = get_transient('uniqueTransactionId' . session_id());
         $phone = wc_format_phone_number($_REQUEST['phoneNumber']);
         $message = array();
         $message['error'] = '';
@@ -227,7 +230,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
-        $uniqueTransactionId = get_transient('uniqueTransactionId');
+        $uniqueTransactionId = get_transient('uniqueTransactionId' . session_id());
         $phone = wc_format_phone_number($_REQUEST['seedpayPhoneNumber']);
         if (!$uniqueTransactionId) {
             $uniqueTransactionId = generateNewUniqueTransactionId();
@@ -235,7 +238,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $submitRequestPaymentResponse = submitRequestPayment(
             $phone,
             WC()->cart->total,
-            get_transient('uniqueTransactionId')
+            get_transient('uniqueTransactionId' . session_id())
         );
         $responseOrGenericError = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($submitRequestPaymentResponse);
         $status = $responseOrGenericError->transaction->status;
@@ -248,6 +251,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             wc_add_notice($error_message, 'notice');
             return;
         }
+        set_transient('seedpayOrderStatus' . get_transient('uniqueTransactionId' . session_id()) . '', $status);
         $order = wc_get_order($order_id);
         $order->payment_complete();
         $order->update_status('wc-processing');
@@ -256,7 +260,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $order->update_meta_data('seedpayOrderResponse', $responseOrGenericError);
         $order->update_meta_data('seedpayOrderPhoneNumber', $phone);
         $order->reduce_order_stock();
-        set_transient('uniqueTransactionId', null);
+        set_transient('uniqueTransactionId' . session_id(), null);
         WC()->cart->empty_cart();
         return array(
             'result' => 'success',
