@@ -1,13 +1,12 @@
 import ajax from './ajax'
 import appConfig from './appConfig'
-import transactionStatus from './transactionStatus'
 import processTransaction from './processTransaction'
 
 appConfig.ajaxUrl = ajaxUrl
 var shouldContinueCheckingStuffs = true
 var startedCheckingUserStatus = false
 var startedCheckingTransactionStatus = false
-
+var paymentAccepted = false
 let submitPaymentRequest = async ({
     errorHandler,
     messageHandler,
@@ -18,34 +17,32 @@ let submitPaymentRequest = async ({
         if (errorMessage.includes('received')) return transactionAccepted()
         errorHandler(errorMessage)
     }
-    let maybeTransaction = ajax.processAjaxResponse({
+    let response = ajax.processAjaxResponse({
         response: await ajax.requestPayment($('#seedpayPhoneNumber').val()),
         errorHandler: submitPaymentRequestErrorHandler,
         messageHandler,
         successHandler: requestSuccessHandler,
         genericError: ajax.generateGenericErrorMessage('requesting payment'),
     })
-    if (!maybeTransaction) return null
-    let transaction = maybeTransaction.transaction || maybeTransaction
-    processTransaction({
-        transaction,
+    if (!response) return false
+    return processTransaction({
+        transaction: response.transaction,
         errorHandler,
         transactionAccepted,
         pendingTransactionHandler,
     })
-    return transaction
 }
 
 let checkTransactionStatus = async () => {
-    let maybeTransactions = ajax.processAjaxResponse({
+    let response = ajax.processAjaxResponse({
         response: await ajax.checkTransactionStatus(),
         errorHandler,
         messageHandler,
         pendingTransactionHandler,
         genericError: ajax.generateGenericErrorMessage('checking your transaction status'),
     })
-    if (!maybeTransactions) return null
-    let transaction = maybeTransactions[0]
+    if (!response || !response.transactions) return null
+    let transaction = response.transactions[0]
     processTransaction({
         transaction,
         errorHandler,
@@ -66,6 +63,8 @@ let transactionAccepted = () => {
     $('.seedpaySuccessMessage').fadeIn()
     $('.woocommerce-checkout').submit()
     shouldContinueCheckingStuffs = false
+    paymentAccepted = true
+    $('form.woocommerce-checkout').submit()
 }
 let submitPaymentRequestSuccessHandler = (transaction) => {
     $('.seedpayPhoneNumberPrompt').fadeOut(0.2, 'linear', () => {
@@ -137,9 +136,10 @@ function checkUserStatus() {
 }
 
 jQuery(($) => {
-    $('form.woocommerce-checkout').on('checkout_place_order', async () => {
+    $('form.woocommerce-checkout').on('checkout_place_order', () => {
+        // $(document).on('click', '#place_order', (event) => {
         if ($('#payment_method_seedpay').is(':checked')) {
-            shouldContinueCheckingStuffs = true
+            if (!paymentAccepted) shouldContinueCheckingStuffs = true
             let cleanedUpPhoneNumber = $('#seedpayPhoneNumber').val().replace(/\D/g, '')
             if (cleanedUpPhoneNumber[0] == '1') cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(1)
             $('#seedpayPhoneNumber').val(cleanedUpPhoneNumber)
@@ -151,7 +151,9 @@ jQuery(($) => {
                 transactionAccepted,
                 pendingTransactionHandler,
             })
-            return false
+
+            if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
+            return paymentAccepted
         }
         return true
     })

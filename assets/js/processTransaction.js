@@ -10,6 +10,7 @@ export default ({
     let status = transaction.status
     if (status == transactionStatus.acceptedAndPaid) {
         transactionAccepted()
+        return true
     } else if (status == transactionStatus.rejected) {
         errorHandler('Payment rejected.  Please resubmit the order to try again.')
     } else if (status == transactionStatus.errored) {
@@ -19,4 +20,5 @@ export default ({
     } else {
         errorHandler('Unknown transaction status.  Please contact helpdesk@seedpay.com.')
     }
+    return false
 }

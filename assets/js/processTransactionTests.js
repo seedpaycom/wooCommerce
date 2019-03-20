@@ -33,8 +33,9 @@ describe('processTransaction', () => {
     it('calls transactionAccepted', async () => {
         options.transaction.status = transactionStatus.acceptedAndPaid
 
-        processTransaction(options)
+        let response = processTransaction(options)
 
+        response.should.be.true
         options.transactionAcceptedCalled.should.be.true
         should.not.exist(options.errorHandlerCalled)
         should.not.exist(options.pendingTransactionHandlerCalled)
@@ -42,8 +43,9 @@ describe('processTransaction', () => {
     it('calls errorHandler when transaction has been rejected', async () => {
         options.transaction.status = transactionStatus.rejected
 
-        processTransaction(options)
+        let response = processTransaction(options)
 
+        response.should.be.false
         options.errorHandlerCalled.should.be.true
         should.not.exist(options.transactionAcceptedCalled)
         should.not.exist(options.pendingTransactionHandlerCalled)
@@ -52,8 +54,9 @@ describe('processTransaction', () => {
     it('calls errorHandler when transaction has errored', async () => {
         options.transaction.status = transactionStatus.errored
 
-        processTransaction(options)
+        let response = processTransaction(options)
 
+        response.should.be.false
         options.errorHandlerCalled.should.be.true
         should.not.exist(options.transactionAcceptedCalled)
         should.not.exist(options.pendingTransactionHandlerCalled)
@@ -62,8 +65,9 @@ describe('processTransaction', () => {
     it('calls errorHandler when transaction has an unknown status', async () => {
         options.transaction.status = 'moobz status'
 
-        processTransaction(options)
+        let response = processTransaction(options)
 
+        response.should.be.false
         options.errorHandlerCalled.should.be.true
         should.not.exist(options.transactionAcceptedCalled)
         should.not.exist(options.pendingTransactionHandlerCalled)
@@ -72,8 +76,9 @@ describe('processTransaction', () => {
     it('calls pending handler when pending', async () => {
         options.transaction.status = transactionStatus.pending
 
-        processTransaction(options)
+        let response = processTransaction(options)
 
+        response.should.be.false
         options.pendingTransactionHandlerCalled.should.be.true
         should.not.exist(options.errorHandlerCalled)
         should.not.exist(options.transactionAcceptedCalled)
@@ -81,8 +86,9 @@ describe('processTransaction', () => {
     it('calls pending handler when accepting', async () => {
         options.transaction.status = transactionStatus.accepting
 
-        processTransaction(options)
+        let response = processTransaction(options)
 
+        response.should.be.false
         options.pendingTransactionHandlerCalled.should.be.true
         should.not.exist(options.errorHandlerCalled)
         should.not.exist(options.transactionAcceptedCalled)
