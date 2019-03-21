@@ -107,7 +107,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
                 'title' => __('Instructions', 'woocommerce-gateway-seedpay'),
                 'type' => 'textarea',
                 'description' => __('Instructions which will be added on the checkout page.', 'woocommerce-gateway-seedpay'),
-                'default' => 'Enter your 10 digit phone number to request a payment on your phone. If you do not have a Seedpay account, we will send an invite link to your phone.',
+                'default' => 'Enter your 10 digit phone number to request a payment on your phone. If you do not have a Seedpay account, an invite link will be sent to your phone.',
                 'desc_tip' => true
             ),
             'environment' => array(

@@ -110,11 +110,8 @@ let errorHandler = (errorMessage) => {
     $('.seedpayRequestingPaymentIndicator').hide()
     $('.seedpayPhoneNumberPrompt').show()
     shouldContinueCheckingStuffs = false
-    let errorWrappedError = {
-        error: errorMessage,
-    }
-    ajax.generateNewTransactionId()
-    return errorWrappedError
+    if (errorMessage.toLowerCase().indexOf('10 digits') < 0)
+        ajax.generateNewTransactionId()
 }
 
 function startTransactionCheckingLoop() {
@@ -144,13 +141,17 @@ function resetPage() {
     $('.seedpaySuccessMessage').hide()
     $('.seedpayErrorMessage').empty('')
 }
+let cleanPhoneNumber = () => {
+    let cleanedUpPhoneNumber = $('#seedpayPhoneNumber').val().replace(/\D/g, '')
+    if (cleanedUpPhoneNumber[0] == '1') cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(1)
+    $('#seedpayPhoneNumber').val(cleanedUpPhoneNumber)
+}
 jQuery(($) => {
+    $('#seedpayPhoneNumber').on('input', cleanPhoneNumber);
     $('form.woocommerce-checkout').on('checkout_place_order', () => {
         if ($('#payment_method_seedpay').is(':checked')) {
             if (!paymentAccepted) shouldContinueCheckingStuffs = true
-            let cleanedUpPhoneNumber = $('#seedpayPhoneNumber').val().replace(/\D/g, '')
-            if (cleanedUpPhoneNumber[0] == '1') cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(1)
-            $('#seedpayPhoneNumber').val(cleanedUpPhoneNumber)
+            cleanPhoneNumber()
             resetPage()
             showWaitingToAcceptIndicator()
             submitPaymentRequest({
