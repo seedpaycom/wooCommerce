@@ -51,6 +51,7 @@ describe('ajax', () => {
             response.should.equal(options.response)
         })
     })
+
     describe('checkTransactionStatus', () => {
         it('posts with correct action', async () => {
             await ajax.checkTransactionStatus()
@@ -59,6 +60,19 @@ describe('ajax', () => {
         })
         it('returns the jquery post response', async () => {
             let response = await ajax.checkTransactionStatus()
+
+            response.should.equal(options.response)
+        })
+    })
+
+    describe('generateNewTransactionId', () => {
+        it('posts with correct action', async () => {
+            await ajax.generateNewTransactionId()
+
+            options.postAction.should.equal('generateNewTransactionId')
+        })
+        it('returns the jquery post response', async () => {
+            let response = await ajax.generateNewTransactionId()
 
             response.should.equal(options.response)
         })

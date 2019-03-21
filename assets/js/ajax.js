@@ -9,6 +9,11 @@ let ajax = {
             'action': 'checkTransactionStatus',
         })
     },
+    generateNewTransactionId: async () => {
+        return await ajax.submitRequest({
+            'action': 'generateNewTransactionId',
+        })
+    },
     requestPayment: async (phoneNumber) => {
         return await ajax.submitRequest({
             'action': 'requestPayment',

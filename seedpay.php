@@ -62,6 +62,14 @@ function checkUserStatus()
 add_action('wp_ajax_checkUserStatus', 'checkUserStatus');
 add_action('wp_ajax_nopriv_checkUserStatus', 'checkUserStatus');
 
+function generateNewTransactionId()
+{
+    wp_send_json('' . generateNewId());
+    die();
+}
+add_action('wp_ajax_generateNewTransactionId', 'generateNewTransactionId');
+add_action('wp_ajax_nopriv_generateNewTransactionId', 'generateNewTransactionId');
+
 function woocommerce_seedpay_init()
 {
     require_once(plugin_basename('includes/class-wc-gateway-seedpay.php'));

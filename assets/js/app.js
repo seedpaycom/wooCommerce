@@ -54,25 +54,29 @@ let checkTransactionStatus = async () => {
 let pendingTransactionHandler = () => {
     if (!startedCheckingTransactionStatus) {
         startedCheckingTransactionStatus = true
+        showWaitingToAcceptIndicator()
         startTransactionCheckingLoop()
     }
 }
 let transactionAccepted = () => {
     $('.seedpayPhoneNumberPrompt').hide()
     $('.seedpayRequestingPaymentIndicator').hide()
-    $('.seedpaySuccessMessage').fadeIn()
+    $('.seedpaySuccessMessage').show()
     $('.woocommerce-checkout').submit()
     shouldContinueCheckingStuffs = false
     paymentAccepted = true
     $('form.woocommerce-checkout').submit()
 }
 let submitPaymentRequestSuccessHandler = (transaction) => {
-    $('.seedpayPhoneNumberPrompt').fadeOut(0.2, 'linear', () => {
-        $('.seedpayRequestingPaymentIndicator').fadeIn()
-    })
+    showWaitingToAcceptIndicator()
     checkTransactionStatus()
 }
+let showWaitingToAcceptIndicator = () => {
+    $('.seedpayPhoneNumberPrompt').hide()
+    $('.seedpayRequestingPaymentIndicator').show()
+}
 let messageHandler = (message) => {
+    resetPage()
     $('.seedpayErrorMessage').html(message)
     if (message.toLowerCase().indexOf('inv') >= 0) {
         checkUserStatus()
@@ -80,13 +84,15 @@ let messageHandler = (message) => {
     }
 }
 let errorHandler = (errorMessage) => {
+    resetPage()
     $('.seedpayErrorMessage').html(errorMessage)
     $('.seedpayRequestingPaymentIndicator').hide()
-    $('.seedpayPhoneNumberPrompt').fadeIn()
+    $('.seedpayPhoneNumberPrompt').show()
     shouldContinueCheckingStuffs = false
     let errorWrappedError = {
         error: errorMessage,
     }
+    ajax.generateNewTransactionId()
     return errorWrappedError
 }
 
@@ -110,7 +116,7 @@ function startUserCheckingLoop() {
 
 function resetPage() {
     $('.seedpayRequestingPaymentIndicator').hide()
-    $('.seedpayPhoneNumberPrompt').fadeIn()
+    $('.seedpayPhoneNumberPrompt').show()
     $('.seedpaySuccessMessage').hide()
     $('.seedpayErrorMessage').empty('')
 }
@@ -137,13 +143,13 @@ function checkUserStatus() {
 
 jQuery(($) => {
     $('form.woocommerce-checkout').on('checkout_place_order', () => {
-        // $(document).on('click', '#place_order', (event) => {
         if ($('#payment_method_seedpay').is(':checked')) {
             if (!paymentAccepted) shouldContinueCheckingStuffs = true
             let cleanedUpPhoneNumber = $('#seedpayPhoneNumber').val().replace(/\D/g, '')
             if (cleanedUpPhoneNumber[0] == '1') cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(1)
             $('#seedpayPhoneNumber').val(cleanedUpPhoneNumber)
-
+            resetPage()
+            showWaitingToAcceptIndicator()
             submitPaymentRequest({
                 errorHandler,
                 messageHandler,

@@ -30,14 +30,6 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             $this,
             'process_admin_options'
         ));
-        add_action('woocommerce_thankyou_cheque', array(
-            $this,
-            'thankyou_page'
-        ));
-        add_action('woocommerce_email_before_order_table', array(
-            $this,
-            'email_instructions'
-        ), 10, 3);
         add_action('wp_enqueue_scripts', array(
             $this,
             'payment_scripts'
@@ -80,7 +72,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="tel" autocomplete="tel" value="">
         </div>
         <div class="seedpayRequestingPaymentIndicator" style="display:none">
-            <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone</p>
+            <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone to continue</p>
             <a href="#" class="seedpayCancelButton seed-pay-button">' . __('Cancel Request', 'woocommerce-gateway-seedpay') . '</a>
         </div>        
         <div class="seedpaySuccessMessage" style="display:none">
@@ -139,29 +131,6 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             )
         );
     }
-    public function thankyou_page()
-    {
-        if ($this->instructions) {
-            $order = wc_get_order($order_id);
-            echo json_encode($order);
-            echo wpautop(wptexturize($order));
-            echo wpautop(wptexturize($this->instructions));
-        }
-    }
-    /**
-     * Add content to the WC emails.
-     *
-     * @access public
-     * @param WC_Order $order
-     * @param bool $sent_to_admin
-     * @param bool $plain_text
-     */
-    public function email_instructions($order, $sent_to_admin, $plain_text = false)
-    {
-        if ($this->instructions && !$sent_to_admin && 'cheque' === $order->payment_method && $order->has_status('on-hold')) {
-            echo wpautop(wptexturize($this->instructions)) . PHP_EOL;
-        }
-    }
     public function payment_scripts()
     {
         if (!is_cart() && !is_checkout() && !isset($_GET['pay_for_order'])) {
@@ -194,7 +163,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         );
         $responseOrGenericError = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($submitRequestPaymentResponse);
         $status = $responseOrGenericError->transaction->status;
-        if ($responseOrGenericError->errors && !$status) {
+        if (!$status && $responseOrGenericError->errors && $responseOrGenericError->errors[0]) {
             wc_add_notice($responseOrGenericError['errors'][0], 'error');
             return;
         }
@@ -212,8 +181,8 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $order->update_meta_data('seedpayOrderResponse', $responseOrGenericError);
         $order->update_meta_data('seedpayOrderPhoneNumber', $phone);
         $order->reduce_order_stock();
-        generateNewTransactionId();
         WC()->cart->empty_cart();
+        generateNewId();
         return array(
             'result' => 'success',
             'redirect' => $this->get_return_url($order)
