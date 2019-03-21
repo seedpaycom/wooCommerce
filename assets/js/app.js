@@ -144,10 +144,13 @@ function resetPage() {
 let cleanPhoneNumber = () => {
     let cleanedUpPhoneNumber = $('#seedpayPhoneNumber').val().replace(/\D/g, '')
     if (cleanedUpPhoneNumber[0] == '1') cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(1)
+    cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(0, 10)
     $('#seedpayPhoneNumber').val(cleanedUpPhoneNumber)
 }
 jQuery(($) => {
-    $('#seedpayPhoneNumber').on('input', cleanPhoneNumber);
+    setTimeout(() => {
+        $('#seedpayPhoneNumber').on('input', cleanPhoneNumber);
+    }, 5000)
     $('form.woocommerce-checkout').on('checkout_place_order', () => {
         if ($('#payment_method_seedpay').is(':checked')) {
             if (!paymentAccepted) shouldContinueCheckingStuffs = true
