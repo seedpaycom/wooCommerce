@@ -149,7 +149,7 @@ let cleanPhoneNumber = () => {
 }
 jQuery(($) => {
     setTimeout(() => {
-        $('#seedpayPhoneNumber').on('input', cleanPhoneNumber);
+        $('#seedpayPhoneNumber').on('change', cleanPhoneNumber);
     }, 5000)
     $('form.woocommerce-checkout').on('checkout_place_order', () => {
         if ($('#payment_method_seedpay').is(':checked')) {
