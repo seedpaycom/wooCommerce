@@ -162,11 +162,6 @@ jQuery(($) => {
         }
         return true
     })
-    $(document).on('click', '.seedpayCancelButton', () => {
-        resetPage()
-        shouldContinueCheckingStuffs = false
-        return false
-    })
 })
 
 export default {
