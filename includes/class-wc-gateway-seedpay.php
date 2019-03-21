@@ -72,7 +72,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             <input id="seedpayPhoneNumber" name="seedpayPhoneNumber" type="tel" autocomplete="tel" value="">
         </div>
         <div class="seedpayRequestingPaymentIndicator" style="display:none">
-            <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone to continue</p>
+            <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please follow the instructions on your phone to continue</p>
         </div>        
         <div class="seedpaySuccessMessage" style="display:none">
             <p class="seedpaySuccessMessage">Payment received.  You will now be directed to the confirmation page.</p> 
