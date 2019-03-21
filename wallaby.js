@@ -7,7 +7,7 @@ module.exports = (wallaby) => {
             type: 'node',
         },
         setup: function(_) {
-            require('./assets/js/test/beforeAllTests')
+            require('./src/test/beforeAllTests')
         },
         files: [
             `${prefix}!(*+(Tests)).js`,

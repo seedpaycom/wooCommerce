@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Seedpay wooCommerce payment plugin",
     "scripts": {
-        "test": " ./node_modules/.bin/mocha --colors --require=@babel/register --require=@babel/polyfill --require ./assets/js/test/beforeAllTests --slow=10 ./assets/js/**/**/*Tests.js --exit --forbidOnly",
+        "test": " ./node_modules/.bin/mocha --colors --require=@babel/register --require=@babel/polyfill --require ./src/test/beforeAllTests --slow=10 ./src/**/**/*Tests.js --exit --forbidOnly",
         "buildprod": "./node_modules/.bin/webpack --config=webpack.js --mode='production'",
         "builddev": "./node_modules/.bin/webpack --config=webpack.js --mode='development'",
         "beautify": "js-beautify --config .jsbeautifyrc -f `find ./assets -type f -name '*.js' -not -name '*.min.js'` -r -n",
