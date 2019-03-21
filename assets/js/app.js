@@ -72,7 +72,6 @@ let submitPaymentRequestSuccessHandler = (transaction) => {
     checkTransactionStatus()
 }
 let showWaitingToAcceptIndicator = () => {
-    $('.seedpayPhoneNumberPrompt').hide()
     $('.seedpayRequestingPaymentIndicator').show()
 }
 let messageHandler = (message) => {

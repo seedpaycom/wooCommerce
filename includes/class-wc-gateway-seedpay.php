@@ -73,7 +73,6 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         </div>
         <div class="seedpayRequestingPaymentIndicator" style="display:none">
             <p class="seedpay-message-success"> <img src="' . WC_SEEDPAY_PLUGIN_ASSETS . 'images/loading.gif" style="border:0px;float:none;"> Please accept the payment on your phone to continue</p>
-            <a href="#" class="seedpayCancelButton seed-pay-button">' . __('Cancel Request', 'woocommerce-gateway-seedpay') . '</a>
         </div>        
         <div class="seedpaySuccessMessage" style="display:none">
             <p class="seedpaySuccessMessage">Payment received.  You will now be directed to the confirmation page.</p> 
