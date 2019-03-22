@@ -68,7 +68,7 @@ let checkUserStatus = async ({
         }
         return false
     }
-    $('.woocommerce-checkout').submit()
+    $('#place_order').click()
     return true
 }
 
@@ -83,10 +83,9 @@ let transactionAccepted = () => {
     $('.seedpayPhoneNumberPrompt').hide()
     $('.seedpayRequestingPaymentIndicator').hide()
     $('.seedpaySuccessMessage').show()
-    $('.woocommerce-checkout').submit()
     shouldContinueCheckingStuffs = false
     paymentAccepted = true
-    $('form.woocommerce-checkout').submit()
+    $('#place_order').click()
 }
 let submitPaymentRequestSuccessHandler = (transaction) => {
     showWaitingToAcceptIndicator()
@@ -149,32 +148,37 @@ let cleanPhoneNumber = () => {
     cleanedUpPhoneNumber = cleanedUpPhoneNumber.substr(0, 10)
     $('#seedpayPhoneNumber').val(cleanedUpPhoneNumber)
 }
-jQuery(($) => {
-    setTimeout(() => {
-        $('#seedpayPhoneNumber').on('change', cleanPhoneNumber)
-    }, 5000)
-    $('form.woocommerce-checkout').on('checkout_place_order', () => {
-        if ($('#payment_method_seedpay').is(':checked')) {
-            if (!paymentAccepted) shouldContinueCheckingStuffs = true
-            cleanPhoneNumber()
-            resetPage()
-            showWaitingToAcceptIndicator()
-            submitPaymentRequest({
-                errorHandler,
-                messageHandler,
-                submitPaymentRequestSuccessHandler,
-                transactionAccepted,
-                pendingTransactionHandler,
-            })
-
-            if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
-            return paymentAccepted
-        }
-        return true
-    })
-})
-
-export default {
-    submitPaymentRequest,
-    resetPage,
+let isPhoneNumberValid = () => {
+    let phoneNumber = $('#seedpayPhoneNumber').val()
+    if (phoneNumber.length != 10) return false
 }
+jQuery(($) => {
+    let bindStuffs = () => {
+        $('#seedpayPhoneNumber').on('change', cleanPhoneNumber)
+        $('#place_order').click((event) => {
+            if ($('#payment_method_seedpay').is(':checked')) {
+                if (!paymentAccepted) shouldContinueCheckingStuffs = true
+                cleanPhoneNumber()
+                resetPage()
+                if (!isPhoneNumberValid()) {
+                    errorHandler('Please enter a valid 10 digit phone number')
+                    event.preventDefault()
+                    return false
+                }
+                showWaitingToAcceptIndicator()
+                submitPaymentRequest({
+                    errorHandler,
+                    messageHandler,
+                    submitPaymentRequestSuccessHandler,
+                    transactionAccepted,
+                    pendingTransactionHandler,
+                })
+
+                if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
+                return paymentAccepted
+            }
+            return true
+        })
+    }
+    setTimeout(bindStuffs, 5000)
+})
