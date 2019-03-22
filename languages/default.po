@@ -84,15 +84,6 @@ msgstr ""
 msgid "Enable Test Servers"
 msgstr ""
 
-#: includes/class-wc-gateway-seedpay.php:190
-msgid "Username"
-msgstr ""
-
-#: includes/class-wc-gateway-seedpay.php:192
-#: includes/class-wc-gateway-seedpay.php:199
-msgid "Your Seedpay Username."
-msgstr ""
-
 #: includes/class-wc-gateway-seedpay.php:197
 msgid "Password"
 msgstr ""

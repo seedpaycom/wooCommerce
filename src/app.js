@@ -97,7 +97,7 @@ let messageHandler = (message) => {
     if (message.toLowerCase().indexOf('inv') >= 0) {
         checkUserStatus({
             errorHandler,
-            messageHandler
+            messageHandler,
         })
         return
     }
@@ -128,7 +128,7 @@ let startUserCheckingLoop = async () => {
         setTimeout(async () => {
             let isRegistered = await checkUserStatus({
                 errorHandler,
-                messageHandler
+                messageHandler,
             })
             if (!isRegistered) startUserCheckingLoop()
         }, 5000)
@@ -149,7 +149,7 @@ let cleanPhoneNumber = () => {
 }
 jQuery(($) => {
     setTimeout(() => {
-        $('#seedpayPhoneNumber').on('change', cleanPhoneNumber);
+        $('#seedpayPhoneNumber').on('change', cleanPhoneNumber)
     }, 5000)
     $('form.woocommerce-checkout').on('checkout_place_order', () => {
         if ($('#payment_method_seedpay').is(':checked')) {

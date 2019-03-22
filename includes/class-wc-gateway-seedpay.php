@@ -17,11 +17,10 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $this->init_settings();
         $this->title = $this->get_option('title');
         $this->instructions = $this->get_option('instructions');
-        $this->username = $this->get_option('username');
         $this->token = $this->get_option('token');
         $error = '';
         if (get_option('_seedpay_login_error') == 1) {
-            $error = '<p style="color:red;font-weight:bold">API Disconnected, please enter your username and API token.</p>';
+            $error = '<p style="color:red;font-weight:bold">API Disconnected, please enter your API token.</p>';
         } else {
             $error = '<p style="color:green;font-weight:bold">API Connected</p>';
         }
@@ -42,11 +41,8 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
     }
     public function login()
     {
-        $fields = array(
-            'username' => $_REQUEST['woocommerce_seedpay_username'],
-        );
-        $response = seedpay_request('/user', $fields, 'GET', $_REQUEST['woocommerce_seedpay_token']);
-        if ($response->errors) {
+        $response = submitRequest('user', null, 'GET');
+        if ($response['statusCode'] != 200) {
             update_option('_seedpay_login_error', 1);
         } else {
             update_option('_seedpay_login_error', 0);
@@ -115,12 +111,6 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
                 'type' => 'checkbox',
                 'label' => __('Enable Test Servers', 'woocommerce-gateway-seedpay'),
                 'default' => 'yes'
-            ),
-            'username' => array(
-                'title' => __('Seedpay Username', 'woocommerce-gateway-seedpay'),
-                'type' => 'text',
-                'description' => __('Your Seedpay Username.', 'woocommerce-gateway-seedpay'),
-                'desc_tip' => true
             ),
             'token' => array(
                 'title' => __('Seedpay Token', 'woocommerce-gateway-seedpay'),

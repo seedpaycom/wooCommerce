@@ -15,5 +15,5 @@
 * Select `Manage` in the Seedpay row
 * Configure the `Title` and `Descriptions`
 * Be sure to do all testing while the `Test Mode` checkbox is enabled
-* Seedpay will provide you with your testing and live `Username` and `Token`
-* When ready click the `Save Changes` button and look for `API Connected` in green text to confirm that your `Username` and `Token` are correct
+* Seedpay will provide you with your testing and live `Token`
+* When ready click the `Save Changes` button and look for `API Connected` in green text to confirm that your `Token` is correct
