@@ -163,9 +163,13 @@ jQuery(($) => {
         $('#seedpayPhoneNumber').on('change', cleanPhoneNumber)
         $('#place_order').click((event) => {
             if ($('#payment_method_seedpay').is(':checked')) {
+                if (paymentAccepted || $('.form-row.woocommerce-invalid').length > 0) {
+                    resetPage()
+                    shouldContinueCheckingStuffs = false
+                    return true
+                }
                 if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
                 if (!paymentAccepted) shouldContinueCheckingStuffs = true
-                if (paymentAccepted) return true
                 cleanPhoneNumber()
                 resetPage()
                 if (!isPhoneNumberValid()) {

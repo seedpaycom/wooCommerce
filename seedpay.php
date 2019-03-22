@@ -101,11 +101,18 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'woocommerce_seed
 
 function seedpay_add_to_cart_validation($passed, $product_id, $quantity)
 {
-    $orderStatus = get_transient('seedpayOrderStatus' . getTransactionId() . '');
-    if ($orderStatus == 'acceptedAndPaid') {
-        wc_add_notice(__('Payment already accepted you can no longer add any items to the cart', 'woocommerce'), 'error');
+    $response = submitGetTransactionStatus(getTransactionId());
+    if (
+        $response && $response["response"]
+        && property_exists($response["response"], 'transactions')
+        && sizeof($response["response"]->transactions) > 0
+        && property_exists($response["response"]->transactions[0], 'status')
+        && $response["response"]->transactions[0]->status == 'acceptedAndPaid'
+    ) {
+        wc_add_notice(__('Payment already accepted.  Please proceed to check out.', 'woocommerce'), 'error');
         $passed = false;
     }
     return $passed;
 };
 add_filter('woocommerce_add_to_cart_validation', 'seedpay_add_to_cart_validation', 10, 3);
+add_filter('woocommerce_update_cart_validation', 'seedpay_add_to_cart_validation', 10, 3);
