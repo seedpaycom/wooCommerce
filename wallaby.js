@@ -1,6 +1,6 @@
 // const wallabyWebpack = require('wallaby-webpack')
 // const webpackPostprocessor = wallabyWebpack({})
-let prefix = 'assets/**/'
+let prefix = 'src/**/'
 module.exports = (wallaby) => {
     return {
         env: {
@@ -21,11 +21,5 @@ module.exports = (wallaby) => {
         compilers: {
             '**/*.js': wallaby.compilers.babel(),
         },
-        // postprocessor: webpackPostprocessor,
-        // setup: function() {
-        //     chai.use(chai.should)
-        //     window.should = chai.should()
-        //     window.__moduleBundler.loadTests()
-        // },
     }
 }
