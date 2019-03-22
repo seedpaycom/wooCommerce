@@ -1,31 +1,25 @@
-const wallabyWebpack = require('wallaby-webpack')
-const webpackPostprocessor = wallabyWebpack({})
-let prefix = 'assets/**/'
-module.exports = function(wallaby) {
+// const wallabyWebpack = require('wallaby-webpack')
+// const webpackPostprocessor = wallabyWebpack({})
+let prefix = 'src/**/'
+module.exports = (wallaby) => {
     return {
+        env: {
+            type: 'node',
+        },
+        setup: function(_) {
+            require('./src/test/beforeAllTests')
+        },
         files: [
-            // loading chai globally
-            {
-                pattern: 'node_modules/chai/chai.js',
-                instrument: false,
-            },
-            {
-                pattern: `${prefix}!(*+(Tests)).js`,
-                load: false,
-            },
+            `${prefix}!(*+(Tests)).js`,
+            `${prefix}beforeAllTests.js`,
         ],
-        tests: [{
-            pattern: `${prefix}*Tests.js`,
-            load: false,
-        }, ],
+        tests: [
+            `${prefix}*Tests.js`,
+            `!beforeAllTests.js`,
+        ],
         testFramework: 'mocha',
         compilers: {
             '**/*.js': wallaby.compilers.babel(),
-        },
-        postprocessor: webpackPostprocessor,
-        setup: function() {
-            chai.use(chai.should)
-            window.__moduleBundler.loadTests()
         },
     }
 }

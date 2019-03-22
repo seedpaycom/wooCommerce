@@ -1,12 +1,17 @@
 let appConfig = require('./appConfig').default
 let ajax = {
-    submitRequest: async function(parameters) {
+    submitRequest: async (parameters) => {
         return await ajax.jQuery.post(appConfig.ajaxUrl, parameters)
     },
 
     checkTransactionStatus: async () => {
         return await ajax.submitRequest({
             'action': 'checkTransactionStatus',
+        })
+    },
+    generateNewTransactionId: async () => {
+        return await ajax.submitRequest({
+            'action': 'generateNewTransactionId',
         })
     },
     requestPayment: async (phoneNumber) => {
@@ -29,18 +34,17 @@ let ajax = {
             if (errorHandler) errorHandler(genericError || ajax.generateGenericErrorMessage('sending your request'))
             return
         }
+        let responseDotResponse = typeof response.response == typeof {} ? response.response : null
         if (response.error || (response.response && response.response.errors && response.response.errors[0])) {
             if (errorHandler) errorHandler(response.error || response.response.errors[0])
-            return
+            return responseDotResponse
         }
         if (response.response && response.response.message) {
             if (messageHandler) messageHandler(response.response.message)
-            return
+            return responseDotResponse
         }
-        if (response.response) {
-            if (successHandler) successHandler(response.response)
-            return
-        }
+        if (responseDotResponse && successHandler) successHandler(response.response)
+        return responseDotResponse
     },
     checkUserStatus: async (phoneNumber) => {
         return await ajax.submitRequest({

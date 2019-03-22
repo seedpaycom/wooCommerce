@@ -78,18 +78,12 @@ function submitGetUserStatus($phoneNumber)
     );
 }
 $GLOBALS['genericRequestPaymentError'] = 'Error while requesting payment.';
-function getTransactionOrErrorFromRequestPaymentResponse($response)
+function getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($response)
 {
-    if (!$response || gettype($response) != gettype(array()) || !$response['statusCode'] || ($response['statusCode'] != 200 && $response['statusCode'] != 400) || !json_decode($response['response']) || $response['error']) {
+    if (!$response || gettype($response) != gettype(array()) || !$response['statusCode'] || ($response['statusCode'] != 200 && $response['statusCode'] != 400) || !is_object($response['response']) || $response['error']) {
         return array(
             'errors' => array($GLOBALS['genericRequestPaymentError'])
         );
     }
-    $responseObject = json_decode($response['response']);
-    if ($response['statusCode'] == 400 && !$responseObject->errors[0]) {
-        return array(
-            'errors' => array($GLOBALS['genericRequestPaymentError'])
-        );
-    }
-    return $responseObject;
+    return $response['response'];
 }

@@ -22,6 +22,7 @@ define('WC_SEEDPAY_PLUGIN_ASSETS', plugins_url('assets/', __FILE__));
 
 require_once __DIR__ . '/configs.php';
 require_once __DIR__ . '/api.php';
+require_once __DIR__ . '/transactionId.php';
 
 function requestPayment()
 {
@@ -29,9 +30,10 @@ function requestPayment()
         submitRequestPayment(
             wc_format_phone_number($_REQUEST['phoneNumber']),
             WC()->cart->total,
-            get_transient('uniqueTransactionId')
+            getTransactionId()
         )
     );
+    die();
 }
 add_action('wp_ajax_requestPayment', 'requestPayment');
 add_action('wp_ajax_nopriv_requestPayment', 'requestPayment');
@@ -40,9 +42,10 @@ function checkTransactionStatus()
 {
     wp_send_json(
         submitGetTransactionStatus(
-            get_transient('uniqueTransactionId')
+            getTransactionId()
         )
     );
+    die();
 }
 add_action('wp_ajax_checkTransactionStatus', 'checkTransactionStatus');
 add_action('wp_ajax_nopriv_checkTransactionStatus', 'checkTransactionStatus');
@@ -54,17 +57,18 @@ function checkUserStatus()
             wc_format_phone_number($_REQUEST['phoneNumber'])
         )
     );
+    die();
 }
 add_action('wp_ajax_checkUserStatus', 'checkUserStatus');
 add_action('wp_ajax_nopriv_checkUserStatus', 'checkUserStatus');
 
-function generateNewUniqueTransactionId()
+function generateNewTransactionId()
 {
-    $transactionId = wp_rand();
-    set_transient('uniqueTransactionId', $transactionId, 168 * HOUR_IN_SECONDS);
-    //setcookie('seedpay_cart_id', $transaction_id, time() + (60 * 20), COOKIEPATH, COOKIE_DOMAIN);
-    return $transactionId;
+    wp_send_json('' . generateNewId());
+    die();
 }
+add_action('wp_ajax_generateNewTransactionId', 'generateNewTransactionId');
+add_action('wp_ajax_nopriv_generateNewTransactionId', 'generateNewTransactionId');
 
 function woocommerce_seedpay_init()
 {
@@ -97,12 +101,11 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'woocommerce_seed
 
 function seedpay_add_to_cart_validation($passed, $product_id, $quantity)
 {
-    $transient = get_transient('seedpay_order_statusname_' . get_transient('uniqueTransactionId') . '');
-    if ($transient == 'acceptedAndPaid') {
+    $orderStatus = get_transient('seedpayOrderStatus' . getTransactionId() . '');
+    if ($orderStatus == 'acceptedAndPaid') {
         wc_add_notice(__('Payment already accepted you can no longer add any items to the cart', 'woocommerce'), 'error');
         $passed = false;
     }
     return $passed;
 };
-
 add_filter('woocommerce_add_to_cart_validation', 'seedpay_add_to_cart_validation', 10, 3);

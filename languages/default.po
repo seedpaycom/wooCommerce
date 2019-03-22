@@ -36,10 +36,6 @@ msgstr ""
 msgid "Request Payment"
 msgstr ""
 
-#: includes/class-wc-gateway-seedpay.php:118
-msgid "Cancel Request"
-msgstr ""
-
 #: includes/class-wc-gateway-seedpay.php:145
 msgid "Seedpay is currently in Test Mode: "
 msgstr ""

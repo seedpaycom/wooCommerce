@@ -16,7 +16,8 @@
         "__dirname": true,
         "Buffer": true,
         "ajaxUrl": true,
-        "chai": true
+        "chai": true,
+        "should": true
     },
     "rules": {
         "prefer-arrow-callback": "error",

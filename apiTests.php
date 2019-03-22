@@ -7,11 +7,11 @@ class apiTests extends TestCase
     function setUp(): void
     { }
     /**
-     * @group getTransactionOrErrorFromRequestPaymentResponse
+     * @group getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse
      */
     function testReturnsAGenericErrorWhenWTFJustHappened(): void
     {
-        $response = getTransactionOrErrorFromRequestPaymentResponse('wtf just happened');
+        $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse('wtf just happened');
         $this->assertEquals(
             array(
                 'errors' => array($GLOBALS['genericRequestPaymentError'])
@@ -20,11 +20,11 @@ class apiTests extends TestCase
         );
     }
     /**
-     * @group getTransactionOrErrorFromRequestPaymentResponse
+     * @group getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse
      */
     function testReturnsAGenericErrorWhenNoResponseGiven(): void
     {
-        $response = getTransactionOrErrorFromRequestPaymentResponse(null);
+        $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse(null);
         $this->assertEquals(
             array(
                 'errors' => array($GLOBALS['genericRequestPaymentError'])
@@ -33,11 +33,11 @@ class apiTests extends TestCase
         );
     }
     /**
-     * @group getTransactionOrErrorFromRequestPaymentResponse
+     * @group getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse
      */
     function testReturnsAGenericErrorWhenNoStatusCodeIsProvided(): void
     {
-        $response = getTransactionOrErrorFromRequestPaymentResponse(array());
+        $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse(array());
         $this->assertEquals(
             array(
                 'errors' => array($GLOBALS['genericRequestPaymentError'])
@@ -46,16 +46,16 @@ class apiTests extends TestCase
         );
     }
     /**
-     * @group getTransactionOrErrorFromRequestPaymentResponse
+     * @group getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse
      */
-    function testReturnsAGenericErrorWhenTheResponseIsntJson(): void
+    function testReturnsAGenericErrorWhenTheResponseDotResponseIsntAnObject(): void
     {
         $options = array(
             'statusCode' => 200,
-            'response' => 'oh noz',
+            'response' => '{}',
             'error' => ''
         );
-        $response = getTransactionOrErrorFromRequestPaymentResponse($options);
+        $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($options);
         $this->assertEquals(
             array(
                 'errors' => array($GLOBALS['genericRequestPaymentError'])
@@ -64,16 +64,16 @@ class apiTests extends TestCase
         );
     }
     /**
-     * @group getTransactionOrErrorFromRequestPaymentResponse
+     * @group getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse
      */
     function testReturnsAGenericErrorWhenGivenAnError(): void
     {
         $options = array(
             'statusCode' => 200,
-            'response' => '{}',
+            'response' => json_decode('{}'),
             'error' => 'i amz errorz'
         );
-        $response = getTransactionOrErrorFromRequestPaymentResponse($options);
+        $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($options);
         $this->assertEquals(
             array(
                 'errors' => array($GLOBALS['genericRequestPaymentError'])
@@ -82,60 +82,63 @@ class apiTests extends TestCase
         );
     }
     /**
-     * @group getTransactionOrErrorFromRequestPaymentResponse
-     */
-    function testReturnsAcceptedAndPaidStatusWhenPaymentAlreadyReceived(): void
-    {
-        $options = array(
-            'statusCode' => 400,
-            'response' => '{
-                "errors": [
-                    "Payment already received"
-                ]
-            }',
-            'error' => ''
-        );
-        $response = getTransactionOrErrorFromRequestPaymentResponse($options);
-        $this->assertEquals(
-            json_decode($options['response']),
-            $response
-        );
-    }
-    /**
-     * @group getTransactionOrErrorFromRequestPaymentResponse
+     * @group getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse
      */
     function testReturnsGivenMessageAsAMessage(): void
     {
         $options = array(
             'statusCode' => 200,
-            'response' => '{
+            'response' => json_decode('{
                 "message": "Invitation sent to 5038661114"
-            }',
+            }'),
             'error' => ''
         );
-        $response = getTransactionOrErrorFromRequestPaymentResponse($options);
+        $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($options);
         $this->assertEquals(
-            json_decode($options['response']),
+            $options['response'],
             $response
         );
     }
     /**
-     * @group getTransactionOrErrorFromRequestPaymentResponse
+     * @group getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse
      */
     function testReturnsFirstGivenError(): void
     {
         $options = array(
             'statusCode' => 400,
-            'response' => '{
+            'response' => json_decode('{
                 "errors": [
                     "wtf mate?"
                 ]
-            }',
+            }'),
             'error' => ''
         );
-        $response = getTransactionOrErrorFromRequestPaymentResponse($options);
+        $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($options);
         $this->assertEquals(
-            json_decode($options['response']),
+            $options['response'],
+            $response
+        );
+    }
+    /**
+     * @group getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse
+     */
+    function testReturnsAcceptedAndPaidStatusWhenPaymentAlreadyReceived(): void
+    {
+        $options = array(
+            'statusCode' => 400,
+            'response' => json_decode('{
+                "errors": [
+                    "Payment already received"
+                ],
+                "transaction": {
+                    "status": "acceptedAndPaid"
+                }
+            }'),
+            'error' => ''
+        );
+        $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($options);
+        $this->assertEquals(
+            $options['response'],
             $response
         );
     }
