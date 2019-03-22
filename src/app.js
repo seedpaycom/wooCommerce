@@ -1,6 +1,8 @@
 import ajax from './ajax'
 import appConfig from './appConfig'
 import processTransaction from './processTransaction'
+import jQuery from 'jquery'
+var $ = jQuery
 
 appConfig.ajaxUrl = ajaxUrl
 var shouldContinueCheckingStuffs = true
