@@ -34,12 +34,6 @@ function submitRequest($resource, $body, $method)
 
 function submitRequestPayment($fromPhoneNumber, $amount, $uniqueTransactionId)
 {
-    if (!$fromPhoneNumber) {
-        return array('error' => __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay'));
-    }
-    if (!$amount || $amount < 0.5) {
-        return array('error' => __('Amount must be larger than $0.50', 'woocommerce-gateway-seedpay'));
-    }
     $body = array(
         'fromPhoneNumber' => $fromPhoneNumber,
         'amount' => $amount,
@@ -54,9 +48,6 @@ function submitRequestPayment($fromPhoneNumber, $amount, $uniqueTransactionId)
 
 function submitGetTransactionStatus($uniqueTransactionId)
 {
-    if (!$uniqueTransactionId) {
-        return array('error' => __('Amount must be larger than $0.50', 'woocommerce-gateway-seedpay'));
-    }
     $url = 'transactions/' . htmlentities(urlencode(json_encode(array(
         'uniqueTransactionId' => $uniqueTransactionId
     )))) . '';
@@ -68,9 +59,6 @@ function submitGetTransactionStatus($uniqueTransactionId)
 }
 function submitGetUserStatus($phoneNumber)
 {
-    if (!$phoneNumber) {
-        return array('error' => __('Please enter a valid 10 digit phone number.', 'woocommerce-gateway-seedpay'));
-    }
     return submitRequest(
         'user/isRegistered/' . $phoneNumber . '',
         null,

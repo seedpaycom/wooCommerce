@@ -16,7 +16,7 @@ let submitPaymentRequest = async ({
     transactionAccepted,
 }) => {
     let submitPaymentRequestErrorHandler = (errorMessage) => {
-        if (errorMessage.includes('received')) return transactionAccepted()
+        if (errorMessage.includes('payment already received')) return transactionAccepted()
         errorHandler(errorMessage)
     }
     let response = ajax.processAjaxResponse({
@@ -106,12 +106,14 @@ let messageHandler = (message) => {
     resetPage()
 }
 let errorHandler = (errorMessage) => {
+    if (errorMessage.toLowerCase().indexOf('payment already received') >= 0) return
     resetPage()
     $('.seedpayErrorMessage').html(errorMessage)
     $('.seedpayRequestingPaymentIndicator').hide()
     $('.seedpayPhoneNumberPrompt').show()
     shouldContinueCheckingStuffs = false
-    if (errorMessage.toLowerCase().indexOf('10 digits') < 0)
+    if (errorMessage.toLowerCase().indexOf('10 digit') < 0 &&
+        errorMessage.toLowerCase().indexOf('payment processing') < 0)
         ajax.generateNewTransactionId()
 }
 
@@ -150,14 +152,20 @@ let cleanPhoneNumber = () => {
 }
 let isPhoneNumberValid = () => {
     let phoneNumber = $('#seedpayPhoneNumber').val()
-    if (phoneNumber.length != 10) return false
+    if (phoneNumber.length != 10) {
+        $('#seedpayPhoneNumber').focus()
+        return false
+    }
+    return true
 }
 jQuery(($) => {
     let bindStuffs = () => {
         $('#seedpayPhoneNumber').on('change', cleanPhoneNumber)
         $('#place_order').click((event) => {
             if ($('#payment_method_seedpay').is(':checked')) {
+                if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
                 if (!paymentAccepted) shouldContinueCheckingStuffs = true
+                if (paymentAccepted) return true
                 cleanPhoneNumber()
                 resetPage()
                 if (!isPhoneNumberValid()) {
@@ -173,12 +181,9 @@ jQuery(($) => {
                     transactionAccepted,
                     pendingTransactionHandler,
                 })
-
-                if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
-                return paymentAccepted
             }
             return true
         })
     }
-    setTimeout(bindStuffs, 5000)
+    setTimeout(bindStuffs, 3000)
 })

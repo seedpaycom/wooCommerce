@@ -152,11 +152,12 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         );
         $responseOrGenericError = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($submitRequestPaymentResponse);
 
+        $status = null;
         if ($responseOrGenericError && property_exists($responseOrGenericError, 'transaction') && property_exists($responseOrGenericError->transaction, 'status')) {
             $status = $responseOrGenericError->transaction->status;
         }
         if (!$status && $responseOrGenericError && property_exists($responseOrGenericError, 'errors') && $responseOrGenericError->errors[0]) {
-            wc_add_notice($responseOrGenericError['errors'][0], 'error');
+            wc_add_notice($responseOrGenericError->errors[0], 'error');
             return;
         }
         if ($status != 'acceptedAndPaid') {
