@@ -47,7 +47,6 @@ archive.glob('**/*', {
         'phpunit.xml',
         'README.md',
         'readme.txt',
-        'transactionId.php',
         'wallaby.js',
         'webpack.js',
         '**/*Tests.php',
