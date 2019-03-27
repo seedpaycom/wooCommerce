@@ -160,34 +160,44 @@ let isPhoneNumberValid = () => {
 }
 jQuery(($) => {
     let bindStuffs = () => {
-        $('#seedpayPhoneNumber').on('change', cleanPhoneNumber)
-        $('#place_order').click((event) => {
-            if ($('#payment_method_seedpay').is(':checked')) {
-                if (paymentAccepted || $('.form-row.woocommerce-invalid').length > 0) {
+        if (!$('#seedpayPhoneNumber')[0] || !$._data($('#seedpayPhoneNumber')[0], 'events')) {
+            $('#seedpayPhoneNumber').on('change', cleanPhoneNumber)
+        }
+        if (!$('#place_order')[0] || !$._data($('#place_order')[0], 'events')) {
+            $('#place_order').click((event) => {
+                if ($('#payment_method_seedpay').is(':checked')) {
+                    if (paymentAccepted || $('.form-row.woocommerce-invalid').length > 0) {
+                        resetPage()
+                        shouldContinueCheckingStuffs = false
+                        return true
+                    }
+                    if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
+                    if (!paymentAccepted) shouldContinueCheckingStuffs = true
+                    cleanPhoneNumber()
                     resetPage()
-                    shouldContinueCheckingStuffs = false
-                    return true
+                    if (!isPhoneNumberValid()) {
+                        errorHandler('Please enter a valid 10 digit phone number')
+                        event.preventDefault()
+                        return false
+                    }
+                    showWaitingToAcceptIndicator()
+                    submitPaymentRequest({
+                        errorHandler,
+                        messageHandler,
+                        submitPaymentRequestSuccessHandler,
+                        transactionAccepted,
+                        pendingTransactionHandler,
+                    })
                 }
-                if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
-                if (!paymentAccepted) shouldContinueCheckingStuffs = true
-                cleanPhoneNumber()
-                resetPage()
-                if (!isPhoneNumberValid()) {
-                    errorHandler('Please enter a valid 10 digit phone number')
-                    event.preventDefault()
-                    return false
-                }
-                showWaitingToAcceptIndicator()
-                submitPaymentRequest({
-                    errorHandler,
-                    messageHandler,
-                    submitPaymentRequestSuccessHandler,
-                    transactionAccepted,
-                    pendingTransactionHandler,
-                })
-            }
-            return true
-        })
+                return true
+            })
+        }
     }
-    setTimeout(bindStuffs, 3000)
+    bindStuffs()
+    //rebind stuffs when the update_order_review ajax call returns.  This is real dumb. 
+    var observer = new MutationObserver((bindStuffs))
+    var config = {
+        attributes: true,
+    }
+    observer.observe(document.body, config)
 })
