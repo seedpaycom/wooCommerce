@@ -194,6 +194,24 @@ jQuery(($) => {
         }
     }
     bindStuffs()
+    setTimeout(() => {
+        bindStuffs()
+    }, 1000)
+    setTimeout(() => {
+        bindStuffs()
+    }, 2000)
+    setTimeout(() => {
+        bindStuffs()
+    }, 3000)
+    setTimeout(() => {
+        bindStuffs()
+    }, 5000)
+    setTimeout(() => {
+        bindStuffs()
+    }, 7000)
+    setTimeout(() => {
+        bindStuffs()
+    }, 10000)
     //rebind stuffs when the update_order_review ajax call returns.  This is real dumb. 
     var observer = new MutationObserver((bindStuffs))
     var config = {
