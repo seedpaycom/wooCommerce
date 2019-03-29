@@ -166,7 +166,9 @@ jQuery(($) => {
         if (!$('#place_order')[0] || !$._data($('#place_order')[0], 'events')) {
             $('#place_order').click((event) => {
                 if ($('#payment_method_seedpay').is(':checked')) {
-                    if (paymentAccepted || $('.form-row.woocommerce-invalid').length > 0) {
+                    if (paymentAccepted ||
+                        $('.form-row.woocommerce-invalid').length > 0 ||
+                        !$('.required').first().parent().parent().find('input').val()) {
                         resetPage()
                         shouldContinueCheckingStuffs = false
                         return true
