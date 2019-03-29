@@ -160,60 +160,61 @@ let isPhoneNumberValid = () => {
 }
 jQuery(($) => {
     let bindStuffs = () => {
-        if (!$('#seedpayPhoneNumber')[0] || !$._data($('#seedpayPhoneNumber')[0], 'events')) {
-            $('#seedpayPhoneNumber').on('change', cleanPhoneNumber)
-        }
-        if (!$('#place_order')[0] || !$._data($('#place_order')[0], 'events')) {
-            $('#place_order').click((event) => {
-                if ($('#payment_method_seedpay').is(':checked')) {
-                    if (paymentAccepted ||
-                        $('.form-row.woocommerce-invalid').length > 0 ||
-                        !$('.required').first().parent().parent().find('input').val()) {
-                        resetPage()
-                        shouldContinueCheckingStuffs = false
-                        return true
-                    }
-                    if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
-                    if (!paymentAccepted) shouldContinueCheckingStuffs = true
-                    cleanPhoneNumber()
+        $('#seedpayPhoneNumber').off('change').on('change', cleanPhoneNumber)
+        $('#place_order').off('click').click((event) => {
+            if ($('#payment_method_seedpay').is(':checked')) {
+                if (paymentAccepted ||
+                    $('.form-row.woocommerce-invalid').length ||
+                    !$('.required').first().parent().parent().find('input').val()) {
                     resetPage()
-                    if (!isPhoneNumberValid()) {
-                        errorHandler('Please enter a valid 10 digit phone number')
-                        event.preventDefault()
-                        return false
-                    }
-                    showWaitingToAcceptIndicator()
-                    submitPaymentRequest({
-                        errorHandler,
-                        messageHandler,
-                        submitPaymentRequestSuccessHandler,
-                        transactionAccepted,
-                        pendingTransactionHandler,
-                    })
+                    shouldContinueCheckingStuffs = false
+                    bindAllTheStuffsAfterDelay()
+                    return true
                 }
-                return true
-            })
-        }
+                if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
+                if (!paymentAccepted) shouldContinueCheckingStuffs = true
+                cleanPhoneNumber()
+                resetPage()
+                if (!isPhoneNumberValid()) {
+                    errorHandler('Please enter a valid 10 digit phone number')
+                    event.preventDefault()
+                    return false
+                }
+                showWaitingToAcceptIndicator()
+                submitPaymentRequest({
+                    errorHandler,
+                    messageHandler,
+                    submitPaymentRequestSuccessHandler,
+                    transactionAccepted,
+                    pendingTransactionHandler,
+                })
+            }
+            return true
+        })
+        return true
     }
-    bindStuffs()
-    setTimeout(() => {
+    let bindAllTheStuffsAfterDelay = () => {
         bindStuffs()
-    }, 1000)
-    setTimeout(() => {
-        bindStuffs()
-    }, 2000)
-    setTimeout(() => {
-        bindStuffs()
-    }, 3000)
-    setTimeout(() => {
-        bindStuffs()
-    }, 5000)
-    setTimeout(() => {
-        bindStuffs()
-    }, 7000)
-    setTimeout(() => {
-        bindStuffs()
-    }, 10000)
+        setTimeout(() => {
+            bindStuffs()
+        }, 1000)
+        setTimeout(() => {
+            bindStuffs()
+        }, 2000)
+        setTimeout(() => {
+            bindStuffs()
+        }, 3000)
+        setTimeout(() => {
+            bindStuffs()
+        }, 5000)
+        setTimeout(() => {
+            bindStuffs()
+        }, 7000)
+        setTimeout(() => {
+            bindStuffs()
+        }, 10000)
+    }
+    bindAllTheStuffsAfterDelay()
     //rebind stuffs when the update_order_review ajax call returns.  This is real dumb. 
     var observer = new MutationObserver((bindStuffs))
     var config = {
