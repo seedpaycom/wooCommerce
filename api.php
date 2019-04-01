@@ -69,9 +69,9 @@ $GLOBALS['genericRequestPaymentError'] = 'Error while requesting payment.';
 function getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($response)
 {
     if (!$response || gettype($response) != gettype(array()) || !$response['statusCode'] || ($response['statusCode'] != 200 && $response['statusCode'] != 400) || !is_object($response['response']) || $response['error']) {
-        return array(
-            'errors' => array($GLOBALS['genericRequestPaymentError'])
-        );
+        return json_decode('{
+            "errors": [' . $GLOBALS['genericRequestPaymentError'] . ']
+        }');
     }
     return $response['response'];
 }

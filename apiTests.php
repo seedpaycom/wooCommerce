@@ -13,9 +13,9 @@ class apiTests extends TestCase
     {
         $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse('wtf just happened');
         $this->assertEquals(
-            array(
-                'errors' => array($GLOBALS['genericRequestPaymentError'])
-            ),
+            json_decode('{
+                "errors": [' . $GLOBALS['genericRequestPaymentError'] . ']
+            }'),
             $response
         );
     }
@@ -26,9 +26,9 @@ class apiTests extends TestCase
     {
         $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse(null);
         $this->assertEquals(
-            array(
-                'errors' => array($GLOBALS['genericRequestPaymentError'])
-            ),
+            json_decode('{
+                "errors": [' . $GLOBALS['genericRequestPaymentError'] . ']
+            }'),
             $response
         );
     }
@@ -39,9 +39,9 @@ class apiTests extends TestCase
     {
         $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse(array());
         $this->assertEquals(
-            array(
-                'errors' => array($GLOBALS['genericRequestPaymentError'])
-            ),
+            json_decode('{
+                "errors": [' . $GLOBALS['genericRequestPaymentError'] . ']
+            }'),
             $response
         );
     }
@@ -57,9 +57,9 @@ class apiTests extends TestCase
         );
         $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($options);
         $this->assertEquals(
-            array(
-                'errors' => array($GLOBALS['genericRequestPaymentError'])
-            ),
+            json_decode('{
+                "errors": [' . $GLOBALS['genericRequestPaymentError'] . ']
+            }'),
             $response
         );
     }
@@ -75,9 +75,9 @@ class apiTests extends TestCase
         );
         $response = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($options);
         $this->assertEquals(
-            array(
-                'errors' => array($GLOBALS['genericRequestPaymentError'])
-            ),
+            json_decode('{
+                "errors": [' . $GLOBALS['genericRequestPaymentError'] . ']
+            }'),
             $response
         );
     }
