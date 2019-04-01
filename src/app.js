@@ -163,9 +163,15 @@ jQuery(($) => {
         $('#seedpayPhoneNumber').off('change').on('change', cleanPhoneNumber)
         $('#place_order').off('click').click((event) => {
             if ($('#payment_method_seedpay').is(':checked')) {
+                let anyEmptyRequiredFields = $('.required').filter((_, requiredField) => {
+                    if ($(requiredField).parent().parent().find('input')) {
+                        return !$(requiredField).parent().parent().find('input').val()
+                    }
+                    return false
+                })
                 if (paymentAccepted ||
                     $('.form-row.woocommerce-invalid').length ||
-                    !$('.required').first().parent().parent().find('input').val()) {
+                    anyEmptyRequiredFields) {
                     resetPage()
                     shouldContinueCheckingStuffs = false
                     bindAllTheStuffsAfterDelay()
