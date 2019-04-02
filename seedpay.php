@@ -6,7 +6,7 @@
  * Description: Receive payments using Seedpay
  * Author: Seedpay
  * Author URI: http://seedpay.com/
- * Version: 3.0.0
+ * Version: 4.0.0
  * WC tested up to: 3.5.4
  * WC requires at least: 3.0
  * Text Domain: woocommerce-gateway-seedpay
