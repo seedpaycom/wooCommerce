@@ -153,10 +153,14 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $responseOrGenericError = getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($submitRequestPaymentResponse);
 
         $status = null;
+        $amount = null;
         if ($responseOrGenericError && property_exists($responseOrGenericError, 'transaction') && property_exists($responseOrGenericError->transaction, 'status')) {
             $status = $responseOrGenericError->transaction->status;
         }
-        if (!$status && $responseOrGenericError && property_exists($responseOrGenericError, 'errors') && $responseOrGenericError->errors[0]) {
+        if ($responseOrGenericError && property_exists($responseOrGenericError, 'transaction') && property_exists($responseOrGenericError->transaction, 'amount')) {
+            $amount = $responseOrGenericError->transaction->amount;
+        }
+        if (! ($status || $amount) && $responseOrGenericError && property_exists($responseOrGenericError, 'errors') && $responseOrGenericError->errors[0]) {
             wc_add_notice($responseOrGenericError->errors[0], 'error');
             return;
         }
@@ -165,8 +169,13 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
             wc_add_notice($error_message, 'notice');
             return;
         }
-        set_transient('seedpayOrderStatus' . getTransactionId() . '', $status);
+        if ($amount != WC()->cart->total) {
+            $error_message = __('The shopping cart has changed after accepting the payment.  Please revert your changes and resubmit the order or contact helpdesk@seedpay.com', 'woocommerce-gateway-seedpay');
+            wc_add_notice($error_message, 'error');
+            return;
+        }
         $order = wc_get_order($order_id);
+        set_transient('seedpayOrderStatus' . getTransactionId() . '', $status);
         $order->payment_complete();
         $order->update_status('wc-processing');
         $order->add_order_note(__('Seedpay Payment Completed: #' . getTransactionId() . '', 'woocommerce-gateway-seedpay'));

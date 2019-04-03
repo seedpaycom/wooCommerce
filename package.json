@@ -8,7 +8,9 @@
         "builddev": "./node_modules/.bin/webpack --config=webpack.js --mode='development'",
         "beautify": "js-beautify --config .jsbeautifyrc -f `find ./assets -type f -name '*.js' -not -name '*.min.js'` -r -n",
         "linter": "eslint --config .eslintrc.json --fix `find ./assets -type f -name '*.js' -not -name '*.min.js'`",
-        "format": "npm run beautify && npm run linter"
+        "format": "npm run beautify && npm run linter",
+        "archive": "node ./src/archivePlugin.js",
+        "prodify": "npm run buildprod && npm run archive"
     },
     "dependencies": {
         "jquery": "^3.3.1"

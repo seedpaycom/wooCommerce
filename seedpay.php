@@ -108,6 +108,8 @@ function seedpay_add_to_cart_validation($passed, $product_id, $quantity)
         && sizeof($response["response"]->transactions) > 0
         && property_exists($response["response"]->transactions[0], 'status')
         && $response["response"]->transactions[0]->status == 'acceptedAndPaid'
+        && property_exists($response["response"]->transactions[0], 'amount')
+        && $response["response"]->transactions[0]->amount == WC()->cart->total
     ) {
         wc_add_notice(__('Payment already accepted.  Please proceed to check out.', 'woocommerce'), 'error');
         $passed = false;
