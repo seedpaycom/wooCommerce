@@ -12,7 +12,7 @@ class WC_Gateway_Seedpay extends WC_Payment_Gateway
         $this->id = 'seedpay';
         $this->icon = apply_filters('woocommerce_cheque_icon', '');
         $this->has_fields = true;
-        $this->method_title = __('Seedpay', 'woocommerce-gateway-seedpay');
+        $this->method_title = __('Pay with Seedpay', 'woocommerce-gateway-seedpay');
         $this->init_form_fields();
         $this->init_settings();
         $this->title = $this->get_option('title');
