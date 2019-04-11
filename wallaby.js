@@ -15,7 +15,7 @@ module.exports = (wallaby) => {
         ],
         tests: [
             `${prefix}*Tests.js`,
-            `!beforeAllTests.js`,
+            `!${prefix}beforeAllTests.js`,
         ],
         testFramework: 'mocha',
         compilers: {

@@ -57,14 +57,6 @@ function submitGetTransactionStatus($uniqueTransactionId)
         'GET'
     );
 }
-function submitGetUserStatus($phoneNumber)
-{
-    return submitRequest(
-        'user/isRegistered/' . $phoneNumber . '',
-        null,
-        'GET'
-    );
-}
 $GLOBALS['genericRequestPaymentError'] = 'Error while requesting payment.';
 function getApiResponseObjectOrGenericErrorsFromRequestPaymentResponse($response)
 {

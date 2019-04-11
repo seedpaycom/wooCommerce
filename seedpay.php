@@ -50,18 +50,6 @@ function checkTransactionStatus()
 add_action('wp_ajax_checkTransactionStatus', 'checkTransactionStatus');
 add_action('wp_ajax_nopriv_checkTransactionStatus', 'checkTransactionStatus');
 
-function checkUserStatus()
-{
-    wp_send_json(
-        submitGetUserStatus(
-            wc_format_phone_number($_REQUEST['phoneNumber'])
-        )
-    );
-    die();
-}
-add_action('wp_ajax_checkUserStatus', 'checkUserStatus');
-add_action('wp_ajax_nopriv_checkUserStatus', 'checkUserStatus');
-
 function generateNewTransactionId()
 {
     wp_send_json('' . generateNewId());

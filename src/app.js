@@ -5,13 +5,11 @@ import jQuery from 'jquery'
 var $ = jQuery
 
 appConfig.ajaxUrl = ajaxUrl
-var shouldContinueCheckingStuffs = true
-var startedCheckingUserStatus = false
+var shouldContinueCheckingTransactionStatus = true
 var startedCheckingTransactionStatus = false
 var paymentAccepted = false
 let submitPaymentRequest = async ({
     errorHandler,
-    messageHandler,
     submitPaymentRequestSuccessHandler,
     transactionAccepted,
 }) => {
@@ -22,7 +20,6 @@ let submitPaymentRequest = async ({
     let response = ajax.processAjaxResponse({
         response: await ajax.requestPayment($('#seedpayPhoneNumber').val()),
         errorHandler: submitPaymentRequestErrorHandler,
-        messageHandler,
         successHandler: submitPaymentRequestSuccessHandler,
         genericError: ajax.generateGenericErrorMessage('requesting payment'),
     })
@@ -39,7 +36,6 @@ let checkTransactionStatus = async () => {
     let response = ajax.processAjaxResponse({
         response: await ajax.checkTransactionStatus(),
         errorHandler,
-        messageHandler,
         genericError: ajax.generateGenericErrorMessage('checking your transaction status'),
     })
     if (!response || !response.transactions) return null
@@ -53,25 +49,6 @@ let checkTransactionStatus = async () => {
     return transaction
 }
 
-let checkUserStatus = async ({
-    errorHandler,
-}) => {
-    let response = ajax.processAjaxResponse({
-        response: await ajax.checkUserStatus($('#seedpayPhoneNumber').val()),
-        errorHandler,
-        genericError: ajax.generateGenericErrorMessage('checking your account status'),
-    })
-    if (!response || !response.isRegistered) {
-        if (!startedCheckingUserStatus) {
-            startedCheckingUserStatus = true
-            startUserCheckingLoop()
-        }
-        return false
-    }
-    $('#place_order').click()
-    return true
-}
-
 let pendingTransactionHandler = () => {
     if (!startedCheckingTransactionStatus) {
         startedCheckingTransactionStatus = true
@@ -83,7 +60,7 @@ let transactionAccepted = () => {
     $('.seedpayPhoneNumberPrompt').hide()
     $('.seedpayRequestingPaymentIndicator').hide()
     $('.seedpaySuccessMessage').show()
-    shouldContinueCheckingStuffs = false
+    shouldContinueCheckingTransactionStatus = false
     paymentAccepted = true
     $('#place_order').click()
 }
@@ -94,48 +71,25 @@ let submitPaymentRequestSuccessHandler = (transaction) => {
 let showWaitingToAcceptIndicator = () => {
     $('.seedpayRequestingPaymentIndicator').show()
 }
-let messageHandler = (message) => {
-    if (message.toLowerCase().indexOf('inv') >= 0) {
-        checkUserStatus({
-            errorHandler,
-            messageHandler,
-        })
-        return
-    }
-    $('.seedpayErrorMessage').html(message)
-    resetPage()
-}
 let errorHandler = (errorMessage) => {
     if (errorMessage.toLowerCase().indexOf('payment already received') >= 0) return
     resetPage()
     $('.seedpayErrorMessage').html(errorMessage)
     $('.seedpayRequestingPaymentIndicator').hide()
     $('.seedpayPhoneNumberPrompt').show()
-    shouldContinueCheckingStuffs = false
+    shouldContinueCheckingTransactionStatus = false
     if (errorMessage.toLowerCase().indexOf('10 digit') < 0 &&
         errorMessage.toLowerCase().indexOf('payment processing') < 0)
         ajax.generateNewTransactionId()
 }
 
 function startTransactionCheckingLoop() {
-    if (shouldContinueCheckingStuffs) {
+    if (shouldContinueCheckingTransactionStatus) {
         setTimeout(() => {
             checkTransactionStatus()
             startTransactionCheckingLoop()
         }, 5000)
     } else startedCheckingTransactionStatus = false
-}
-
-let startUserCheckingLoop = async () => {
-    if (shouldContinueCheckingStuffs) {
-        setTimeout(async () => {
-            let isRegistered = await checkUserStatus({
-                errorHandler,
-                messageHandler,
-            })
-            if (!isRegistered) startUserCheckingLoop()
-        }, 5000)
-    } else startedCheckingUserStatus = false
 }
 
 function resetPage() {
@@ -173,12 +127,12 @@ jQuery(($) => {
                     $('.form-row.woocommerce-invalid').length ||
                     emptyRequiredFields.length) {
                     resetPage()
-                    shouldContinueCheckingStuffs = false
+                    shouldContinueCheckingTransactionStatus = false
                     bindAllTheStuffsAfterDelay()
                     return true
                 }
                 if (!paymentAccepted && event && event.preventDefault) event.preventDefault()
-                if (!paymentAccepted) shouldContinueCheckingStuffs = true
+                if (!paymentAccepted) shouldContinueCheckingTransactionStatus = true
                 cleanPhoneNumber()
                 resetPage()
                 if (!isPhoneNumberValid()) {
@@ -189,7 +143,6 @@ jQuery(($) => {
                 showWaitingToAcceptIndicator()
                 submitPaymentRequest({
                     errorHandler,
-                    messageHandler,
                     submitPaymentRequestSuccessHandler,
                     transactionAccepted,
                     pendingTransactionHandler,

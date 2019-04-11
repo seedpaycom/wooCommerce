@@ -46,12 +46,6 @@ let ajax = {
         if (responseDotResponse && successHandler) successHandler(response.response)
         return responseDotResponse
     },
-    checkUserStatus: async (phoneNumber) => {
-        return await ajax.submitRequest({
-            'action': 'checkUserStatus',
-            phoneNumber,
-        })
-    },
     jQuery: require('jquery'),
 }
 export default ajax
