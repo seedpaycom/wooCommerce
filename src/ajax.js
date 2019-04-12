@@ -26,7 +26,6 @@ let ajax = {
     processAjaxResponse: ({
         response,
         errorHandler,
-        messageHandler,
         successHandler,
         genericError,
     }) => {
@@ -37,10 +36,6 @@ let ajax = {
         let responseDotResponse = typeof response.response == typeof {} ? response.response : null
         if (response.error || (response.response && response.response.errors && response.response.errors[0])) {
             if (errorHandler) errorHandler(response.error || response.response.errors[0])
-            return responseDotResponse
-        }
-        if (response.response && response.response.message) {
-            if (messageHandler) messageHandler(response.response.message)
             return responseDotResponse
         }
         if (responseDotResponse && successHandler) successHandler(response.response)

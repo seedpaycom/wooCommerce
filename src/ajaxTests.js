@@ -146,23 +146,6 @@ describe('ajax', () => {
 
             options.handlerCalled.should.be.true
         })
-        it('calls the message handler with the response.response.message', () => {
-            let response = {
-                response: {
-                    message: 'luuk at meezor',
-                },
-            }
-
-            ajax.processAjaxResponse({
-                response,
-                messageHandler: (message) => {
-                    options.handlerCalled = true
-                    message.should.equal(response.response.message)
-                },
-            })
-
-            options.handlerCalled.should.be.true
-        })
         it('calls the success handler with the response.response', () => {
             let response = {
                 response: {},
